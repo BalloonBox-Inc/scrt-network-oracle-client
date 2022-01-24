@@ -3,7 +3,7 @@
 ![scrt sybil image](./public/images/readmeImage.png)
 
 
-⚡️ Made with developer experience in mind: Next.js, TypeScript, ESLint, Prettier, Husky, Lint-Staged, VSCode, PostCSS, Tailwind CSS.
+⚡️ This is the client side for SCRTSybil, made with the developer experience in mind: Next.js, TypeScript, ESLint, Prettier, Husky, Lint-Staged, VSCode, PostCSS, Tailwind CSS.
 
 ### Features
 
@@ -33,6 +33,27 @@ git clone  ... my-project-name
 cd my-project-name
 yarn install
 ```
+
+### Credentials Required
+
+Your browser will require the Keplr Chrome extension, downloadable [here.](https://chrome.google.com/webstore/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap?hl=en)
+
+Create a .env.local file in your root folder: 
+
+```
+PLAID_CLIENT_ID=your_client_id
+PLAID_URL_SANDBOX="sandbox.plaid.com"
+PLAID_SECRET_KEY_SANDBOX=your_sandbox_key
+
+COINBASE_CLIENT_ID=your_client_Id
+COINBASE_CLIENT_SECRET=your_client_secret
+COINBASE_BASE_AUTHORIZE_URL=your_url
+COINBASE_ACCESS_TOKEN_URL=your_url
+
+```
+
+You will need to create an account on [Plaid](https://dashboard.plaid.com/) and [Coinbase](https://developers.coinbase.com/) in order to receive client ids and client secrets for your api. 
+
 
 Then, you can run locally in development mode with live reload:
 
