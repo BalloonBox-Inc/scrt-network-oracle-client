@@ -1,4 +1,6 @@
-🚀 SCRT SYBIL
+# 🚀 SCRT SYBIL
+
+![scrt sybil image](./public/images/readmeImage.png)
 
 
 ⚡️ Made with developer experience in mind: Next.js, TypeScript, ESLint, Prettier, Husky, Lint-Staged, VSCode, PostCSS, Tailwind CSS.
@@ -65,5 +67,4 @@ Licensed under the MIT License, Copyright © 2022
 ---
 
 
-### Credits
 Credits to [ixartz](https://github.com/ixartz/Next-js-Boilerplate) for the NextJS boilerplate
