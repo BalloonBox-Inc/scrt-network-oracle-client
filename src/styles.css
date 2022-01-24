@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+$primary-color: white;
+$bg: black;
+
+body {
+  font-family: 'Poppins', sans-serif !important;
+}
+
+.spin {
+  animation-name: spin;
+  animation-duration: 1000ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.growLeft {
+  animation: growLeft 0.7s forwards;
+}
+
+.shrinkRight {
+  animation: shrinkRight 0.7s forwards;
+}
+
+@keyframes growLeft {
+  from {
+    width: 2.8rem;
+  }
+  to {
+    width: 420px;
+  }
+}
+
+@keyframes shrinkRight {
+  from {
+    width: 400px;
+  }
+  to {
+    width: 2.8rem;
+  }
+}
