@@ -52,7 +52,7 @@ COINBASE_ACCESS_TOKEN_URL=your_url
 
 ```
 
-You will need to create an account on [Plaid](https://dashboard.plaid.com/) and [Coinbase](https://developers.coinbase.com/) in order to receive client ids and client secrets for your api. 
+You will need to create an account on [Plaid](https://dashboard.plaid.com/) OR [Coinbase](https://developers.coinbase.com/) in order to receive client ids and client secrets for your api. 
 
 
 Then, you can run locally in development mode with live reload:
