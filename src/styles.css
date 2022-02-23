@@ -38,15 +38,17 @@ body {
     width: 2.8rem;
   }
   to {
-    width: 420px;
+    width: 450px;
+
   }
 }
 
 @keyframes shrinkRight {
-  from {
-    width: 400px;
+  0% {
+    width: 450px;
   }
-  to {
+  99% {
     width: 2.8rem;
   }
+  
 }

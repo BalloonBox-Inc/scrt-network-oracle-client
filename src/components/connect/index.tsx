@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 
-import { DisconnectOutlined } from '@ant-design/icons';
-import { Modal } from 'antd';
+import {
+  CloseOutlined,
+  CopyOutlined,
+  DisconnectOutlined,
+} from '@ant-design/icons';
+import { Modal, message } from 'antd';
 
 import { useSecretContext } from '@scrtsybil/src/context';
 
@@ -12,10 +16,6 @@ const Connect = () => {
   };
   const [showWallet, setShowWallet] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
-
-  const handleWalletClick = () => {
-    setShowWallet(!showWallet);
-  };
 
   const {
     secretjs,
@@ -48,17 +48,18 @@ const Connect = () => {
   return (
     <div
       role={'presentation'}
-      onClick={() => handleWalletClick()}
+      onClick={() => setShowWallet(true)}
       className={`cursor-pointer relative`}
     >
       <div
-        className={`flex justify-center items-center  ${
-          showWallet ? 'growLeft' : undefined
-        } ${secretjs ? 'opacity-100' : 'opacity-20'} `}
+        className={`flex justify-center items-center  
+        ${showWallet ? 'growLeft' : 'shrinkRight'} ${
+          secretjs ? 'opacity-100' : 'opacity-20'
+        } `}
         style={{
           width: '2.8rem',
           height: '2.8rem',
-          borderRadius: showWallet ? '10px' : '50%',
+          borderRadius: '10px',
           backgroundColor: '#5A57D9',
           right: '1rem',
           top: '1rem',
@@ -66,27 +67,54 @@ const Connect = () => {
           zIndex: '5',
         }}
       >
+        {showWallet && (
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowWallet(false);
+            }}
+            role={'presentation'}
+            className="-left-5 absolute top-2"
+          >
+            <CloseOutlined />
+          </div>
+        )}
         <img
           alt="keplr_logo"
           src={'./images/keplr.svg'}
           style={{
             width: '1.8rem',
             borderRadius: 10,
-            marginLeft: showWallet ? '.5rem' : undefined,
+            // marginLeft: showWallet ? '.5rem' : undefined,
+            marginLeft: '15px',
           }}
         />
-        {showWallet && (
-          <div className={`mx-2 flex items-center  overflow-x-hidden`}>
-            {secretAddress}
-            <DisconnectOutlined
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowModal(true);
-              }}
-              className="mx-2"
-            />
+
+        <div className={`mx-2 flex items-center  overflow-x-hidden`}>
+          {secretAddress}
+          <div
+            onClick={() => {
+              return message.success({
+                content: 'Copied to clipboard',
+                className: 'absolute left-0 items-center',
+                style: {
+                  borderRadius: '20px',
+                },
+              });
+            }}
+            className="text-lg mx-2 mb-2 transition-colors hover:text-green-400"
+          >
+            <CopyOutlined />
           </div>
-        )}
+          <DisconnectOutlined
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowModal(true);
+            }}
+            className="mr-2 text-lg hover:text-red-400 transition-colors"
+          />
+        </div>
+
         {showModal && (
           <Modal
             onOk={() => {
