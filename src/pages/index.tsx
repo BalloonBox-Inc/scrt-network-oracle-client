@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import BlueWave from '@scrtsybil/src/components/blueWave';
 import LogoLoader from '@scrtsybil/src/components/LogoLoader';
 import LogoWithWaves from '@scrtsybil/src/components/LogoWithWaves';
+import { CHAIN_ID } from '@scrtsybil/src/constants';
 import { useSecretContext } from '@scrtsybil/src/context';
 
 const { Content } = Layout;
@@ -66,7 +67,7 @@ const Home = () => {
         <>
           <Title>Your Secret Wallet</Title>
           <p className="text-center" style={{ fontSize: '1.2rem' }}>
-            Send, Request and Swap SCRT directly from your Blockchain Wallet.
+            Generate, store, and share your credit score on the Secret Network.
           </p>
         </>
       </div>
@@ -134,8 +135,8 @@ const Home = () => {
 
   return (
     <Layout>
-      <Content style={{ zIndex: '50' }} className="h-screen px-3">
-        <div className="z-100">
+      <Content style={{ zIndex: '0' }} className="h-screen px-3">
+        <div className="">
           {connectRequest ? awaitingConnectionView : clickToConnectView}
           {!connectRequest && connectButton}
         </div>

@@ -1,7 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
-import { IPlaidTokenCreateResponse } from './plaid';
-
 const CLIENT_ID = process.env.COINBASE_CLIENT_ID;
 const { COINBASE_CLIENT_SECRET } = process.env;
 const REDIRECT_URL = 'http://localhost:3000/auth';
@@ -37,7 +35,7 @@ export default async function handler(
           },
         }
       );
-      const tokenResJson: IPlaidTokenCreateResponse = await tokenRes.json();
+      const tokenResJson = await tokenRes.json();
       res.send({ ...tokenResJson });
     } catch (error: unknown | ICoinbaseTokenError) {
       res.send({ error });

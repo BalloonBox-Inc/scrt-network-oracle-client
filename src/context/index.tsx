@@ -1,12 +1,11 @@
-import React, { useState, useContext, useEffect, createContext } from 'react';
+import React, { useState, useContext, createContext, useEffect } from 'react';
 
 import { notification } from 'antd';
 import { ItemPublicTokenExchangeResponse } from 'plaid';
 import { PlaidLinkOnSuccessMetadata } from 'react-plaid-link';
 import { SigningCosmWasmClient } from 'secretjs';
 
-import { NOTIFICATIONS } from '@scrtsybil/src/constants';
-
+import { NOTIFICATIONS } from '../constants';
 import { ICoinbaseTokenCreateResponse } from '../pages/api/coinbase';
 import { handleKeplrOpen } from '../utils';
 
@@ -66,7 +65,7 @@ const storageHelper = {
 const ContextProvider = ({ children }: any) => {
   const [secretAddress, setSecretAddress] = useState<string | null>(null);
   const [secretjs, setSecretjs] = useState<SigningCosmWasmClient | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [connectRequest, setConnectRequest] = useState<boolean>(false);
   const [coinbaseToken, setCoinbaseToken] = useState<
     ICoinbaseTokenCreateResponse | undefined
@@ -87,6 +86,7 @@ const ContextProvider = ({ children }: any) => {
     plaidPublicExchangeResponse &&
       storageHelper.persist('plaidPublicExchangeResponse', null);
   };
+
   const disconnectWallet = () => {
     setSecretAddress(null);
     setSecretjs(null);
@@ -102,10 +102,8 @@ const ContextProvider = ({ children }: any) => {
     }
   };
 
-  console.log(secretjs);
-
   const connectWallet = () => {
-    handleKeplrOpen(setSecretjs, setSecretAddress, setConnectRequest);
+    handleKeplrOpen(setSecretjs, setSecretAddress);
   };
 
   // PERSIST TO STORAGE HERE:

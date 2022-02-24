@@ -23,10 +23,10 @@ const AuthPage = () => {
   const {
     secretjs,
     setPlaidPublicToken,
-    plaidPublicToken,
     loading,
     setCoinbaseToken,
     coinbaseToken,
+    plaidPublicExchangeResponse,
   } = useSecretContext();
   const router = useRouter();
   const connectionError = (client: 'Coinbase' | 'Plaid') =>
@@ -35,12 +35,13 @@ const AuthPage = () => {
     });
 
   useEffect(() => {
-    (!!plaidPublicToken || !!coinbaseToken) && setDisabled(false);
-  }, [plaidPublicToken, coinbaseToken]);
+    (!!plaidPublicExchangeResponse || !!coinbaseToken) && setDisabled(false);
+  }, [plaidPublicExchangeResponse, coinbaseToken]);
 
   useEffect(() => {
-    (!!plaidPublicToken || !!coinbaseToken) && setHideInstructions(true);
-  }, [plaidPublicToken, coinbaseToken]);
+    (!!plaidPublicExchangeResponse || !!coinbaseToken) &&
+      setHideInstructions(true);
+  }, [plaidPublicExchangeResponse, coinbaseToken]);
 
   useEffect(() => {
     const getCoinbaseToken = async (code: string) => {
@@ -115,8 +116,8 @@ const AuthPage = () => {
       <div
         onClick={() => (isDisabled ? null : onClickHandler())}
         role="presentation"
-        className={`bg-scrt-background w-max px-5 py-4 pb-7 rounded-md  transition-colors justify-start flex items-center ${
-          disabled ? 'cursor-auto' : 'cursor-pointer hover:bg-secondary'
+        className={`bg-scrt-background w-fit px-5 py-4 pb-7 rounded-md  transition-colors flex items-center ${
+          isDisabled ? 'cursor-auto' : 'cursor-pointer hover:bg-secondary'
         }`}
       >
         {children}
@@ -125,10 +126,11 @@ const AuthPage = () => {
   };
 
   const handleCalculateScore = () => {
-    const bothProvidersSelected = !!plaidPublicToken && !!coinbaseToken;
+    const bothProvidersSelected =
+      !!plaidPublicExchangeResponse && !!coinbaseToken;
     if (!bothProvidersSelected) {
       setConfirmCalculate(true);
-    }
+    } else router.push('/score');
   };
 
   return (
@@ -136,8 +138,7 @@ const AuthPage = () => {
       {plaidToken && <LaunchLink token={plaidToken} />}
       <Modal
         onOk={() => {
-          // disconnectWallet();
-          // setShowModal(false);
+          router.push('/score');
         }}
         visible={confirmCalculate}
         okText={<>Calculate</>}
@@ -151,9 +152,11 @@ const AuthPage = () => {
           textAlign: 'center',
         }}
       >
-        <div className="px-2">{`Are you sure you only want to calculate your score using your ${
-          plaidPublicToken ? 'Plaid' : 'Coinbase'
-        } account?`}</div>
+        <div className="px-2">
+          {`Are you sure you only want to calculate your score using your ${
+            plaidPublicExchangeResponse ? 'Plaid' : 'Coinbase'
+          } account?`}
+        </div>
       </Modal>
 
       <div className="flex justify-center items-center flex-col h-full px-10">
@@ -166,42 +169,43 @@ const AuthPage = () => {
           </Title>
           <div className="bg-scrt-background rounded-md flex justify-between space-y-3 mt-8 py-4 flex-col  items-center">
             {!hideInstructions && (
-              <Alert
-                closable
-                className="text-sm"
-                showIcon
-                message="Select one or more of the following providers to qualify for a credit check."
-                type="info"
-              />
+              <div className="mx-3">
+                <Alert
+                  closable
+                  className="text-sm"
+                  showIcon
+                  message="Select one or more of the following providers to qualify for a credit check."
+                  type="info"
+                />
+              </div>
             )}
             <LogoContainer
               isDisabled={!!coinbaseToken}
               onClickHandler={handleCoinbaseConnect}
             >
-              <div className="flex items-center text-primary">
+              <div className="flex items-center text-primary mt-3  justify-between">
                 <img
-                  style={{ marginTop: '-8px' }}
-                  width={'150px'}
+                  style={{ marginTop: '-4px' }}
                   alt="coinbase_logo"
                   src={'./images/coinbaseLogo.svg'}
+                  width={'130px'}
                 />
-                {!!coinbaseToken && (
+                {coinbaseToken && (
                   <CheckCircleFilled className="text-xl mx-2" />
                 )}
               </div>
             </LogoContainer>
             <LogoContainer
-              isDisabled={!!plaidPublicToken}
+              isDisabled={!!plaidPublicExchangeResponse}
               onClickHandler={handlePlaidConnect}
             >
-              <div className="flex items-center text-primary">
+              <div className="flex items-center justify-between text-primary mt-3">
                 <img
+                  width={'130px'}
                   alt="coinbase_logo"
                   src={'./images/plaidLogo.svg'}
-                  width={'150px'}
-                  height={'100px'}
                 />
-                {!!plaidPublicToken && (
+                {plaidPublicExchangeResponse && (
                   <CheckCircleFilled className="text-xl mx-2" />
                 )}
               </div>

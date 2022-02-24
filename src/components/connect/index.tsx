@@ -16,6 +16,7 @@ const Connect = () => {
   };
   const [showWallet, setShowWallet] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [shrinkAnimation, setShrinkAnimation] = useState<boolean>(false); // added so that it doesn't shrink on load
 
   const {
     secretjs,
@@ -23,6 +24,7 @@ const Connect = () => {
     secretAddress,
     setSecretAddress,
     disconnectWallet,
+    connectWallet,
   } = useSecretContext();
 
   useEffect(() => {
@@ -48,29 +50,33 @@ const Connect = () => {
   return (
     <div
       role={'presentation'}
-      onClick={() => setShowWallet(true)}
-      className={`cursor-pointer relative`}
+      onClick={() => {
+        secretAddress ? setShowWallet(true) : connectWallet();
+      }}
+      className="cursor-pointer relative"
     >
       <div
-        className={`flex justify-center items-center  
-        ${showWallet ? 'growLeft' : 'shrinkRight'} ${
-          secretjs ? 'opacity-100' : 'opacity-20'
-        } `}
+        className={`flex absolute  justify-center items-center  
+        ${showWallet ? 'growLeft' : undefined} 
+        ${!showWallet && shrinkAnimation ? 'shrinkRight' : undefined}
+        ${secretjs ? 'opacity-100' : 'opacity-100'} `}
         style={{
-          width: '2.8rem',
+          width: secretAddress ? '2.8rem' : 'fit-content',
           height: '2.8rem',
           borderRadius: '10px',
-          backgroundColor: '#5A57D9',
+          border: '1px solid #5A57D9',
+          backgroundColor: secretjs ? '#5A57D9' : 'transparent',
           right: '1rem',
           top: '1rem',
-          position: 'absolute',
           zIndex: '5',
+          cursor: 'pointer',
         }}
       >
         {showWallet && (
           <div
             onClick={(e) => {
               e.stopPropagation();
+              setShrinkAnimation(true);
               setShowWallet(false);
             }}
             role={'presentation'}
@@ -85,40 +91,44 @@ const Connect = () => {
           style={{
             width: '1.8rem',
             borderRadius: 10,
-            // marginLeft: showWallet ? '.5rem' : undefined,
-            marginLeft: '15px',
+            marginLeft: showWallet ? '5px' : '15px',
           }}
         />
-
-        <div className={`mx-2 flex items-center  overflow-x-hidden`}>
-          {secretAddress}
-          <div
-            onClick={() => {
-              return message.success({
-                content: 'Copied to clipboard',
-                className: 'absolute left-0 items-center',
-                style: {
-                  borderRadius: '20px',
-                },
-              });
-            }}
-            className="text-lg mx-2 mb-2 transition-colors hover:text-green-400"
-          >
-            <CopyOutlined />
+        {!secretjs && <p className="mt-3 ml-2 mr-3">Connect</p>}
+        {secretAddress && (
+          <div className={`mx-2 flex items-center  overflow-x-hidden`}>
+            {secretAddress}
+            <div
+              onClick={() => {
+                navigator.clipboard.writeText(secretAddress);
+                message.success({
+                  content: 'Copied to clipboard',
+                  className: 'absolute left-0 items-center',
+                  style: {
+                    borderRadius: '20px',
+                  },
+                });
+              }}
+              className="text-lg mx-2 mb-2 transition-colors hover:text-green-400"
+            >
+              <CopyOutlined />
+            </div>
+            <DisconnectOutlined
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowModal(true);
+              }}
+              className="text-lg hover:text-red-400 transition-colors"
+            />
           </div>
-          <DisconnectOutlined
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowModal(true);
-            }}
-            className="mr-2 text-lg hover:text-red-400 transition-colors"
-          />
-        </div>
-
+        )}
         {showModal && (
           <Modal
-            onOk={() => {
-              disconnectWallet();
+            onOk={(e) => {
+              e.stopPropagation();
+              setShrinkAnimation(false);
+              setShowWallet(false);
+              setTimeout(() => disconnectWallet(), 500);
               setShowModal(false);
             }}
             visible={showModal}
