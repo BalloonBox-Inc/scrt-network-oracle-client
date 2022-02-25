@@ -3,7 +3,7 @@
 ![scrt sybil image](./public/images/readmeImage.png)
 
 
-⚡️ This is the client side for SCRTSybil, made with the developer experience in mind: Next.js, TypeScript, ESLint, Prettier, Husky, Lint-Staged, VSCode, PostCSS, Tailwind CSS.
+⚡️ This is the client side for SCRTSibyl, made with the developer experience in mind: Next.js, TypeScript, ESLint, Prettier, Husky, Lint-Staged, VSCode, PostCSS, Tailwind CSS.
 
 ### Features
 
