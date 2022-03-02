@@ -113,44 +113,60 @@ export const handleKeplrOpen = async (
       alert('Failed to suggest the chain');
     }
   }
+};
 
-  // try {
-  //   // Enabling before using the Keplr is recommended.
-  //   // This method will ask the user whether to allow access if they haven't visited this website.
-  //   // Also, it will request that the user unlock the wallet if the wallet is locked.
-  //   await window.keplr?.enable(chainId);
+const generatePermission = async ({
+  contractAddress,
+  permissionName,
+}: {
+  contractAddress: String;
+  permissionName: String;
+}) => {
+  const allowedTokens = [contractAddress];
+  const permissions = ['balance'];
+  // @ts-ignore
+  const keplrOfflineSigner = window.getOfflineSigner(CHAIN_ID);
+  const accounts = await keplrOfflineSigner.getAccounts();
+  // @ts-ignore
+  const addr = accounts[0].address;
+  if (typeof window !== 'undefined') {
+    // @ts-ignore
+    const { signature }: { signature: StdSignature } =
+      // eslint-disable-next-line no-unsafe-optional-chaining
+      await window.keplr?.signAmino(
+        CHAIN_ID,
+        addr,
+        {
+          chain_id: CHAIN_ID,
+          account_number: '0', // Must be 0
+          sequence: '0', // Must be 0
+          fee: {
+            amount: [{ denom: 'uscrt', amount: '0' }], // Must be 0 uscrt
+            gas: '1', // Must be 1
+          },
+          msgs: [
+            {
+              type: 'query_permit', // Must be "query_permit"
+              value: {
+                permit_name: permissionName,
+                allowed_tokens: allowedTokens,
+                permissions,
+              },
+            },
+          ],
+          memo: '', // Must be empty
+        },
+        {
+          preferNoSetFee: true, // Fee must be 0, so hide it from the user
+          preferNoSetMemo: true, // Memo must be empty, so hide it from the user
+        }
+      );
+    return signature;
 
-  //   const offlineSigner = window.keplr?.getOfflineSigner(chainId);
-  //   const enigmaUtils = (window as any).getEnigmaUtils(chainId);
-
-  //   console.log({ offlineSigner, enigmaUtils });
-
-  //   // You can get the address/public keys by `getAccounts` method.
-  //   // It can return the array of address/public key.
-  //   // But, currently, Keplr extension manages only one address/public key pair. (this may have changed)
-  //   // XXX: This line is needed to set the sender address for SigningCosmosClient.
-  //   const accounts = await offlineSigner?.getAccounts();
-
-  //   if (accounts?.length && accounts[0] && !!offlineSigner) {
-  //     const secretAddress = accounts[0].address;
-
-  //     const cosmJS = new SigningCosmWasmClient(
-  //       // 'https://lcd-secret.keplr.app/rest',
-  //       'http://bootstrap.supernova.enigma.co:1317',
-  //       secretAddress,
-  //       offlineSigner as any,
-  //       enigmaUtils,
-  //       undefined,
-  //       BroadcastMode.Sync
-  //     );
-  //     setSecretAddress(secretAddress);
-  //     console.log({ cosmJS });
-  //     cosmJS && setSecretjs(cosmJS);
-  //   }
-  // } catch (error) {
-  //   notification.error({
-  //     message: NOTIFICATIONS.ERROR_CONNECTING_WALLET,
-  //   });
-  //   setConnectRequest(false);
-  // }
+    // setPermissionSig({
+    //   pubkey: signature.pub_key.value,
+    //   signature: signature.signature,
+    // });
+  }
+  return null;
 };

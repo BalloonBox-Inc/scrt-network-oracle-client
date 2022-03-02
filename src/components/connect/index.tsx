@@ -6,7 +6,9 @@ import {
   DisconnectOutlined,
 } from '@ant-design/icons';
 import { Modal, message } from 'antd';
+import Image from 'next/image';
 
+import logoImage from '@scrtsybil/public/images/keplr.svg';
 import { useSecretContext } from '@scrtsybil/src/context';
 
 const Connect = () => {
@@ -48,15 +50,9 @@ const Connect = () => {
   }, [setSecretAddress, setSecretjs]);
 
   return (
-    <div
-      role={'presentation'}
-      onClick={() => {
-        secretAddress ? setShowWallet(true) : connectWallet();
-      }}
-      className="cursor-pointer relative"
-    >
+    <div role={'presentation'} className="relative  h-full">
       <div
-        className={`flex absolute  justify-center items-center  
+        className={`flex absolute justify-center items-center  
         ${showWallet ? 'growLeft' : undefined} 
         ${!showWallet && shrinkAnimation ? 'shrinkRight' : undefined}
         ${secretjs ? 'opacity-100' : 'opacity-100'} `}
@@ -85,15 +81,24 @@ const Connect = () => {
             <CloseOutlined />
           </div>
         )}
-        <img
-          alt="keplr_logo"
-          src={'./images/keplr.svg'}
-          style={{
-            width: '1.8rem',
-            borderRadius: 10,
-            marginLeft: showWallet ? '5px' : '15px',
+        <div
+          onClick={() => {
+            secretAddress ? setShowWallet(true) : connectWallet();
           }}
-        />
+          className="flex items-center  justify-center  h-10"
+          style={{
+            marginLeft: showWallet ? '5px' : '17px',
+          }}
+        >
+          <Image
+            layout="fixed"
+            width={'30'}
+            height={'30'}
+            alt="keplr_logo"
+            src={logoImage}
+          />
+        </div>
+
         {!secretjs && <p className="mt-3 ml-2 mr-3">Connect</p>}
         {secretAddress && (
           <div className={`mx-2 flex items-center  overflow-x-hidden`}>
