@@ -18,6 +18,7 @@ module.exports = {
         primary: '#5A57D9',
         secondary: '#160A41',
         'scrt-background': '#2E3558',
+        'input-bg': '#292929',
         gray: {
           100: '#f7fafc',
           200: '#edf2f7',
