@@ -1,7 +1,15 @@
 import { Window as KeplrWindow } from '@keplr-wallet/types';
+import { notification } from 'antd';
 import { SigningCosmWasmClient } from 'secretjs';
+import { StdSignature } from 'secretjs/types/types';
 
-import { CHAIN_ID, REST_URL, RPC_PORT } from '@scrtsybil/src/constants';
+import {
+  CHAIN_ID,
+  CUSTOM_FEES,
+  REST_URL,
+  RPC_PORT,
+  SECRET_CONTRACT_ADDR,
+} from '@scrtsybil/src/constants';
 
 const EXPERIMENTAL: boolean = true;
 const chainId = CHAIN_ID;
@@ -162,11 +170,69 @@ const generatePermission = async ({
         }
       );
     return signature;
-
-    // setPermissionSig({
-    //   pubkey: signature.pub_key.value,
-    //   signature: signature.signature,
-    // });
   }
   return null;
+};
+
+export const queryAsServProvider = async ({
+  permissionName,
+  permissionSignature,
+  publicAddress,
+}: {
+  permissionName: string;
+  permissionSignature: string;
+  publicAddress: string;
+}) => {
+  try {
+    // @ts-ignore
+    const keplrOfflineSigner = window.getOfflineSigner(CHAIN_ID);
+    const accounts = await keplrOfflineSigner.getAccounts();
+    // @ts-ignore
+    const addr = accounts[0].address;
+
+    const cosmJS = new SigningCosmWasmClient(
+      REST_URL,
+      addr,
+      keplrOfflineSigner as any,
+      // @ts-ignore
+      window.getEnigmaUtils(CHAIN_ID),
+      CUSTOM_FEES
+      // BroadcastMode.Sync
+    );
+
+    const getScoreWithPermission = {
+      with_permit: {
+        query: { balance: {} },
+        permit: {
+          params: {
+            permit_name: permissionName,
+            allowed_tokens: [SECRET_CONTRACT_ADDR],
+            chain_id: CHAIN_ID,
+            permissions: ['balance'],
+          },
+          signature: {
+            pub_key: {
+              type: 'tendermint/PubKeySecp256k1',
+              value: publicAddress,
+            },
+            signature: permissionSignature,
+          },
+        },
+      },
+    };
+    const response = await cosmJS.queryContractSmart(
+      SECRET_CONTRACT_ADDR,
+      getScoreWithPermission
+    );
+    if (response.Ok) {
+      notification.success({
+        message: `Score queried: ${response.Ok.score}`,
+      });
+    }
+  } catch (error) {
+    console.log({ error });
+    notification.error({
+      message: 'There was an error',
+    });
+  }
 };
