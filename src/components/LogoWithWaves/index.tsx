@@ -1,6 +1,6 @@
 import Image from 'next/image';
 
-const LandingLogo = '/images/LandingLogo.svg';
+const landingLogo = '/images/LandingLogo.svg';
 const SecretLogo = './images/scrtLogo.svg';
 
 const LogoWithWaves = () => {
@@ -17,7 +17,7 @@ const LogoWithWaves = () => {
       <img
         alt="lines"
         style={{ minHeight: '15rem', width: '100vw' }}
-        src={LandingLogo}
+        src={landingLogo}
       />
       {/* <div style={{ minHeight: '15rem', width: '100vw' }}>
         <Image layout="fill" alt="lines" src={LandingLogo} />
