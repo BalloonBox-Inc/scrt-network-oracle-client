@@ -138,7 +138,9 @@ const Home = () => {
       <Content style={{ zIndex: '0' }} className="h-screen px-3">
         <div className="">
           {connectRequest ? awaitingConnectionView : clickToConnectView}
-          {!connectRequest && connectButton}
+          {process.env.NODE_ENV !== 'production' &&
+            !connectRequest &&
+            connectButton}
         </div>
       </Content>
       <BlueWave />
