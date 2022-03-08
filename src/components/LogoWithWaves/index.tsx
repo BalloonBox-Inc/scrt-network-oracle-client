@@ -14,14 +14,14 @@ const LogoWithWaves = () => {
         margin: '4rem 0',
       }}
     >
-      {/* <img
+      <img
         alt="lines"
         style={{ minHeight: '15rem', width: '100vw' }}
         src={LandingLogo}
-      /> */}
-      <div style={{ minHeight: '15rem', width: '100vw' }}>
+      />
+      {/* <div style={{ minHeight: '15rem', width: '100vw' }}>
         <Image layout="fill" alt="lines" src={LandingLogo} />
-      </div>
+      </div> */}
 
       <div
         style={{
