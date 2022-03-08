@@ -1,6 +1,6 @@
 import Image from 'next/image';
 
-const landingLogo = '/images/LandingLogo.svg';
+const landingLogo = '/images/landingLogo.svg';
 const SecretLogo = './images/scrtLogo.svg';
 
 const LogoWithWaves = () => {
