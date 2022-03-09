@@ -140,7 +140,7 @@ const Home = () => {
           {connectRequest ? awaitingConnectionView : clickToConnectView}
           {!process.env.IN_PROGRESS && !connectRequest && connectButton}
 
-          {!process.env.IN_PROGRESS && (
+          {process.env.IN_PROGRESS && (
             <div className="text-center text-blue-300 text-2xl">
               {' '}
               Coming Soon{' '}
