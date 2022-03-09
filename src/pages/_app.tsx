@@ -9,7 +9,7 @@ import 'antd/dist/antd.dark.min.css';
 const MyApp = ({ Component, pageProps }: AppProps) => {
   return (
     <ContextProvider>
-      {process.env.NODE_ENV !== 'production' && <Connect />}
+      {!process.env.IN_PROGRESS && <Connect />}
       <Component {...pageProps} />
     </ContextProvider>
   );

@@ -61,7 +61,7 @@ const Home = () => {
   );
 
   const clickToConnectView = (
-    <div style={{ marginTop: '8rem' }}>
+    <div className="mt-9 md:mt-4">
       <LogoWithWaves />
       <div className="flex  justify-center items-center flex-col">
         <>
@@ -138,12 +138,17 @@ const Home = () => {
       <Content style={{ zIndex: '0' }} className="h-screen px-3">
         <div className="">
           {connectRequest ? awaitingConnectionView : clickToConnectView}
-          {process.env.NODE_ENV !== 'production' &&
-            !connectRequest &&
-            connectButton}
+          {!process.env.IN_PROGRESS && !connectRequest && connectButton}
+
+          {!process.env.IN_PROGRESS && (
+            <div className="text-center text-blue-300 text-2xl">
+              {' '}
+              Coming Soon{' '}
+            </div>
+          )}
         </div>
       </Content>
-      <BlueWave />
+      {/* <BlueWave /> */}
     </Layout>
   );
 };
