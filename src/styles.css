@@ -2,11 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-$primary-color: white;
-$bg: black;
+@font-face {
+  font-family: 'Poppins';
+  src:url('/fonts/Poppins/Poppins-Regular.ttf');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
 
-body {
-  font-family: 'Poppins', sans-serif !important;
+@font-face {
+  font-family: 'Poppins';
+  src:url('/fonts/Poppins/Poppins-Medium.ttf');
+  font-style: medium;
+  font-weight: 500;
+  font-display: swap;
 }
 
 .spin {
