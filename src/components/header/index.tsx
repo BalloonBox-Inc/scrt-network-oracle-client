@@ -6,11 +6,12 @@ import Connect from '@scrtsybil/src/components/connect';
 
 export default function Header() {
   return (
-    <div className="w-full font-sans bg-black p-5 flex items-center justify-between text-white">
+    <header className="w-full font-sans bg-black p-5 flex items-center justify-between text-white">
       <Link href="/">
         <img
           src="./images/scrt-logo-horizaontal-white.svg"
           style={{ width: '10rem', cursor: 'pointer' }}
+          alt="scrtsibyl-logo"
         />
       </Link>
       <div className="flex items-center">
@@ -22,6 +23,6 @@ export default function Header() {
         </Link>
         <Connect />
       </div>
-    </div>
+    </header>
   );
 }

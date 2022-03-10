@@ -25,7 +25,6 @@ interface IButtonField {
 export enum BUTTON_STYLES {
   DEFAULT = 'default',
   OUTLINE = 'outline',
-  DARK = 'dark',
   LINK = 'link',
 }
 
