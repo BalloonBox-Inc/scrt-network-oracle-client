@@ -69,8 +69,7 @@ const Home = () => {
       </Layout>
     );
   }
-
+    
   return <div className="">{connectRequest && awaitingConnectionView}</div>;
-};
 
 export default Home;

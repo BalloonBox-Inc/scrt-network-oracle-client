@@ -1,5 +1,3 @@
-import Image from 'next/image';
-
 const landingLogo = '/images/landingLogo.svg';
 const SecretLogo = './images/scrtLogo.svg';
 
@@ -16,13 +14,9 @@ const LogoWithWaves = () => {
     >
       <img
         alt="lines"
-        style={{ minHeight: '15rem', width: '100vw' }}
+        style={{ minHeight: '12rem', width: '100vw' }}
         src={landingLogo}
       />
-      {/* <div style={{ minHeight: '15rem', width: '100vw' }}>
-        <Image layout="fill" alt="lines" src={LandingLogo} />
-      </div> */}
-
       <div
         style={{
           position: 'absolute',
@@ -31,8 +25,13 @@ const LogoWithWaves = () => {
           width: '13em',
           top: '50%',
         }}
+        className="w-10 "
       >
-        <img alt="scrtLogo" src={SecretLogo} />
+        <img
+          alt="scrtLogo"
+          className="w-2/4 ml-12 md:ml-0 md:w-full"
+          src={SecretLogo}
+        />
       </div>
     </div>
   );
