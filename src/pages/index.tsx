@@ -1,95 +1,32 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 
-import { Layout, Typography, Button } from 'antd';
+import { Typography, Button } from 'antd';
 import { useRouter } from 'next/router';
 
-import BlueWave from '@scrtsybil/src/components/blueWave';
+import Layout from '@scrtsybil/src/components/Layout';
 import LogoLoader from '@scrtsybil/src/components/LogoLoader';
-import LogoWithWaves from '@scrtsybil/src/components/LogoWithWaves';
-import { CHAIN_ID } from '@scrtsybil/src/constants';
 import { useSecretContext } from '@scrtsybil/src/context';
 
-const { Content } = Layout;
-const { Title } = Typography;
-
-const diagonalWaves = './images/diagonalWaves.svg';
 const keplr = '/images/keplr.svg';
 
 const Home = () => {
   const navigate = useRouter();
-  const {
-    secretjs,
-    loading,
-    connectWallet,
-    connectRequest,
-    setConnectRequest,
-  } = useSecretContext();
+  const { secretjs, loading, connectRequest, setConnectRequest } =
+    useSecretContext();
 
   useEffect(() => {
     secretjs && navigate.push('/auth');
   }, [secretjs, navigate]);
 
-  const handleConnectRequest = () => {
-    setConnectRequest(!connectRequest);
-    if (!secretjs) {
-      connectWallet();
-    }
-  };
-
   const handleDisconnectRequest = () => {
     setConnectRequest(false);
   };
-
-  const connectButton = (
-    <div className="flex justify-center z-50">
-      <Button
-        onClick={() => handleConnectRequest()}
-        size="large"
-        style={{ padding: '0 2.3rem' }}
-        type={connectRequest ? 'link' : 'primary'}
-      >
-        <div className="flex">
-          <img
-            alt="keplr_logo"
-            style={{ width: '1.4rem', marginRight: '.5rem' }}
-            src={keplr}
-          />
-          Connect with Keplr
-        </div>
-      </Button>
-    </div>
-  );
-
-  const clickToConnectView = (
-    <div style={{ marginTop: '8rem' }}>
-      <LogoWithWaves />
-      <div className="flex  justify-center items-center flex-col">
-        <>
-          <Title>Your Secret Wallet</Title>
-          <p className="text-center" style={{ fontSize: '1.2rem' }}>
-            Generate, store, and share your credit score on the Secret Network.
-          </p>
-        </>
-      </div>
-    </div>
-  );
 
   const awaitingConnectionView = (
     <div
       style={{ height: '70%', padding: '3rem 5rem' }}
       className="flex justify-center items-center flex-col"
     >
-      <div
-        style={{
-          position: 'absolute',
-          display: 'flex',
-          justifyContent: 'center',
-          width: '100%',
-          top: '0',
-        }}
-      >
-        <img alt="background_waves" src={diagonalWaves} />
-      </div>
       <div
         className="flex flex-col items-center"
         style={{
@@ -133,19 +70,7 @@ const Home = () => {
     );
   }
 
-  return (
-    <Layout>
-      <Content style={{ zIndex: '0' }} className="h-screen px-3">
-        <div className="">
-          {connectRequest ? awaitingConnectionView : clickToConnectView}
-          {process.env.NODE_ENV !== 'production' &&
-            !connectRequest &&
-            connectButton}
-        </div>
-      </Content>
-      <BlueWave />
-    </Layout>
-  );
+  return <div className="">{connectRequest && awaitingConnectionView}</div>;
 };
 
 export default Home;

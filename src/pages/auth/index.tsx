@@ -13,8 +13,6 @@ import { handleCoinbaseCode } from '@scrtsybil/src/services';
 const { Content } = Layout;
 const { Title } = Typography;
 
-const diagonalWaves = './images/diagonalWaves.svg';
-
 const AuthPage = () => {
   const [disabled, setDisabled] = useState<boolean>(true);
   const [plaidToken, setPlaidToken] = useState<undefined | string>(undefined);
@@ -160,9 +158,6 @@ const AuthPage = () => {
       </Modal>
 
       <div className="flex justify-center items-center flex-col h-full px-10">
-        <div className="absolute flex justify-center w-full top-0">
-          <img alt="background_waves" src={diagonalWaves} />
-        </div>
         <Content className="z-10 mt-32">
           <Title className="text-center px-5" style={{ fontWeight: 500 }}>
             Welcome to <span className="text-primary">SCRTsybil</span>

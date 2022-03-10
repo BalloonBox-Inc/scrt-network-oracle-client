@@ -1,3 +1,5 @@
+const defaultTheme = require('tailwindcss/defaultTheme');
+
 module.exports = {
   content: ['./src/**/*.{js,ts,jsx,tsx}'],
   theme: {
@@ -14,6 +16,12 @@ module.exports = {
       '6xl': '4rem',
     },
     extend: {
+      backgroundImage: {
+        'footer-wave': "url('/images/diagonalWaves.svg')",
+      },
+      fontFamily: {
+        sans: ['Poppins', ...defaultTheme.fontFamily.sans],
+      },
       colors: {
         primary: '#5A57D9',
         secondary: '#160A41',
@@ -30,17 +38,14 @@ module.exports = {
           800: '#2d3748',
           900: '#1a202c',
         },
-        blue: {
-          100: '#ebf8ff',
-          200: '#bee3f8',
-          300: '#90cdf4',
-          400: '#63b3ed',
-          500: '#4299e1',
-          600: '#3182ce',
-          700: '#2b6cb0',
-          800: '#2c5282',
-          900: '#2a4365',
-        },
+        black: '#0C0E10',
+        darkgray: '#1B2025',
+        navy: '#1F1F33',
+        purple: '#5728AA',
+        blue: '#2258A3',
+        lightblue: '#0790C0',
+        mint: '#66CED1',
+        pink: '#E6074E',
       },
     },
   },

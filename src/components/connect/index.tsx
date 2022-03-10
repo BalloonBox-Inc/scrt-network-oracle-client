@@ -27,6 +27,8 @@ const Connect = () => {
     setSecretAddress,
     disconnectWallet,
     connectWallet,
+    connectRequest,
+    setConnectRequest,
   } = useSecretContext();
 
   useEffect(() => {
@@ -49,59 +51,59 @@ const Connect = () => {
     }
   }, [setSecretAddress, setSecretjs]);
 
+  const handleConnectRequest = () => {
+    setConnectRequest(!connectRequest);
+    connectWallet();
+  };
+
   return (
-    <div role={'presentation'} className="relative  h-full">
+    <div role={'presentation'} className="h-full">
       <div
-        className={`flex absolute justify-center items-center  
+        className={`flex justify-center items-center bg-gradient-to-b from-purple to-blue hover:opacity-75
         ${showWallet ? 'growLeft' : undefined} 
         ${!showWallet && shrinkAnimation ? 'shrinkRight' : undefined}
         ${secretjs ? 'opacity-100' : 'opacity-100'} `}
         style={{
           width: secretAddress ? '2.8rem' : 'fit-content',
           height: '2.8rem',
-          borderRadius: '10px',
-          border: '1px solid #5A57D9',
-          backgroundColor: secretjs ? '#5A57D9' : 'transparent',
-          right: '1rem',
-          top: '1rem',
+          borderRadius: '50px',
           zIndex: '5',
           cursor: 'pointer',
         }}
       >
-        {showWallet && (
-          <div
-            onClick={(e) => {
-              e.stopPropagation();
-              setShrinkAnimation(true);
-              setShowWallet(false);
-            }}
-            role={'presentation'}
-            className="-left-5 absolute top-2"
-          >
-            <CloseOutlined />
-          </div>
-        )}
         <div
           onClick={() => {
-            secretAddress ? setShowWallet(true) : connectWallet();
+            secretAddress ? setShowWallet(true) : handleConnectRequest();
           }}
-          className="flex items-center  justify-center  h-10"
-          style={{
-            marginLeft: showWallet ? '5px' : '17px',
-          }}
+          className={`flex items-center justify-center h-10 ${
+            !showWallet && 'ml-4'
+          }`}
         >
+          {showWallet && (
+            <div
+              onClick={(e) => {
+                e.stopPropagation();
+                setShrinkAnimation(true);
+                setShowWallet(false);
+              }}
+              role={'presentation'}
+              className="mr-2 -mt-1"
+            >
+              <CloseOutlined />
+            </div>
+          )}
+
           <Image
             layout="fixed"
-            width={'30'}
-            height={'30'}
+            width={'25'}
+            height={'25'}
             alt="keplr_logo"
             src={logoImage}
           />
+          {!secretjs && <p className="pt-3 pl-2 pr-4">Connect</p>}
         </div>
-
-        {!secretjs && <p className="mt-3 ml-2 mr-3">Connect</p>}
         {secretAddress && (
-          <div className={`mx-2 flex items-center  overflow-x-hidden`}>
+          <div className={`mx-2 flex text-xs items-center overflow-x-hidden`}>
             {secretAddress}
             <div
               onClick={() => {
@@ -135,6 +137,7 @@ const Connect = () => {
               setShowWallet(false);
               setTimeout(() => disconnectWallet(), 500);
               setShowModal(false);
+              setConnectRequest(false);
             }}
             visible={showModal}
             okText={<>Disconnect</>}
