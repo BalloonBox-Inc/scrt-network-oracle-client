@@ -13,7 +13,7 @@ export default function Header() {
           style={{ width: '10rem', cursor: 'pointer' }}
         />
       </Link>
-      <div className="flex items-end">
+      <div className="flex items-center">
         <Link href="/">
           <p className="mr-5 cursor-pointer hover:text-purple">Learn more</p>
         </Link>

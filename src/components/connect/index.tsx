@@ -100,7 +100,7 @@ const Connect = () => {
             alt="keplr_logo"
             src={logoImage}
           />
-          {!secretjs && <p className="pt-3 pl-2 pr-4">Connect</p>}
+          {!secretjs && <p className="pl-2 pr-4">Connect</p>}
         </div>
         {secretAddress && (
           <div className={`mx-2 flex text-xs items-center overflow-x-hidden`}>
