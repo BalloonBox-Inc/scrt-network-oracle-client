@@ -1,19 +1,26 @@
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 export default function Footer() {
+  const router = useRouter();
+  const routerIsHome = router.pathname === '/';
   return (
-    <footer className="w-full p-5 flex justify-between items-end bg-black text-white bg-footer-wave bg-cover font-sans">
+    <footer
+      className={`z-50 border-t-2 border-gray-800 w-full p-5 flex justify-between items-end bg-black text-white bg-cover font-sans ${
+        routerIsHome ? 'bg-footer-wave' : undefined
+      }`}
+    >
       <div>
         <div>
           <Link href="/">
             <img
               src="./images/scrt-logo-horizaontal-white.svg"
-              style={{ width: '10rem', cursor: 'pointer' }}
+              style={{ width: '7rem', cursor: 'pointer' }}
               alt="scrtsibyl-logo-white"
             />
           </Link>
         </div>
-        <p className="pl-3 text-sm">
+        <p className="pl-3 text-xs">
           &copy; {new Date().getFullYear()} SCRTsibyl
         </p>
       </div>

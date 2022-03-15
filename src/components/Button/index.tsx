@@ -46,13 +46,13 @@ export default function Button({
 }: IButtonField) {
   const classnames = cx(
     {
-      'inline-flex justify-center py-2 px-6 text-sm font-medium rounded-3xl focus:outline-none':
+      'inline-flex justify-center py-2 px-6 text-sm font-medium rounded-3xl focus:outline-none z-50':
         style !== BUTTON_STYLES.LINK,
-      'text-white border-solid border-2 border-gradient-br-purple-blue':
+      'text-white border-solid border-2 border-gradient-br-purple-blue z-50':
         style === BUTTON_STYLES.OUTLINE,
-      'text-white bg-gradient-to-b from-purple to-blue hover:opacity-75':
+      'text-white bg-gradient-to-b from-purple to-blue hover:opacity-75 cursor-pointer z-50':
         style === BUTTON_STYLES.DEFAULT,
-      'disabled:opacity-30 disabled:bg-gray-700 cursor-default': isDisabled,
+      'disabled:opacity-50 disabled:bg-gray-700 cursor-default': isDisabled,
     },
     classes?.button || ''
   );

@@ -22,6 +22,11 @@ module.exports = {
       fontFamily: {
         sans: ['Poppins', ...defaultTheme.fontFamily.sans],
       },
+      width: {
+        100: '25rem',
+        110: '28rem',
+        115: '30rem',
+      },
       colors: {
         primary: '#5A57D9',
         secondary: '#160A41',
