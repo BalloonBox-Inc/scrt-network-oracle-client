@@ -26,6 +26,7 @@ export enum BUTTON_STYLES {
   DEFAULT = 'default',
   OUTLINE = 'outline',
   LINK = 'link',
+  BLACK = 'dark',
 }
 
 export enum BUTTON_ACTION {
@@ -46,12 +47,13 @@ export default function Button({
 }: IButtonField) {
   const classnames = cx(
     {
-      'inline-flex justify-center py-2 px-6 text-sm font-medium rounded-3xl focus:outline-none':
+      'inline-flex justify-center py-3 px-6 text-sm font-normal rounded-3xl focus:outline-none':
         style !== BUTTON_STYLES.LINK,
-      'text-white border-solid border-2 border-gradient-br-purple-blue':
+      'text-white border-solid border-2 border-gradient-t-purple-blue hover:text-lightgray bg-darkgray/75 hover:bg-transparent':
         style === BUTTON_STYLES.OUTLINE,
       'text-white bg-gradient-to-b from-purple to-blue hover:opacity-75':
         style === BUTTON_STYLES.DEFAULT,
+      'text-white bg-black hover:opacity-75': style === BUTTON_STYLES.BLACK,
       'disabled:opacity-30 disabled:bg-gray-700 cursor-default': isDisabled,
     },
     classes?.button || ''

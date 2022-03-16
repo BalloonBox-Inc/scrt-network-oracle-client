@@ -1,8 +1,26 @@
-const defaultTheme = require('tailwindcss/defaultTheme');
+const defaultTheme = require('tailwindcss/defaultTheme'); // eslint-disable-line global-require
 
 module.exports = {
   content: ['./src/**/*.{js,ts,jsx,tsx}'],
   theme: {
+    screens: {
+      xs: '0px',
+
+      sm: '640px',
+      // => @media (min-width: 640px) { ... }
+
+      md: '768px',
+      // => @media (min-width: 768px) { ... }
+
+      lg: '1024px',
+      // => @media (min-width: 1024px) { ... }
+
+      xl: '1280px',
+      // => @media (min-width: 1280px) { ... }
+
+      '2xl': '1536px',
+      // => @media (min-width: 1536px) { ... }
+    },
     fontSize: {
       xs: '0.75rem',
       sm: '0.875rem',
@@ -16,6 +34,22 @@ module.exports = {
       '6xl': '4rem',
     },
     extend: {
+      linearBorderGradients: {
+        directions: {
+          // defaults to these values
+          t: 'to top',
+          tr: 'to top right',
+          r: 'to right',
+          br: 'to bottom right',
+          b: 'to bottom',
+          bl: 'to bottom left',
+          l: 'to left',
+          tl: 'to top left',
+        },
+        colors: {
+          'purple-blue': ['#5728AA', '#2258A3'],
+        },
+      },
       backgroundImage: {
         'footer-wave': "url('/images/diagonalWaves.svg')",
       },
@@ -38,8 +72,9 @@ module.exports = {
           800: '#2d3748',
           900: '#1a202c',
         },
-        black: '#0C0E10',
+        black: '#191819',
         darkgray: '#1B2025',
+        lightgray: '#C4C4C4',
         navy: '#1F1F33',
         purple: '#5728AA',
         blue: '#2258A3',
@@ -50,5 +85,7 @@ module.exports = {
     },
   },
   variants: {},
-  plugins: [],
+  plugins: [
+    require('tailwindcss-border-gradient-radius'), // eslint-disable-line global-require
+  ],
 };

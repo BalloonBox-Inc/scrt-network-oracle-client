@@ -6,7 +6,7 @@ import Connect from '@scrtsybil/src/components/connect';
 
 export default function Header() {
   return (
-    <header className="w-full font-sans bg-black p-5 flex items-center justify-between text-white">
+    <header className="w-full font-sans py-5 2xl:px-36 sm:px-16 bg-black/12 p-5 flex items-center justify-between text-white">
       <Link href="/">
         <img
           src="./images/scrt-logo-horizaontal-white.svg"
@@ -16,10 +16,12 @@ export default function Header() {
       </Link>
       <div className="flex items-center">
         <Link href="/">
-          <p className="mr-5 cursor-pointer hover:text-purple">Learn more</p>
+          <p className="mr-5 cursor-pointer hover:text-lightgray">Learn more</p>
         </Link>
         <Link href="/">
-          <p className="mr-5 cursor-pointer hover:text-purple">Get started</p>
+          <p className="mr-5 cursor-pointer hover:text-lightgray">
+            Get started
+          </p>
         </Link>
         <Connect />
       </div>
