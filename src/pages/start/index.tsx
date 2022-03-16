@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 
 import BgImage from '@scrtsybil/src/components/BgImage';
 import Button from '@scrtsybil/src/components/Button';
+import { BORDER_GRADIENT_STYLE } from '@scrtsybil/src/constants';
 
 const StartPage = () => {
   const router = useRouter();
@@ -13,7 +14,7 @@ const StartPage = () => {
 
   return (
     <div className="px-14 py-10 ">
-      <div className="w-full text-center pb-50">
+      <div className="w-full text-center ">
         <div className="flex flex-col items-center space-y-5 justify-center w-full">
           <div className="z-50 opacity-100 px-0 sm:p-10">
             <h2 className="z-50 text-xl sm:text-3xl md:text-3xl p-0">
@@ -25,13 +26,13 @@ const StartPage = () => {
             style={{
               background:
                 userTypeSelection === 'applicant'
-                  ? 'linear-gradient(205deg, rgba(85,42,170,1) 0%, rgba(7,144,192,1) 100%)'
+                  ? BORDER_GRADIENT_STYLE
                   : 'transparent',
             }}
           >
             <div
               onClick={() => setUserTypeSelection('applicant')}
-              className={`bg-gray-900 border-transparent z-50  cursor-pointer border-2 rounded-md p-5 px-8`}
+              className={`bg-gray-900  z-50  cursor-pointer  rounded-md p-5 px-8`}
             >
               <div className="text-left ">
                 <h3 className="text-lg sm:text-xl">Applicant</h3>
@@ -48,14 +49,13 @@ const StartPage = () => {
             style={{
               background:
                 userTypeSelection === 'provider'
-                  ? 'linear-gradient(205deg, rgba(85,42,170,1) 0%, rgba(7,144,192,1) 100%)'
+                  ? BORDER_GRADIENT_STYLE
                   : 'transparent',
             }}
           >
             <div
               onClick={() => setUserTypeSelection('provider')}
-              className={`bg-gray-900  z-50 cursor-pointer border-2 rounded-md px-8 p-5 border-transparent`}
-              style={{ width: 480 }}
+              className={`bg-gray-900  z-50 cursor-pointer  rounded-md px-8 p-5 `}
             >
               <div className="text-left">
                 <h3 className="text-lg sm:text-xl">Service Provider</h3>
