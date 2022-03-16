@@ -51,3 +51,9 @@ export const CUSTOM_FEES = {
     gas: '4438626',
   },
 };
+
+export const BORDER_GRADIENT_STYLE =
+  'linear-gradient(180deg, rgba(85,42,170,1) 0%, rgba(7,144,192,1) 100%)';
+
+export const BORDER_GREYSCALE =
+  'linear-gradient(180deg, rgba(161,161,161,1) 0%, rgba(47,47,47,1) 100%, rgba(7,144,192,1) 100%)';

@@ -14,10 +14,6 @@ const Home = () => {
   const { secretjs, loading, connectRequest, setConnectRequest } =
     useSecretContext();
 
-  useEffect(() => {
-    secretjs && navigate.push('/auth');
-  }, [secretjs, navigate]);
-
   const handleDisconnectRequest = () => {
     setConnectRequest(false);
   };

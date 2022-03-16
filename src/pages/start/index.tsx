@@ -1,7 +1,10 @@
 import { useState } from 'react';
 
-import { Button, Card, Typography } from 'antd';
 import { useRouter } from 'next/router';
+
+import BgImage from '@scrtsybil/src/components/BgImage';
+import Button from '@scrtsybil/src/components/Button';
+import { BORDER_GRADIENT_STYLE } from '@scrtsybil/src/constants';
 
 const StartPage = () => {
   const router = useRouter();
@@ -10,61 +13,72 @@ const StartPage = () => {
   >(null);
 
   return (
-    <div className="px-20 py-60 ">
-      <div className="w-full text-center">
-        <Typography.Title level={2}>Select Your User Type</Typography.Title>
-        <p>To get started, choose your user type.</p>
+    <div className="px-14 py-10 ">
+      <div className="w-full text-center ">
         <div className="flex flex-col items-center space-y-5 justify-center w-full">
+          <div className="z-50 opacity-100 px-0 sm:p-10">
+            <h2 className="z-50 text-xl sm:text-3xl md:text-3xl p-0">
+              Select Your User Type
+            </h2>
+          </div>
           <div
-            onClick={() => setUserTypeSelection('applicant')}
-            className={`bg-gray-900 cursor-pointer border-2 rounded-md p-5 ${
-              userTypeSelection === 'applicant'
-                ? ' border-blue-500'
-                : 'border-transparent'
-            }`}
-            style={{ width: 380 }}
+            className="flex z-50 justify-center w-80  sm:w-115  rounded-md p-1 "
+            style={{
+              background:
+                userTypeSelection === 'applicant'
+                  ? BORDER_GRADIENT_STYLE
+                  : 'transparent',
+            }}
           >
-            <div className="text-left">
-              <Typography.Title level={3}>Applicant</Typography.Title>
-              <Typography.Paragraph>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat
-                ipsum, voluptate incidunt quos, ullam error voluptates magnam
-                ab.
-              </Typography.Paragraph>
+            <div
+              onClick={() => setUserTypeSelection('applicant')}
+              className={`bg-gray-900  z-50  cursor-pointer  rounded-md p-5 px-8`}
+            >
+              <div className="text-left ">
+                <h3 className="text-lg sm:text-xl">Applicant</h3>
+                <p className="text-xs font-thin">
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                  Fugiat ipsum, voluptate incidunt quos, ullam error voluptates
+                  magnam ab.
+                </p>
+              </div>
             </div>
           </div>
-
           <div
-            onClick={() => setUserTypeSelection('provider')}
-            className={`bg-gray-900 cursor-pointer border-2 rounded-md p-5 ${
-              userTypeSelection === 'provider'
-                ? ' border-blue-500'
-                : 'border-transparent'
-            }`}
-            style={{ width: 380 }}
+            className="flex z-50  w-80  sm:w-115 justify-center   rounded-md p-1"
+            style={{
+              background:
+                userTypeSelection === 'provider'
+                  ? BORDER_GRADIENT_STYLE
+                  : 'transparent',
+            }}
           >
-            <div className="text-left">
-              <Typography.Title level={3}>Service Provider</Typography.Title>
-              <Typography.Paragraph>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat
-                ipsum, voluptate incidunt quos, ullam error voluptates magnam
-                ab.
-              </Typography.Paragraph>
+            <div
+              onClick={() => setUserTypeSelection('provider')}
+              className={`bg-gray-900  z-50 cursor-pointer  rounded-md px-8 p-5 `}
+            >
+              <div className="text-left">
+                <h3 className="text-lg sm:text-xl">Service Provider</h3>
+                <p className="text-xs font-thin">
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                  Fugiat ipsum, voluptate incidunt quos, ullam error voluptates
+                  magnam ab.
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div className="mt-3 flex justify-end">
+      <div className="pt-16 z-30 flex justify-end">
         <Button
-          type="primary"
-          disabled={!userTypeSelection}
           onClick={() => {
             router.push(`/${userTypeSelection}`);
           }}
-        >
-          Next
-        </Button>
+          isDisabled={!userTypeSelection}
+          text="Continue"
+        />
       </div>
+      <BgImage />
     </div>
   );
 };
