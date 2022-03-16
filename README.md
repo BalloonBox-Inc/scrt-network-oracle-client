@@ -1,4 +1,4 @@
-# 🚀 SCRT SYBIL
+# 🚀 SCRT SIBYL
 
 ![scrt sybil image](./public/images/readmeImage.png)
 
