@@ -10,5 +10,6 @@ module.exports = {
     COINBASE_BASE_AUTHORIZE_URL: process.env.COINBASE_BASE_AUTHORIZE_URL,
     COINBASE_ACCESS_TOKEN_URL: process.env.COINBASE_ACCESS_TOKEN_URL,
     IN_PROGRESS: process.env.IN_PROGRESS,
+    NEXT_BASE_URL: process.env.NEXT_BASE_URL,
   },
 };

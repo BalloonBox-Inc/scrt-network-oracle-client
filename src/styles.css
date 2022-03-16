@@ -84,3 +84,59 @@ font-family: "Poppins";
 .gradient-outline-grayscale {
 background: #718096
 }
+
+.center-absolute {
+  position: absolute;
+  top: 22%;
+  left: 48.5%;
+  transform: translate(-48.5%, -50%);
+  }
+
+
+
+.needle-move {
+  animation-timing-function: ease-in-out;
+  animation: needle-move 4.5s 1;
+  transform: rotate(-90deg);
+  transform-origin: bottom;
+}
+
+
+@keyframes needle-move {
+  0% {
+    transform: rotate(-90deg);
+    
+  }
+  10% {
+    transform: rotate(-45deg);
+  }
+
+  20% {
+    transform: rotate(-50deg);
+  }
+  30% {
+    transform: rotate(-54deg);
+  }
+  50% {
+    transform: rotate(-25deg);
+  }
+  60% {
+  transform: rotate(5deg);
+  }
+
+  76% {
+  transform: rotate(10deg);
+  }
+
+  85% {
+  transform: rotate(0deg);
+  }
+
+  90% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
