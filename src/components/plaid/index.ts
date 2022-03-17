@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 
 import { notification } from 'antd';
+import { Router, useRouter } from 'next/router';
 import { ItemPublicTokenExchangeResponse } from 'plaid';
 import { usePlaidLink, PlaidLinkOptionsWithLinkToken } from 'react-plaid-link';
 
@@ -17,20 +18,12 @@ interface Props {
 }
 
 const LaunchLink = (props: Props) => {
-  const { setPlaidPublicExchangeResponse, setPlaidMetadata } =
-    useSecretContext();
-
+  const { setScoreResponse, scoreResponse } = useSecretContext();
   const onSuccess = async (publicToken: string, metadata: any) => {
-    const plaidTokenRes: ItemPublicTokenExchangeResponse =
-      await exchangePlaidToken({ publicToken });
-    if (metadata) {
-      setPlaidMetadata(metadata);
-    }
-    if (plaidTokenRes.access_token) {
-      setPlaidPublicExchangeResponse(plaidTokenRes);
-      notification.success({
-        message: NOTIFICATIONS.PLAID_CONNECTION_SUCCESS,
-      });
+    const { plaid_score_res } = await exchangePlaidToken({ publicToken });
+
+    if (plaid_score_res.status_code === 200) {
+      setScoreResponse(plaid_score_res);
     } else {
       notification.error({
         message: NOTIFICATIONS.PLAID_CONNECTION_ERROR,
@@ -44,10 +37,10 @@ const LaunchLink = (props: Props) => {
   };
 
   const { open } = usePlaidLink(config);
-
+  console.log({ scoreResponse });
   useEffect(() => {
-    open();
-  }, [open]);
+    !scoreResponse && open();
+  }, [open, scoreResponse]);
 
   return null;
 };

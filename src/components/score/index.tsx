@@ -5,8 +5,13 @@ import Image from 'next/image';
 import ScoreMainImg from '@scrtsybil/public/images/score-main.svg';
 import ScoreNeedleTip from '@scrtsybil/public/images/score-needle-tip.svg';
 
-const ScoreSpeedometer = ({ score }: { score: number }) => {
-  const [showScore, setShowScore] = useState<boolean>(false);
+const ScoreSpeedometer = ({
+  score,
+  showScore,
+}: {
+  score: number;
+  showScore: boolean;
+}) => {
   const [randomNumber, setRandomNumber] = useState<string | null>('300');
   const rotationCalculator = (scr: number) => {
     if (scr < 550) {
@@ -38,12 +43,6 @@ const ScoreSpeedometer = ({ score }: { score: number }) => {
     return () => clearInterval(randomNumb);
   }, []);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setShowScore(true);
-    }, 3800);
-  }, []);
-
   return (
     <div className="flex w-full justify-center">
       <div className="inline-block relative z-50">
@@ -54,7 +53,7 @@ const ScoreSpeedometer = ({ score }: { score: number }) => {
 
         <div
           style={{
-            transitionDuration: '2s',
+            transitionDuration: '1s',
             transform: showScore
               ? `rotate(${rotationCalculator(score)}deg)`
               : `rotate(0deg)`,
@@ -97,7 +96,7 @@ const ScoreSpeedometer = ({ score }: { score: number }) => {
 
         <div
           style={{
-            transitionDuration: '2s',
+            transitionDuration: '1s',
             transform: showScore
               ? `rotate(${rotationCalculator(score)}deg)`
               : `rotate(0deg)`,

@@ -78,10 +78,17 @@ export default function Button({
     </button>
   );
 
+  const renderBackground = () => {
+    if (style === BUTTON_STYLES.LINK) {
+      return 'transparent';
+    }
+    return !isDisabled ? BORDER_GRADIENT_STYLE : '#718096';
+  };
+
   return (
     <div
       style={{
-        background: !isDisabled ? BORDER_GRADIENT_STYLE : '#718096',
+        background: renderBackground(),
         borderRadius: '400px',
         padding: '3px',
         justifyItems: 'center',
