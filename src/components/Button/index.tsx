@@ -2,6 +2,8 @@ import { ReactNode } from 'react';
 
 import cx from 'classnames';
 
+import { BORDER_GRADIENT_STYLE } from '@scrtsybil/src/constants';
+
 interface IButtonClasses {
   container?: string;
   button?: string;
@@ -47,11 +49,11 @@ export default function Button({
 }: IButtonField) {
   const classnames = cx(
     {
-      'inline-flex justify-center py-3 px-6 text-sm font-normal rounded-3xl focus:outline-none':
+      'inline-flex justify-center py-2 px-6 text-sm font-thin rounded-3xl  focus:outline-none':
         style !== BUTTON_STYLES.LINK,
-      'text-white border-solid border-2 border-gradient-t-purple-blue hover:text-lightgray bg-darkgray/75 hover:bg-transparent':
+      'text-white border-solid bg-black py-2 border-gradient-br-purple-blue':
         style === BUTTON_STYLES.OUTLINE,
-      'text-white bg-gradient-to-b from-purple to-blue hover:opacity-75':
+      'text-white  bg-gradient-to-b from-purple to-blue hover:opacity-75  cursor-pointer  gradient-outline':
         style === BUTTON_STYLES.DEFAULT,
       'text-white bg-black hover:opacity-75': style === BUTTON_STYLES.BLACK,
       'disabled:opacity-30 disabled:bg-gray-700 cursor-default': isDisabled,
@@ -77,9 +79,20 @@ export default function Button({
     </button>
   );
 
-  return classes?.container ? (
-    <div className={classes.container}>{button}</div>
-  ) : (
-    button
+  return (
+    <div
+      style={{
+        background: !isDisabled ? BORDER_GRADIENT_STYLE : '#718096',
+        borderRadius: '400px',
+        padding: '3px',
+        justifyItems: 'center',
+        alignItems: 'center',
+        cursor: 'pointer',
+        zIndex: '30',
+      }}
+      className={classes?.container}
+    >
+      {button}
+    </div>
   );
 }

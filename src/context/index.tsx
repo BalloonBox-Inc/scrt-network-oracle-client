@@ -102,6 +102,10 @@ const ContextProvider = ({ children }: any) => {
     }
   };
 
+  useEffect(() => {
+    secretAddress && setConnectRequest(false);
+  }, [secretAddress]);
+
   const connectWallet = () => {
     handleKeplrOpen(setSecretjs, setSecretAddress);
   };

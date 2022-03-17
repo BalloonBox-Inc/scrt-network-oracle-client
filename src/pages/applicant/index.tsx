@@ -1,75 +1,114 @@
 import { useState } from 'react';
 
-import { Card, Typography, Tooltip, Button } from 'antd';
-import Link from 'next/link';
 import router from 'next/router';
+
+import BgImage from '@scrtsybil/src/components/BgImage';
+import Button, { BUTTON_STYLES } from '@scrtsybil/src/components/Button';
+import { BORDER_GRADIENT_STYLE } from '@scrtsybil/src/constants';
 
 const ApplicantServicesPage = () => {
   const [selection, setSelection] = useState<
     null | 'generate' | 'query' | 'revoke'
   >(null);
   return (
-    <div className="px-20 py-60 ">
+    <div className="px-14  -mt-20">
       <div className="w-full text-center">
-        <Typography.Title level={2}>Select Services</Typography.Title>
-        <p>User Type: Applicant</p>
-        <div className="flex flex-col items-center space-y-5 mt-8 justify-center w-full">
+        <div className=" flex flex-col items-center space-y-5  justify-center w-full">
+          <div className="z-50 opacity-100 px-0 sm:p-10">
+            <h2 className="z-50 font-semibold text-2xl sm:text-3xl md:text-3xl lg:text-4xl p-0">
+              Choose a Service
+            </h2>
+            <p className="z-50 font-thin text-md sm:text-lg md:text-xl lg:text-2xl p-0">
+              User Type: Applicant
+            </p>
+          </div>
           <div
-            onClick={() => setSelection('generate')}
-            className={`bg-gray-900 cursor-pointer border-2 rounded-md ${
-              selection === 'generate'
-                ? ' border-blue-500'
-                : 'border-transparent'
-            }`}
-            style={{ width: 380 }}
+            className="flex z-50 justify-center w-80  sm:w-115  rounded-md p-1 "
+            style={{
+              background:
+                selection === 'generate'
+                  ? BORDER_GRADIENT_STYLE
+                  : 'transparent',
+            }}
           >
-            <div className="text-center">
-              <p className="text-lg p-0 m-0 py-4">Generate a Score</p>
+            <div
+              onClick={() => setSelection('generate')}
+              className={`bg-gray-900  cursor-pointer w-full  rounded-md`}
+            >
+              <div className="text-center">
+                <p className="text-base p-0 m-0 py-4">Generate a Score</p>
+              </div>
             </div>
           </div>
         </div>
 
         <div className="flex flex-col items-center space-y-5 mt-8 justify-center w-full">
           <div
-            onClick={() => setSelection('query')}
-            className={`bg-gray-900 cursor-pointer border-2 rounded-md ${
-              selection === 'query' ? ' border-blue-500' : 'border-transparent'
-            }`}
-            style={{ width: 380 }}
+            className="flex z-50 justify-center w-80  sm:w-115  rounded-md p-1 "
+            style={{
+              background:
+                selection === 'query' ? BORDER_GRADIENT_STYLE : 'transparent',
+            }}
           >
-            <div className="text-center">
-              <p className="text-lg p-0 m-0 py-4">
-                Query a previously generated score
-              </p>
+            <div
+              onClick={() => setSelection('query')}
+              className={`bg-gray-900 cursor-pointer rounded-md w-full`}
+            >
+              <div className="text-center">
+                <p className="text-base p-0 m-0 py-4">
+                  Query a previously generated score
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
         <div className="flex flex-col items-center space-y-5 mt-8 justify-center w-full">
           <div
-            onClick={() => setSelection('revoke')}
-            className={`bg-gray-900 cursor-pointer border-2 rounded-md ${
-              selection === 'revoke' ? ' border-blue-500' : 'border-transparent'
-            }`}
-            style={{ width: 380 }}
+            className="flex z-50 justify-center w-80  sm:w-115  rounded-md p-1"
+            style={{
+              background:
+                selection === 'revoke' ? BORDER_GRADIENT_STYLE : 'transparent',
+            }}
           >
-            <div className="text-center">
-              <p className="text-lg p-0 m-0 py-4">Revoke a permission</p>
+            <div
+              onClick={() => setSelection('revoke')}
+              className={`bg-gray-900 cursor-pointer w-full rounded-md`}
+            >
+              <div className="text-center">
+                <p className="text-base p-0 m-0 py-4">Revoke a permission</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div className="mt-3 flex justify-end">
-        <Button
-          type="primary"
-          disabled={!selection}
-          onClick={() => {
-            router.push(`/applicant/${selection}`);
-          }}
-        >
-          Next
-        </Button>
+      <div className=" sm:px-10 flex justify-between">
+        <div className="pt-16 z-30 flex justify-start">
+          <div>
+            <Button
+              onClick={() => {
+                router.push(`/start`);
+              }}
+              text="Back"
+              style={BUTTON_STYLES.OUTLINE}
+            />
+          </div>
+        </div>
+        <div className="pt-16 z-30 flex justify-end">
+          <div>
+            <Button
+              onClick={() => {
+                router.push(`/applicant/${selection}`);
+              }}
+              isDisabled={!selection}
+              text="Continue"
+              style={BUTTON_STYLES.DEFAULT}
+            />
+          </div>
+        </div>
       </div>
+
+      <BgImage />
     </div>
   );
 };

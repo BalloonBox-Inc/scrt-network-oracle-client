@@ -25,8 +25,8 @@ module.exports = {
       xs: '0.75rem',
       sm: '0.875rem',
       base: '1rem',
-      lg: '1.125rem',
-      xl: '1.25rem',
+      lg: '1.25rem',
+      xl: '1.35rem',
       '2xl': '1.5rem',
       '3xl': '1.875rem',
       '4xl': '2.25rem',
@@ -55,6 +55,12 @@ module.exports = {
       },
       fontFamily: {
         sans: ['Poppins', ...defaultTheme.fontFamily.sans],
+      },
+      width: {
+        95: '21rem',
+        100: '25rem',
+        110: '28rem',
+        115: '30rem',
       },
       colors: {
         primary: '#5A57D9',
