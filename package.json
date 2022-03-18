@@ -27,6 +27,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-plaid-link": "^3.2.1",
+    "react-spinners": "^0.11.0",
     "sass": "^1.48.0",
     "secretjs": "^0.17.5",
     "styled-jsx-plugin-postcss": "^4.0.1",

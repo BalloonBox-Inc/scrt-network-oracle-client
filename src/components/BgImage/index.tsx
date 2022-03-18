@@ -39,12 +39,13 @@ const BgImage = () => {
   }, []);
 
   return (
-    <div className="fixed z-0 left-0 top-0 opacity-60">
+    <div className="absolute z-0 left-0 top-0 opacity-30">
       <Image
         alt="diagonal-waves"
         src={diagonalWaves}
         width={width}
         height={height}
+        className="z-0"
       />
     </div>
   );

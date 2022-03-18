@@ -4,6 +4,7 @@ import { notification } from 'antd';
 import { ItemPublicTokenExchangeResponse } from 'plaid';
 import { PlaidLinkOnSuccessMetadata } from 'react-plaid-link';
 import { SigningCosmWasmClient } from 'secretjs';
+import { StdSignature } from 'secretjs/types/types';
 
 import { NOTIFICATIONS } from '../constants';
 import { ICoinbaseTokenCreateResponse } from '../pages/api/coinbase';
@@ -29,12 +30,21 @@ interface ISecretContext {
     React.SetStateAction<undefined | PlaidToken>
   >;
   plaidPublicToken: PlaidToken | undefined;
-  plaidPublicExchangeResponse: ItemPublicTokenExchangeResponse | undefined;
-  setPlaidPublicExchangeResponse: React.Dispatch<
-    React.SetStateAction<undefined | ItemPublicTokenExchangeResponse>
+  scoreResponse: any;
+  setScoreResponse: any;
+  chainActivity: null | IChainActivity;
+  setChainActivity: React.Dispatch<React.SetStateAction<IChainActivity | null>>;
+  permissionSig?: StdSignature;
+  setPermissionSig: React.Dispatch<
+    React.SetStateAction<StdSignature | undefined>
   >;
-  plaidMetadata: any;
-  setPlaidMetadata: any;
+}
+
+interface IChainActivity {
+  scoreSubmitted?: boolean;
+  queryPermit?: string[];
+  permissionKey?: string[];
+  shareableLink?: boolean;
 }
 
 interface PlaidToken {
@@ -50,7 +60,7 @@ const useSecretContext = () => {
   }
   return context;
 };
-const storageHelper = {
+export const storageHelper = {
   persist: (key: string, item: any) =>
     localStorage.setItem(key, JSON.stringify(item)),
   get: (key: string) => {
@@ -67,16 +77,22 @@ const ContextProvider = ({ children }: any) => {
   const [secretjs, setSecretjs] = useState<SigningCosmWasmClient | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [connectRequest, setConnectRequest] = useState<boolean>(false);
+  const [scoreResponse, setScoreResponse] = useState<any>(undefined);
   const [coinbaseToken, setCoinbaseToken] = useState<
     ICoinbaseTokenCreateResponse | undefined
   >(undefined);
   const [plaidPublicToken, setPlaidPublicToken] = useState<
     undefined | PlaidToken
   >(undefined);
-  const [plaidMetadata, setPlaidMetadata] =
-    useState<PlaidLinkOnSuccessMetadata | null>(null);
+  const [chainActivity, setChainActivity] = useState<IChainActivity | null>(
+    null
+  );
   const [plaidPublicExchangeResponse, setPlaidPublicExchangeResponse] =
     useState<undefined | ItemPublicTokenExchangeResponse>(undefined);
+
+  const [permissionSig, setPermissionSig] = useState<StdSignature | undefined>(
+    undefined
+  );
 
   const setClearLocalStorage = () => {
     !!secretjs && storageHelper.persist('secretjs', null);
@@ -114,6 +130,7 @@ const ContextProvider = ({ children }: any) => {
   useEffect(() => {
     secretjs && storageHelper.persist('secretjs', secretjs);
     secretAddress && storageHelper.persist('secretAddress', secretAddress);
+    scoreResponse && storageHelper.persist('scoreResponse', scoreResponse);
     coinbaseToken && storageHelper.persist('coinbaseToken', coinbaseToken);
     plaidPublicToken &&
       storageHelper.persist('plaidPublicToken', plaidPublicToken);
@@ -122,6 +139,7 @@ const ContextProvider = ({ children }: any) => {
         'plaidPublicExchangeResponse',
         plaidPublicExchangeResponse
       );
+    chainActivity && storageHelper.persist('chainActivity', chainActivity);
 
     setLoading(false);
   }, [
@@ -130,6 +148,8 @@ const ContextProvider = ({ children }: any) => {
     coinbaseToken,
     plaidPublicToken,
     plaidPublicExchangeResponse,
+    scoreResponse,
+    chainActivity,
   ]);
 
   // HYDRATE CONTEXT HERE:
@@ -137,11 +157,12 @@ const ContextProvider = ({ children }: any) => {
     setSecretjs(storageHelper.get('secretjs'));
     setSecretAddress(storageHelper.get('secretAddress'));
     setCoinbaseToken(storageHelper.get('coinbaseToken'));
-    setPlaidMetadata(storageHelper.get('plaidMetadata'));
     setPlaidPublicToken(storageHelper.get('plaidPublicToken'));
     setPlaidPublicExchangeResponse(
       storageHelper.get('plaidPublicExchangeResponse')
     );
+    setScoreResponse(storageHelper.get('scoreResponse'));
+    setChainActivity(storageHelper.get('chainActivity'));
 
     setLoading(false);
   }, []);
@@ -162,10 +183,12 @@ const ContextProvider = ({ children }: any) => {
         coinbaseToken,
         setPlaidPublicToken,
         plaidPublicToken,
-        plaidPublicExchangeResponse,
-        setPlaidPublicExchangeResponse,
-        plaidMetadata,
-        setPlaidMetadata,
+        scoreResponse,
+        setScoreResponse,
+        chainActivity,
+        setChainActivity,
+        permissionSig,
+        setPermissionSig,
       }}
     >
       {children}

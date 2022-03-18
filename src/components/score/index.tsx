@@ -5,8 +5,13 @@ import Image from 'next/image';
 import ScoreMainImg from '@scrtsybil/public/images/score-main.svg';
 import ScoreNeedleTip from '@scrtsybil/public/images/score-needle-tip.svg';
 
-const ScoreSpeedometer = ({ score }: { score: number }) => {
-  const [showScore, setShowScore] = useState<boolean>(false);
+const ScoreSpeedometer = ({
+  score,
+  showScore,
+}: {
+  score: number;
+  showScore: boolean;
+}) => {
   const [randomNumber, setRandomNumber] = useState<string | null>('300');
   const rotationCalculator = (scr: number) => {
     if (scr < 550) {
@@ -38,12 +43,6 @@ const ScoreSpeedometer = ({ score }: { score: number }) => {
     return () => clearInterval(randomNumb);
   }, []);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setShowScore(true);
-    }, 3800);
-  }, []);
-
   return (
     <div className="flex w-full justify-center">
       <div className="inline-block relative z-50">
@@ -54,7 +53,7 @@ const ScoreSpeedometer = ({ score }: { score: number }) => {
 
         <div
           style={{
-            transitionDuration: '2s',
+            transitionDuration: '1s',
             transform: showScore
               ? `rotate(${rotationCalculator(score)}deg)`
               : `rotate(0deg)`,
@@ -81,11 +80,8 @@ const ScoreSpeedometer = ({ score }: { score: number }) => {
         >
           <div className="bg-black w-3 h-3 rounded-full z-50" />
         </div>
-        <div className="absolute justify-center items-center w-full z-50  flex">
-          <div
-            // style={{ left: '13.5rem', top: '20.5rem', fontSize: '4rem' }}
-            className="text-5xl sm:text-6xl  font-bold tracking-widest z-40 mt-56 sm:-mt-44"
-          >
+        <div className="absolute justify-center items-center w-full z-50 flex">
+          <div className="text-4xl sm:text-6xl  font-bold tracking-widest z-40 mt-48 sm:-mt-64">
             {showScore ? score : randomNumber}
           </div>
         </div>
@@ -97,7 +93,7 @@ const ScoreSpeedometer = ({ score }: { score: number }) => {
 
         <div
           style={{
-            transitionDuration: '2s',
+            transitionDuration: '1s',
             transform: showScore
               ? `rotate(${rotationCalculator(score)}deg)`
               : `rotate(0deg)`,

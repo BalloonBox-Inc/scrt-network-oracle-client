@@ -4,7 +4,8 @@ import { Configuration, PlaidApi, PlaidEnvironments } from 'plaid';
 const ENV_URL = process.env.PLAID_URL_SANDBOX;
 const CLIENT_ID = process.env.PLAID_CLIENT_ID;
 const SECRET_KEY = process.env.PLAID_SECRET_KEY_SANDBOX;
-
+const PLAID_ENDPOINT = `${process.env.BACKEND_BASE_URL}/credit_score/plaid`;
+const REDIRECT_URL = `${process.env.NEXT_BASE_URL}/applicant/generate?type=plaid&status=loading`;
 const clientConfiguration = new Configuration({
   basePath: PlaidEnvironments.sandbox,
   baseOptions: {
@@ -40,6 +41,26 @@ const config = {
   products: ['auth'],
 };
 
+async function get_plaid_data(
+  req: NextApiRequest,
+  res: NextApiResponse,
+  body: any
+) {
+  try {
+    const backend_response = await fetch(PLAID_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+    const responseJson = await backend_response.json();
+    return responseJson;
+  } catch (error) {
+    return error;
+  }
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -50,15 +71,30 @@ export default async function handler(
   if (isExchange) {
     try {
       const plaidClient = new PlaidApi(clientConfiguration);
-
       const { publicToken }: ITokenExchangeProps = req.body;
-
       const response = await plaidClient.itemPublicTokenExchange({
         public_token: publicToken,
       });
+
       const access_token = await response.data.access_token;
 
-      res.send({ access_token });
+      const body = {
+        keplr_token: 'not-needed-yet',
+        plaid_token: access_token,
+        plaid_client_id: CLIENT_ID,
+        plaid_client_secret: SECRET_KEY,
+      };
+
+      let plaid_score_res = await get_plaid_data(req, res, body);
+
+      // Seems to be failing on first attempt - need to fix this on API side
+      if (plaid_score_res.status === 'Error') {
+        setTimeout(async () => {
+          plaid_score_res = await get_plaid_data(req, res, body);
+          res.send({ plaid_score_res });
+        }, 3000);
+      }
+
       return;
     } catch (error) {
       res.send({ error });
@@ -74,6 +110,7 @@ export default async function handler(
       body: JSON.stringify(config),
     });
     const data: IPlaidTokenCreateResponse = await clientTokenRes.json();
+
     res.send({
       ...data,
     });

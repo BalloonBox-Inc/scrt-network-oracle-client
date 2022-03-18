@@ -12,13 +12,15 @@ export default function Header() {
   return (
     <header className="w-full relative z-10 font-sans bg-black px-5 py-0 flex items-center justify-between text-white border-b-2 border-gray-800">
       <Link passHref={true} href="/">
-        <Image
-          src={whiteLogo}
-          width={'140%'}
-          height={'100%'}
-          alt="scrtsibyl-logo"
-          className="cursor-pointer"
-        />
+        <a>
+          <Image
+            src={whiteLogo}
+            width={'140%'}
+            height={'100%'}
+            alt="scrtsibyl-logo"
+            className="cursor-pointer"
+          />
+        </a>
       </Link>
       <div className="flex items-center">
         <Link passHref={true} href="/">
