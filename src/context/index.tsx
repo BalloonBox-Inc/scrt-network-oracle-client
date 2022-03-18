@@ -4,6 +4,7 @@ import { notification } from 'antd';
 import { ItemPublicTokenExchangeResponse } from 'plaid';
 import { PlaidLinkOnSuccessMetadata } from 'react-plaid-link';
 import { SigningCosmWasmClient } from 'secretjs';
+import { StdSignature } from 'secretjs/types/types';
 
 import { NOTIFICATIONS } from '../constants';
 import { ICoinbaseTokenCreateResponse } from '../pages/api/coinbase';
@@ -31,6 +32,19 @@ interface ISecretContext {
   plaidPublicToken: PlaidToken | undefined;
   scoreResponse: any;
   setScoreResponse: any;
+  chainActivity: null | IChainActivity;
+  setChainActivity: React.Dispatch<React.SetStateAction<IChainActivity | null>>;
+  permissionSig?: StdSignature;
+  setPermissionSig: React.Dispatch<
+    React.SetStateAction<StdSignature | undefined>
+  >;
+}
+
+interface IChainActivity {
+  scoreSubmitted?: boolean;
+  queryPermit?: string[];
+  permissionKey?: string[];
+  shareableLink?: boolean;
 }
 
 interface PlaidToken {
@@ -46,7 +60,7 @@ const useSecretContext = () => {
   }
   return context;
 };
-const storageHelper = {
+export const storageHelper = {
   persist: (key: string, item: any) =>
     localStorage.setItem(key, JSON.stringify(item)),
   get: (key: string) => {
@@ -70,9 +84,15 @@ const ContextProvider = ({ children }: any) => {
   const [plaidPublicToken, setPlaidPublicToken] = useState<
     undefined | PlaidToken
   >(undefined);
-
+  const [chainActivity, setChainActivity] = useState<IChainActivity | null>(
+    null
+  );
   const [plaidPublicExchangeResponse, setPlaidPublicExchangeResponse] =
     useState<undefined | ItemPublicTokenExchangeResponse>(undefined);
+
+  const [permissionSig, setPermissionSig] = useState<StdSignature | undefined>(
+    undefined
+  );
 
   const setClearLocalStorage = () => {
     !!secretjs && storageHelper.persist('secretjs', null);
@@ -119,6 +139,7 @@ const ContextProvider = ({ children }: any) => {
         'plaidPublicExchangeResponse',
         plaidPublicExchangeResponse
       );
+    chainActivity && storageHelper.persist('chainActivity', chainActivity);
 
     setLoading(false);
   }, [
@@ -128,6 +149,7 @@ const ContextProvider = ({ children }: any) => {
     plaidPublicToken,
     plaidPublicExchangeResponse,
     scoreResponse,
+    chainActivity,
   ]);
 
   // HYDRATE CONTEXT HERE:
@@ -140,6 +162,7 @@ const ContextProvider = ({ children }: any) => {
       storageHelper.get('plaidPublicExchangeResponse')
     );
     setScoreResponse(storageHelper.get('scoreResponse'));
+    setChainActivity(storageHelper.get('chainActivity'));
 
     setLoading(false);
   }, []);
@@ -162,6 +185,10 @@ const ContextProvider = ({ children }: any) => {
         plaidPublicToken,
         scoreResponse,
         setScoreResponse,
+        chainActivity,
+        setChainActivity,
+        permissionSig,
+        setPermissionSig,
       }}
     >
       {children}

@@ -11,7 +11,7 @@ const ApplicantServicesPage = () => {
     null | 'generate' | 'query' | 'revoke'
   >(null);
   return (
-    <div className="px-14  -mt-20">
+    <div className="px-14 py-20 ">
       <div className="w-full text-center">
         <div className=" flex flex-col items-center space-y-5  justify-center w-full">
           <div className="z-50 opacity-100 px-0 sm:p-10">

@@ -80,11 +80,8 @@ const ScoreSpeedometer = ({
         >
           <div className="bg-black w-3 h-3 rounded-full z-50" />
         </div>
-        <div className="absolute justify-center items-center w-full z-50  flex">
-          <div
-            // style={{ left: '13.5rem', top: '20.5rem', fontSize: '4rem' }}
-            className="text-5xl sm:text-6xl  font-bold tracking-widest z-40 mt-56 sm:-mt-44"
-          >
+        <div className="absolute justify-center items-center w-full z-50 flex">
+          <div className="text-4xl sm:text-6xl  font-bold tracking-widest z-40 mt-48 sm:-mt-64">
             {showScore ? score : randomNumber}
           </div>
         </div>

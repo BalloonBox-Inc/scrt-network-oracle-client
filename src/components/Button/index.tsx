@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 
 import cx from 'classnames';
+import { ClipLoader } from 'react-spinners';
 
 import { BORDER_GRADIENT_STYLE } from '@scrtsybil/src/constants';
 
@@ -41,7 +42,7 @@ export default function Button({
   text,
   classes,
   type,
-  isDisabled,
+  isDisabled = false,
   style = BUTTON_STYLES.DEFAULT,
   isLoading,
   id,
@@ -50,12 +51,12 @@ export default function Button({
     {
       'inline-flex justify-center py-2 px-6 text-sm font-thin rounded-3xl  focus:outline-none':
         style !== BUTTON_STYLES.LINK,
-      'text-white border-solid bg-black py-2 border-gradient-br-purple-blue':
+      'text-white border-solid bg-black py-2 border-gradient-br-purple-blue cursor-pointer':
         style === BUTTON_STYLES.OUTLINE,
-      'text-white  bg-gradient-to-b from-purple to-blue hover:opacity-75  cursor-pointer  gradient-outline':
+      'text-white  bg-gradient-to-b from-purple to-blue hover:opacity-75  cursor-pointer  gradient-outline min-w-4':
         style === BUTTON_STYLES.DEFAULT,
       'disabled:opacity-70 cursor-default gradient-outline-grayscale':
-        isDisabled,
+        isDisabled || isLoading,
     },
     classes?.button || ''
   );
@@ -67,14 +68,9 @@ export default function Button({
       type={type}
       id={id}
       className={classnames}
+      style={{ minWidth: '100px' }}
     >
-      {isLoading ? (
-        <div style={{ margin: '-2px 3px' }}>
-          {/* put the loading spinner later */}
-        </div>
-      ) : (
-        text
-      )}
+      {isLoading ? <ClipLoader speedMultiplier={1.25} size={20} /> : text}
     </button>
   );
 
@@ -82,7 +78,7 @@ export default function Button({
     if (style === BUTTON_STYLES.LINK) {
       return 'transparent';
     }
-    return !isDisabled ? BORDER_GRADIENT_STYLE : '#718096';
+    return !isDisabled && !isLoading ? BORDER_GRADIENT_STYLE : '#718096';
   };
 
   return (
@@ -94,7 +90,7 @@ export default function Button({
         justifyItems: 'center',
         alignItems: 'center',
         cursor: 'pointer',
-        zIndex: '30',
+        zIndex: '50',
       }}
       className={classes?.container}
     >

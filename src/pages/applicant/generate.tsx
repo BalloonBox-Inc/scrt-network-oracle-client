@@ -119,50 +119,54 @@ const GenerateScorePage = () => {
     </div>
   );
 
+  const scoreResponseModal = (
+    <Modal
+      footer={null}
+      style={{ top: '30%' }}
+      closable={false}
+      visible={queryStatus === 'success'}
+    >
+      <div className="h-60 w-full space-y-2 flex justify-center items-center flex-col">
+        <h2 className="text-xl font-semibold">Ready to calculate Score</h2>
+        <p>with </p>
+        <div className="w-full justify-center flex">
+          {queryType === 'plaid' ? (
+            <img
+              width={'40%'}
+              alt="plaid_logo"
+              src={'../../images/plaidLogo.svg'}
+            />
+          ) : (
+            <img
+              width={'40%'}
+              alt="coinbase_logo"
+              src={'../../images/coinbaseLogo.svg'}
+            />
+          )}
+        </div>
+      </div>
+      <div className="flex flex-col w-full justify-center items-center">
+        <div className=" w-max">
+          <Button
+            onClick={() => router.push('/applicant/score')}
+            text="Continue to score calculation"
+            style={BUTTON_STYLES.DEFAULT}
+          />
+        </div>
+        <div className=" w-max mt-3">
+          <Button
+            onClick={() => startOver()}
+            text="start over"
+            style={BUTTON_STYLES.LINK}
+          />
+        </div>
+      </div>
+    </Modal>
+  );
+
   return (
-    <div className="px-14  -mt-20">
-      <Modal
-        footer={null}
-        style={{ top: '30%' }}
-        visible={queryStatus === 'success'}
-        bodyStyle={{ background: '#242630' }}
-      >
-        <div className="h-60 w-full space-y-2 flex justify-center items-center flex-col">
-          <h2 className="text-xl font-semibold">Score calculated</h2>
-          <p>using </p>
-          <div className="w-full justify-center flex">
-            {queryType === 'plaid' ? (
-              <img
-                width={'40%'}
-                alt="plaid_logo"
-                src={'../../images/plaidLogo.svg'}
-              />
-            ) : (
-              <img
-                width={'40%'}
-                alt="coinbase_logo"
-                src={'../../images/coinbaseLogo.svg'}
-              />
-            )}
-          </div>
-        </div>
-        <div className="flex flex-col w-full justify-center items-center">
-          <div className=" w-max">
-            <Button
-              onClick={() => router.push('/applicant/score')}
-              text="Continue"
-              style={BUTTON_STYLES.DEFAULT}
-            />
-          </div>
-          <div className=" w-max mt-3">
-            <Button
-              onClick={() => startOver()}
-              text="start over"
-              style={BUTTON_STYLES.LINK}
-            />
-          </div>
-        </div>
-      </Modal>
+    <div className="px-14 py-20 ">
+      {queryStatus === 'success' && scoreResponseModal}
       {startPlaid && plaidPublicToken?.publicToken && (
         <LaunchLink token={plaidPublicToken.publicToken} />
       )}

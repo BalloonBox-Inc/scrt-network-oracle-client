@@ -55,9 +55,7 @@ async function get_plaid_data(
       body: JSON.stringify(body),
     });
     const responseJson = await backend_response.json();
-    console.log({ responseJson });
     return responseJson;
-    // res.send({ data: responseJson });
   } catch (error) {
     return error;
   }
@@ -94,7 +92,7 @@ export default async function handler(
         setTimeout(async () => {
           plaid_score_res = await get_plaid_data(req, res, body);
           res.send({ plaid_score_res });
-        }, 5000);
+        }, 3000);
       }
 
       return;
