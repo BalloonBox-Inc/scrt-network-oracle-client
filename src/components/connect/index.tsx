@@ -59,7 +59,7 @@ const Connect = () => {
   return (
     <div role={'presentation'} className="h-full">
       <div
-        className={`flex justify-center items-center bg-gradient-to-b from-purple to-blue hover:opacity-75
+        className={`flex justify-center items-center bg-gradient-to-b from-purple to-deepblue hover:opacity-75
         ${showWallet ? 'growLeft' : undefined} 
         ${!showWallet && shrinkAnimation ? 'shrinkRight' : undefined}
         ${secretjs ? 'opacity-100' : 'opacity-100'} `}
@@ -76,7 +76,7 @@ const Connect = () => {
             secretAddress ? setShowWallet(true) : handleConnectRequest();
           }}
           className={`flex items-center justify-center h-10 ${
-            !showWallet && 'ml-4'
+            !showWallet && 'sm:ml-4 ml-0 px-3 sm:px-0'
           }`}
         >
           {showWallet && (
@@ -100,7 +100,7 @@ const Connect = () => {
             alt="keplr_logo"
             src={logoImage}
           />
-          {!secretjs && <p className="pl-2 pr-4">Connect</p>}
+          {!secretjs && <p className="hidden sm:block pl-2 pr-4">Connect</p>}
         </div>
         {secretAddress && (
           <div className={`mx-2 flex text-xs items-center overflow-x-hidden`}>

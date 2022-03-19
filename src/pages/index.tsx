@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 import Button, { BUTTON_STYLES } from '@scrtsybil/src/components/Button';
@@ -124,7 +125,9 @@ const Home = () => {
               {' '}
               <Button text="Get Started" />
             </div>
-            <Button style={BUTTON_STYLES.OUTLINE} text="Learn more" />
+            <Link href="/learn">
+              <Button style={BUTTON_STYLES.OUTLINE} text="Learn more" />
+            </Link>
           </div>
         </div>
         <div className="mx-auto max-w-lg lg:w-1/2 flex px-10 sm:px-0 pt-10 lg:pt-0">
@@ -138,7 +141,7 @@ const Home = () => {
     <div className="flex flex-col items-center justify-center py-10">
       <h2 className="text-4xl font-extrabold mb-20">
         Why{' '}
-        <span className="text-transparent bg-gradient-to-b from-purple to-blue bg-clip-text">
+        <span className="text-transparent bg-gradient-to-b from-purple to-deepblue bg-clip-text">
           SCRTsibyl?
         </span>
       </h2>
@@ -173,7 +176,7 @@ const Home = () => {
         <div
           className={`text-lightgray hover:text-white ${
             applicant &&
-            'bg-gradient-to-b from-purple to-blue py-2.5 rounded-full text-white'
+            'bg-gradient-to-b from-purple to-deepblue py-2.5 rounded-full text-white'
           }`}
           style={{ width: '150px', textAlign: 'center' }}
           onClick={() => setApplicant(true)}
@@ -183,7 +186,7 @@ const Home = () => {
         <div
           className={`text-lightgray hover:text-white ${
             !applicant &&
-            'bg-gradient-to-b from-purple to-blue py-2.5 rounded-full text-white'
+            'bg-gradient-to-b from-purple to-deepblue py-2.5 rounded-full text-white'
           }`}
           style={{ width: '150px', textAlign: 'center' }}
           onClick={() => setApplicant(false)}
@@ -268,7 +271,7 @@ const Home = () => {
 
   const ctaSection = (
     <div className="flex justify-center mb-10">
-      <div className="flex flex-col items-center bg-gradient-to-r from-purple to-blue py-10 px-10 md:px-20 lg:px-40 mb-10 rounded-3xl">
+      <div className="flex flex-col items-center bg-gradient-to-r from-purple to-deepblue py-10 px-10 md:px-20 lg:px-40 mb-10 rounded-3xl">
         <h3 className="font-white font-bold text-xl md:text-2xl text-center">
           Get your credit score, <br /> and pulish it to the blockchain
           securely.

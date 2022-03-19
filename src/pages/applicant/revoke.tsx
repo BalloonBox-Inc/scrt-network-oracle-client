@@ -9,7 +9,7 @@ const RevokePermissionPage = () => {
   const requestDataInput = (onChange?: (e?: any) => void) => (
     <input
       onChange={onChange}
-      className=" focus-visible:outline-blue-600 focus-visible:outline-none  font-mono text-blue-600 bg-input-bg w-full py-3 px-3 rounded-md mb-4"
+      className=" focus-visible:outline-deepblue-600 focus-visible:outline-none font-mono text-blue-600 bg-input-bg w-full py-3 px-3 rounded-md mb-4"
       type={'text'}
     />
   );

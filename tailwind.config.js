@@ -83,7 +83,7 @@ module.exports = {
         lightgray: '#C4C4C4',
         navy: '#1F1F33',
         purple: '#5728AA',
-        blue: '#2258A3',
+        deepblue: '#2258A3',
         lightblue: '#0790C0',
         mint: '#66CED1',
         pink: '#E6074E',
