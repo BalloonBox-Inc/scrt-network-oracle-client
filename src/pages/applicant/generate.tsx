@@ -1,17 +1,14 @@
-import { text } from 'stream/consumers';
-
 import { useEffect, useState } from 'react';
 
-import { CheckCircleFilled } from '@ant-design/icons';
-import { Layout, Typography, notification, Alert, Modal } from 'antd';
+import { notification, Modal } from 'antd';
 import { useRouter } from 'next/router';
 import ClipLoader from 'react-spinners/ClipLoader';
 
 import BgImage from '@scrtsybil/src/components/BgImage';
 import Button, { BUTTON_STYLES } from '@scrtsybil/src/components/Button';
 import LaunchLink from '@scrtsybil/src/components/plaid';
-import { BORDER_GRADIENT_STYLE, NOTIFICATIONS } from '@scrtsybil/src/constants';
-import { useSecretContext } from '@scrtsybil/src/context';
+import { BORDER_GRADIENT_STYLE } from '@scrtsybil/src/constants';
+import { storageHelper, useSecretContext } from '@scrtsybil/src/context';
 import { IPlaidTokenCreateResponse } from '@scrtsybil/src/pages/api/plaid';
 import { handleCoinbaseCode } from '@scrtsybil/src/services';
 
@@ -19,14 +16,15 @@ const GenerateScorePage = () => {
   const [selection, setSelection] = useState<string | undefined>(undefined);
   const [awaitingScoreResponse, setAwaitingScoreResponse] =
     useState<boolean>(false);
-  const [startPlaid, setStartPlaid] = useState<boolean>(false);
+  const [startPlaidLink, setStartPlaidLink] = useState<boolean>(false);
 
   const {
     setPlaidPublicToken,
     plaidPublicToken,
     setCoinbaseToken,
-    scoreResponse,
-    setScoreResponse,
+    scoreResponsePlaid,
+    setScoreResponsePlaid,
+    setScoreResponseCoinbase,
   } = useSecretContext();
 
   const router = useRouter();
@@ -39,19 +37,14 @@ const GenerateScorePage = () => {
     });
 
   const startOver = () => {
-    setStartPlaid(false);
+    storageHelper.persist('scoreAnimationViewed', false);
+    setStartPlaidLink(false);
     setAwaitingScoreResponse(false);
-    setScoreResponse(undefined);
+    setScoreResponsePlaid(undefined);
     setPlaidPublicToken(undefined);
+    setScoreResponseCoinbase(undefined);
     router.replace('/applicant/generate');
   };
-
-  useEffect(() => {
-    scoreResponse &&
-      awaitingScoreResponse &&
-      router.replace('/applicant/generate?type=plaid&status=success') &&
-      setAwaitingScoreResponse(false);
-  }, [router, scoreResponse, awaitingScoreResponse]);
 
   useEffect(() => {
     router.query.status === 'loading' && setAwaitingScoreResponse(true);
@@ -71,7 +64,19 @@ const GenerateScorePage = () => {
         }
         if (resJson.access_token) {
           setCoinbaseToken(resJson);
-          router.replace('/applicant/score');
+          router.replace('/applicant/generate?type=coinbase&status=loading');
+          const coinbaseRes = await fetch(
+            `/api/coinbase?access_token=${resJson.access_token}&refresh_token=${resJson.refresh_token}`
+          );
+
+          const { coinbaseScore } = await coinbaseRes.json();
+
+          if (coinbaseScore.status === 'success') {
+            setScoreResponseCoinbase(coinbaseScore);
+            router.replace('/applicant/generate?type=coinbase&status=success');
+          } else {
+            router.replace('/applicant/generate?type=coinbase&status=error');
+          }
         }
       } catch (error) {
         router.pathname = '/applicant/generate';
@@ -82,9 +87,10 @@ const GenerateScorePage = () => {
     if (router?.query?.code) {
       getCoinbaseToken(router.query.code as string);
     }
-  }, [router, setCoinbaseToken]);
+  }, [router, setCoinbaseToken, setScoreResponseCoinbase]);
 
   const handleCoinbaseConnect = async () => {
+    setAwaitingScoreResponse(true);
     const res = await fetch('/api/coinbase');
     const resJson = await res.json();
     if (resJson.url) {
@@ -93,20 +99,26 @@ const GenerateScorePage = () => {
   };
 
   const handlePlaidConnect = async () => {
+    router.replace('/applicant/generate?type=plaid&status=loading');
     try {
       const plaidRes = await fetch('/api/plaid');
-
       const plaidResJson: IPlaidTokenCreateResponse = await plaidRes.json();
+      setAwaitingScoreResponse(true);
       if (plaidResJson?.link_token) {
-        router.replace('/applicant/generate?type=plaid&status=loading');
-        // setPlaidToken(plaidResJson.link_token);
-        setStartPlaid(true);
+        setStartPlaidLink(true);
         setPlaidPublicToken({ publicToken: plaidResJson.link_token });
       }
     } catch (error) {
       connectionError('plaid');
     }
   };
+  useEffect(() => {
+    queryType !== 'coinbase' &&
+      scoreResponsePlaid &&
+      awaitingScoreResponse &&
+      router.replace('/applicant/generate?type=plaid&status=success') &&
+      setAwaitingScoreResponse(false);
+  }, [router, queryType, scoreResponsePlaid, awaitingScoreResponse]);
 
   const loadingContainer = (
     <div className="w-full flex-col  flex justify-center items-center z-50">
@@ -167,8 +179,12 @@ const GenerateScorePage = () => {
   return (
     <div className="px-14 py-20 ">
       {queryStatus === 'success' && scoreResponseModal}
-      {startPlaid && plaidPublicToken?.publicToken && (
-        <LaunchLink token={plaidPublicToken.publicToken} />
+      {startPlaidLink && plaidPublicToken?.publicToken && (
+        <LaunchLink
+          setAwaitingScoreResponse={setAwaitingScoreResponse}
+          router={router}
+          token={plaidPublicToken.publicToken}
+        />
       )}
       {awaitingScoreResponse && loadingContainer}
       {!awaitingScoreResponse && (
@@ -232,7 +248,7 @@ const GenerateScorePage = () => {
               <div>
                 <Button
                   onClick={() => {
-                    router.push(`/start`);
+                    router.push(`/applicant`);
                   }}
                   text="Back"
                   style={BUTTON_STYLES.OUTLINE}

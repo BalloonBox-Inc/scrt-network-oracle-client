@@ -1,4 +1,5 @@
 import { notification } from 'antd';
+import { without } from 'ramda';
 import { SigningCosmWasmClient } from 'secretjs';
 import { StdSignature } from 'secretjs/types/types';
 
@@ -8,14 +9,15 @@ import {
   SECRET_CONTRACT_ADDR,
   CHAIN_ID,
 } from '../constants';
-import { IScoreResponse } from '../types/types';
+import { IChainActivity } from '../context';
+import { IScoreResponsePlaid } from '../types/types';
 
 export const handleSetScore = async ({
   setStatus,
   scoreResponse,
 }: {
   setStatus: (s: 'loading' | 'error' | 'success' | undefined) => void;
-  scoreResponse: IScoreResponse;
+  scoreResponse: IScoreResponsePlaid;
 }) => {
   setStatus('loading');
   try {
@@ -113,6 +115,56 @@ export const handleGeneratePermissionQuery = async ({
   } catch (error) {
     notification.error({
       message: 'There was an error creating a permit query',
+    });
+    return { status: error };
+  }
+  return null;
+};
+
+export const handlePermissionRevoke = async ({
+  permissionName,
+  chainActivity,
+  setChainActivity,
+}: {
+  permissionName: string;
+  chainActivity: IChainActivity | null;
+  setChainActivity: React.Dispatch<React.SetStateAction<IChainActivity | null>>;
+}) => {
+  try {
+    // @ts-ignore
+    const keplrOfflineSigner = window.getOfflineSigner(CHAIN_ID);
+    const accounts = await keplrOfflineSigner.getAccounts();
+    // @ts-ignore
+    const addr = accounts[0].address;
+
+    const cosmJS = new SigningCosmWasmClient(
+      REST_URL,
+      addr,
+      keplrOfflineSigner as any,
+      // @ts-ignore
+      window.getEnigmaUtils(CHAIN_ID),
+      CUSTOM_FEES
+    );
+
+    const handleMsg = { revoke_permit: { permit_name: permissionName } };
+    const response = await cosmJS.execute(SECRET_CONTRACT_ADDR, handleMsg);
+
+    const str = Buffer.from(response.data.buffer).toString();
+    if (str.includes('success')) {
+      setChainActivity({
+        ...chainActivity,
+        queryPermit: chainActivity?.queryPermit?.includes(permissionName)
+          ? without([permissionName], [...chainActivity.queryPermit])
+          : [],
+      });
+      notification.success({
+        message: `Successfully revoked ${permissionName}!`,
+      });
+      return { status: 'success' };
+    }
+  } catch (error) {
+    notification.error({
+      message: 'There was an error revoking the permit query',
     });
     return { status: error };
   }
