@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react';
 
 import { Input, Modal } from 'antd';
-import { useRouter } from 'next/router';
 import { ClipLoader } from 'react-spinners';
 
 import BgImage from '@scrtsybil/src/components/BgImage';
 import Button, { BUTTON_STYLES } from '@scrtsybil/src/components/Button';
 import ScoreSpeedometer from '@scrtsybil/src/components/score';
-import ScoreSubmitted from '@scrtsybil/src/components/score/scoreSubmitted';
 import { storageHelper, useSecretContext } from '@scrtsybil/src/context';
 import {
   handleGeneratePermissionQuery,
@@ -16,14 +14,18 @@ import {
 
 const ApplicantScorePage = () => {
   const {
-    scoreResponse,
+    scoreResponsePlaid,
     setChainActivity,
     chainActivity,
     setPermissionSig,
     permissionSig,
+    scoreResponseCoinbase,
+    setScoreResponseCoinbase,
   } = useSecretContext();
+
   const [showScore, setShowScore] = useState<boolean>(false);
   const [permitQueryModal, setPermitQueryModal] = useState<boolean>(false);
+  const [modalWarn, setModalWarn] = useState<boolean>(false);
   const [status, setStatus] = useState<
     string | 'loading' | 'error' | 'success' | undefined
   >(undefined);
@@ -34,6 +36,12 @@ const ApplicantScorePage = () => {
 
   const isSuccess = status === 'success';
   const isLoading = status === 'loading';
+
+  const handleSaveToBlockchain = () => {
+    chainActivity?.scoreSubmitted
+      ? setModalWarn(true)
+      : handleSetScore({ setStatus, scoreResponse: scoreResponsePlaid });
+  };
 
   const submitQueryAttempt = async () => {
     setPermissionLoading(true);
@@ -74,6 +82,121 @@ const ApplicantScorePage = () => {
     );
   }, []);
 
+  const warnModal = (
+    <Modal
+      visible={modalWarn}
+      footer={null}
+      onCancel={() => {
+        setModalWarn(false);
+      }}
+      style={{ top: '30%' }}
+      bodyStyle={{ background: '#242630' }}
+    >
+      <div className={`px-8 flex py-5 justify-center rounded-md z-50`}>
+        <div className="p-8 px-2 rounded-lg z-50  max-w-xl w-full ">
+          <div className="flex items-center mb-6">
+            <h3 className="text-lg mr-2 uppercase font-semibold ">Warning</h3>
+          </div>
+
+          <div>
+            You have already submitted your score of{' '}
+            {chainActivity?.scoreAmount}. Are you sure you want to submit a new
+            score of {scoreResponsePlaid?.score || scoreResponseCoinbase?.score}
+            ?
+          </div>
+
+          <div className="flex items-center mt-8">
+            <Button
+              text="Submit to blockchain"
+              onClick={() => {
+                setScoreResponseCoinbase(undefined);
+                storageHelper.persist('scoreAnimationViewed', false);
+                submitQueryAttempt();
+              }}
+            />
+            <Button
+              text="Cancel"
+              style={BUTTON_STYLES.LINK}
+              onClick={() => {
+                setModalWarn(false);
+              }}
+            />
+          </div>
+        </div>
+      </div>
+    </Modal>
+  );
+
+  const permitModal = (
+    <Modal
+      visible={permitQueryModal}
+      footer={null}
+      onCancel={() => {
+        setPermitName(undefined);
+        setPermissionLoading(false);
+        setPermitQueryModal(false);
+      }}
+      style={{ top: '30%' }}
+      bodyStyle={{ background: '#242630' }}
+    >
+      <div className={`px-8 flex py-5 justify-center rounded-md z-50`}>
+        {permissionSig ? (
+          <div className="p-8 px-2 rounded-lg z-50  max-w-xl w-full ">
+            <div className="flex items-center mb-6">
+              <h3 className="text-lg mr-2 uppercase font-semibold ">
+                Query Permit{' '}
+              </h3>
+              <div className="bg-gray-500 w-4 h-4 rounded-full p-2 flex justify-center items-center cursor-pointer text-black">
+                i
+              </div>
+            </div>
+            <p className="mb-3 font-semibold">
+              Permit Name: <span className="font-thin">{permitName}</span>
+            </p>
+            <p className="mb-3 font-semibold">
+              Public Key:{' '}
+              <span className="font-thin">{permissionSig.pub_key.value}</span>
+            </p>
+            <p className="mb-3 font-semibold">
+              Signature:{' '}
+              <span className="font-thin">{permissionSig.signature}</span>
+            </p>
+            <div className="flex">
+              <Button
+                text="I have saved these keys"
+                onClick={() => {
+                  setPermitName(undefined);
+                  setPermissionLoading(false);
+                  setPermitQueryModal(false);
+                  setPermissionSig(undefined);
+                }}
+              />
+            </div>
+          </div>
+        ) : (
+          <>
+            <Input
+              onChange={(e) => setPermitName(e.target.value)}
+              type={'text'}
+              placeholder="name of permit"
+              className="mr-3"
+              value={permitName}
+              disabled={permissionLoading}
+            />
+            <Button
+              onClick={() => submitQueryAttempt()}
+              style={BUTTON_STYLES.OUTLINE}
+              text="Submit"
+              classes={{ button: 'text-xs' }}
+              isLoading={permissionLoading}
+              isDisabled={!permitName}
+            />
+          </>
+        )}
+      </div>
+    </Modal>
+  );
+
   const mainScoreContainer = (
     <div className="px-3 sm:px-10 z-50 mt-20 mb-20 sm:mt-20 ">
       <div className="w-full text-center">
@@ -85,11 +208,18 @@ const ApplicantScorePage = () => {
           </div>
         </div>
       </div>
-      {scoreResponse?.score && (
+      {scoreResponsePlaid?.score ? (
         <div className="flex w-full justify-center">
           <ScoreSpeedometer
             showScore={showScore}
-            score={Math.round(scoreResponse?.score)}
+            score={Math.round(scoreResponsePlaid?.score)}
+          />
+        </div>
+      ) : (
+        <div className="flex w-full justify-center">
+          <ScoreSpeedometer
+            showScore={showScore}
+            score={Math.round(scoreResponseCoinbase?.score)}
           />
         </div>
       )}
@@ -105,17 +235,9 @@ const ApplicantScorePage = () => {
           </div>
           <div className="z-50 flex justify-center mt-8">
             <Button
-              onClick={() => {
-                chainActivity?.scoreSubmitted
-                  ? setPermitQueryModal(true)
-                  : handleSetScore({ setStatus, scoreResponse });
-              }}
+              onClick={() => handleSaveToBlockchain()}
               style={BUTTON_STYLES.DEFAULT}
-              text={
-                chainActivity?.scoreSubmitted
-                  ? 'Generate a Query Permit'
-                  : 'Save To Blockchain'
-              }
+              text={'Save To Blockchain'}
             />
           </div>
         </>
@@ -125,6 +247,7 @@ const ApplicantScorePage = () => {
         footer={null}
         onCancel={() => setShowScoreDescription(false)}
         bodyStyle={{ background: '#242630' }}
+        style={{ top: '20%' }}
       >
         <div
           className={`px-8 flex py-5 justify-center rounded-md z-50 duration-500  ${
@@ -133,77 +256,14 @@ const ApplicantScorePage = () => {
         >
           <div className="p-8 rounded-lg z-50  max-w-xl w-full ">
             <h3 className="text-lg uppercase font-semibold mb-4">Summary</h3>
-            <p className="sm:text-base leading-7">{scoreResponse?.message}</p>
+            <p className="sm:text-base leading-7">
+              {scoreResponsePlaid?.message || scoreResponseCoinbase?.message}
+            </p>
           </div>
         </div>
       </Modal>
-      <Modal
-        visible={permitQueryModal}
-        footer={null}
-        onCancel={() => {
-          setPermitName(undefined);
-          setPermissionLoading(false);
-          setPermitQueryModal(false);
-        }}
-        style={{ top: '30%' }}
-        bodyStyle={{ background: '#242630' }}
-      >
-        <div className={`px-8 flex py-5 justify-center rounded-md z-50`}>
-          {permissionSig ? (
-            <div className="p-8 px-2 rounded-lg z-50  max-w-xl w-full ">
-              <div className="flex items-center mb-6">
-                <h3 className="text-lg mr-2 uppercase font-semibold ">
-                  Query Permit{' '}
-                </h3>
-                <div className="bg-gray-500 w-4 h-4 rounded-full p-2 flex justify-center items-center cursor-pointer text-black">
-                  i
-                </div>
-              </div>
-              <p className="mb-3 font-semibold">
-                Permit Name: <span className="font-thin">{permitName}</span>
-              </p>
-              <p className="mb-3 font-semibold">
-                Public Key:{' '}
-                <span className="font-thin">{permissionSig.pub_key.value}</span>
-              </p>
-              <p className="mb-3 font-semibold">
-                Signature:{' '}
-                <span className="font-thin">{permissionSig.signature}</span>
-              </p>
-              <div className="flex">
-                <Button
-                  text="I have saved these keys"
-                  onClick={() => {
-                    setPermitName(undefined);
-                    setPermissionLoading(false);
-                    setPermitQueryModal(false);
-                    setPermissionSig(undefined);
-                  }}
-                />
-              </div>
-            </div>
-          ) : (
-            <>
-              <Input
-                onChange={(e) => setPermitName(e.target.value)}
-                type={'text'}
-                placeholder="name of permit"
-                className="mr-3"
-                value={permitName}
-                disabled={permissionLoading}
-              />
-              <Button
-                onClick={() => submitQueryAttempt()}
-                style={BUTTON_STYLES.OUTLINE}
-                text="Submit"
-                classes={{ button: 'text-xs' }}
-                isLoading={permissionLoading}
-                isDisabled={!permitName}
-              />
-            </>
-          )}
-        </div>
-      </Modal>
+      {permitModal}
+      {warnModal}
     </div>
   );
 

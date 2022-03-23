@@ -86,14 +86,13 @@ export default async function handler(
       };
 
       let plaid_score_res = await get_plaid_data(req, res, body);
-
       // Seems to be failing on first attempt - need to fix this on API side
-      if (plaid_score_res.status === 'Error') {
+      if (plaid_score_res.status === 'error') {
         setTimeout(async () => {
           plaid_score_res = await get_plaid_data(req, res, body);
           res.send({ plaid_score_res });
         }, 3000);
-      }
+      } else res.send({ plaid_score_res });
 
       return;
     } catch (error) {

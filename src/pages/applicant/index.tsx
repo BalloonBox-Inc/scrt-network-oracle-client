@@ -8,7 +8,7 @@ import { BORDER_GRADIENT_STYLE } from '@scrtsybil/src/constants';
 
 const ApplicantServicesPage = () => {
   const [selection, setSelection] = useState<
-    null | 'generate' | 'query' | 'revoke'
+    null | 'generate' | 'query' | 'revoke' | 'create'
   >(null);
   return (
     <div className="px-14 py-20 ">
@@ -63,6 +63,24 @@ const ApplicantServicesPage = () => {
           </div>
         </div>
 
+        <div className="flex flex-col items-center space-y-5 mt-8 justify-center w-full">
+          <div
+            className="flex z-50 justify-center w-80  sm:w-115  rounded-md p-1"
+            style={{
+              background:
+                selection === 'create' ? BORDER_GRADIENT_STYLE : 'transparent',
+            }}
+          >
+            <div
+              onClick={() => setSelection('create')}
+              className={`bg-gray-900 cursor-pointer w-full rounded-md`}
+            >
+              <div className="text-center">
+                <p className="text-base p-0 m-0 py-4">Create a permission</p>
+              </div>
+            </div>
+          </div>
+        </div>
         <div className="flex flex-col items-center space-y-5 mt-8 justify-center w-full">
           <div
             className="flex z-50 justify-center w-80  sm:w-115  rounded-md p-1"
