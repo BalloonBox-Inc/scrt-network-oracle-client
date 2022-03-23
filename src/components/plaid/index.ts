@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 
 import { notification } from 'antd';
-import { ItemPublicTokenExchangeResponse } from 'plaid';
 import { usePlaidLink, PlaidLinkOptionsWithLinkToken } from 'react-plaid-link';
 
 import { NOTIFICATIONS } from '@scrtsybil/src/constants';
@@ -14,28 +13,24 @@ interface Props {
   userId?: number;
   itemId?: number | null;
   children?: React.ReactNode;
+  router: any;
+  setAwaitingScoreResponse: any;
 }
 
 const LaunchLink = (props: Props) => {
-  const { setPlaidPublicExchangeResponse, setPlaidMetadata } =
-    useSecretContext();
-
+  const { setScoreResponsePlaid, scoreResponsePlaid } = useSecretContext();
   const onSuccess = async (publicToken: string, metadata: any) => {
-    const plaidTokenRes: ItemPublicTokenExchangeResponse =
-      await exchangePlaidToken({ publicToken });
-    if (metadata) {
-      setPlaidMetadata(metadata);
-    }
-    if (plaidTokenRes.access_token) {
-      setPlaidPublicExchangeResponse(plaidTokenRes);
-      notification.success({
-        message: NOTIFICATIONS.PLAID_CONNECTION_SUCCESS,
-      });
+    const { plaid_score_res } = await exchangePlaidToken({ publicToken });
+
+    if (plaid_score_res.status_code === 200) {
+      setScoreResponsePlaid(plaid_score_res);
     } else {
+      props.router.replace('/applicant/generate');
       notification.error({
         message: NOTIFICATIONS.PLAID_CONNECTION_ERROR,
       });
     }
+    props.setAwaitingScoreResponse(false);
   };
 
   const config: PlaidLinkOptionsWithLinkToken = {
@@ -46,8 +41,8 @@ const LaunchLink = (props: Props) => {
   const { open } = usePlaidLink(config);
 
   useEffect(() => {
-    open();
-  }, [open]);
+    !scoreResponsePlaid && open();
+  }, [open, scoreResponsePlaid]);
 
   return null;
 };

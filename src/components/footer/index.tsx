@@ -17,13 +17,15 @@ export default function Footer() {
       <div>
         <div>
           <Link passHref={true} href="/">
-            <Image
-              src={whiteLogo}
-              width={'100%'}
-              height={'40%'}
-              alt="scrtsibyl-logo"
-              className="cursor-pointer"
-            />
+            <a>
+              <Image
+                src={whiteLogo}
+                width={'100%'}
+                height={'40%'}
+                alt="scrtsibyl-logo"
+                className="cursor-pointer"
+              />
+            </a>
           </Link>
         </div>
         <p className="pl-3 text-xs">

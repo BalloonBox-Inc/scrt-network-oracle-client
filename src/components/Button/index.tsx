@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 
 import cx from 'classnames';
+import { ClipLoader } from 'react-spinners';
 
 import { BORDER_GRADIENT_STYLE } from '@scrtsybil/src/constants';
 
@@ -42,7 +43,7 @@ export default function Button({
   text,
   classes,
   type,
-  isDisabled,
+  isDisabled = false,
   style = BUTTON_STYLES.DEFAULT,
   isLoading,
   id,
@@ -51,12 +52,12 @@ export default function Button({
     {
       'inline-flex justify-center py-2 px-6 text-sm font-thin rounded-3xl focus:outline-none':
         style !== BUTTON_STYLES.LINK,
-      'text-white border-solid bg-black py-2 hover:opacity-75':
+      'text-white border-solid bg-black py-2 border-gradient-br-purple-blue cursor-pointer':
         style === BUTTON_STYLES.OUTLINE,
-      'text-white bg-gradient-to-b from-purple to-deepblue hover:opacity-75 cursor-pointer gradient-outline':
+      'text-white  bg-gradient-to-b from-purple to-blue hover:opacity-75  cursor-pointer  gradient-outline min-w-4':
         style === BUTTON_STYLES.DEFAULT,
-      'text-white bg-black hover:opacity-75': style === BUTTON_STYLES.BLACK,
-      'disabled:opacity-30 disabled:bg-gray-700 cursor-default': isDisabled,
+      'disabled:opacity-70 cursor-default gradient-outline-grayscale':
+        isDisabled || isLoading,
     },
     classes?.button || ''
   );
@@ -68,27 +69,29 @@ export default function Button({
       type={type}
       id={id}
       className={classnames}
+      style={{ minWidth: '100px' }}
     >
-      {isLoading ? (
-        <div style={{ margin: '-2px 3px' }}>
-          {/* put the loading spinner later */}
-        </div>
-      ) : (
-        text
-      )}
+      {isLoading ? <ClipLoader speedMultiplier={1.25} size={20} /> : text}
     </button>
   );
+
+  const renderBackground = () => {
+    if (style === BUTTON_STYLES.LINK) {
+      return 'transparent';
+    }
+    return !isDisabled && !isLoading ? BORDER_GRADIENT_STYLE : '#718096';
+  };
 
   return (
     <div
       style={{
-        background: !isDisabled ? BORDER_GRADIENT_STYLE : '#718096',
+        background: renderBackground(),
         borderRadius: '400px',
         padding: '3px',
         justifyItems: 'center',
         alignItems: 'center',
         cursor: 'pointer',
-        zIndex: '30',
+        zIndex: '50',
       }}
       className={classes?.container}
     >

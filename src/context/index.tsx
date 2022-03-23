@@ -1,9 +1,16 @@
-import React, { useState, useContext, createContext, useEffect } from 'react';
+import React, {
+  useState,
+  useContext,
+  createContext,
+  useEffect,
+  useCallback,
+} from 'react';
 
 import { notification } from 'antd';
+import router from 'next/router';
 import { ItemPublicTokenExchangeResponse } from 'plaid';
-import { PlaidLinkOnSuccessMetadata } from 'react-plaid-link';
 import { SigningCosmWasmClient } from 'secretjs';
+import { StdSignature } from 'secretjs/types/types';
 
 import { NOTIFICATIONS } from '../constants';
 import { ICoinbaseTokenCreateResponse } from '../pages/api/coinbase';
@@ -29,12 +36,25 @@ interface ISecretContext {
     React.SetStateAction<undefined | PlaidToken>
   >;
   plaidPublicToken: PlaidToken | undefined;
-  plaidPublicExchangeResponse: ItemPublicTokenExchangeResponse | undefined;
-  setPlaidPublicExchangeResponse: React.Dispatch<
-    React.SetStateAction<undefined | ItemPublicTokenExchangeResponse>
+  scoreResponsePlaid: any;
+  setScoreResponsePlaid: any;
+  scoreResponseCoinbase: any;
+  setScoreResponseCoinbase: any;
+  chainActivity: null | IChainActivity;
+  setChainActivity: React.Dispatch<React.SetStateAction<IChainActivity | null>>;
+  permissionSig?: StdSignature;
+  setPermissionSig: React.Dispatch<
+    React.SetStateAction<StdSignature | undefined>
   >;
-  plaidMetadata: any;
-  setPlaidMetadata: any;
+}
+
+export interface IChainActivity {
+  scoreSubmitted?: boolean;
+  queryPermit?: string[];
+  permissionKey?: string[];
+  shareableLink?: boolean;
+  dataProvider?: 'coinbase' | 'plaid';
+  scoreAmount?: number;
 }
 
 interface PlaidToken {
@@ -50,7 +70,7 @@ const useSecretContext = () => {
   }
   return context;
 };
-const storageHelper = {
+export const storageHelper = {
   persist: (key: string, item: any) =>
     localStorage.setItem(key, JSON.stringify(item)),
   get: (key: string) => {
@@ -65,18 +85,26 @@ const storageHelper = {
 const ContextProvider = ({ children }: any) => {
   const [secretAddress, setSecretAddress] = useState<string | null>(null);
   const [secretjs, setSecretjs] = useState<SigningCosmWasmClient | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [connectRequest, setConnectRequest] = useState<boolean>(false);
+  const [scoreResponsePlaid, setScoreResponsePlaid] = useState<any>(undefined);
+  const [scoreResponseCoinbase, setScoreResponseCoinbase] =
+    useState<any>(undefined);
   const [coinbaseToken, setCoinbaseToken] = useState<
     ICoinbaseTokenCreateResponse | undefined
   >(undefined);
   const [plaidPublicToken, setPlaidPublicToken] = useState<
     undefined | PlaidToken
   >(undefined);
-  const [plaidMetadata, setPlaidMetadata] =
-    useState<PlaidLinkOnSuccessMetadata | null>(null);
+  const [chainActivity, setChainActivity] = useState<IChainActivity | null>(
+    null
+  );
   const [plaidPublicExchangeResponse, setPlaidPublicExchangeResponse] =
     useState<undefined | ItemPublicTokenExchangeResponse>(undefined);
+
+  const [permissionSig, setPermissionSig] = useState<StdSignature | undefined>(
+    undefined
+  );
 
   const setClearLocalStorage = () => {
     !!secretjs && storageHelper.persist('secretjs', null);
@@ -102,6 +130,19 @@ const ContextProvider = ({ children }: any) => {
     }
   };
 
+  const returnHome = useCallback(() => {
+    (router.pathname.includes('applicant') ||
+      router.pathname.includes('provider')) &&
+      router.push('/');
+  }, []);
+
+  useEffect(() => {
+    // use this to rerouter user to home page if router includes 'applicant' or 'provider'
+    if (!loading) {
+      !secretAddress && returnHome();
+    }
+  }, [returnHome, secretAddress, loading]);
+
   useEffect(() => {
     secretAddress && setConnectRequest(false);
   }, [secretAddress]);
@@ -114,6 +155,10 @@ const ContextProvider = ({ children }: any) => {
   useEffect(() => {
     secretjs && storageHelper.persist('secretjs', secretjs);
     secretAddress && storageHelper.persist('secretAddress', secretAddress);
+    scoreResponsePlaid &&
+      storageHelper.persist('scoreResponsePlaid', scoreResponsePlaid);
+    scoreResponseCoinbase &&
+      storageHelper.persist('scoreResponseCoinbase', scoreResponseCoinbase);
     coinbaseToken && storageHelper.persist('coinbaseToken', coinbaseToken);
     plaidPublicToken &&
       storageHelper.persist('plaidPublicToken', plaidPublicToken);
@@ -122,6 +167,7 @@ const ContextProvider = ({ children }: any) => {
         'plaidPublicExchangeResponse',
         plaidPublicExchangeResponse
       );
+    chainActivity && storageHelper.persist('chainActivity', chainActivity);
 
     setLoading(false);
   }, [
@@ -130,6 +176,9 @@ const ContextProvider = ({ children }: any) => {
     coinbaseToken,
     plaidPublicToken,
     plaidPublicExchangeResponse,
+    scoreResponsePlaid,
+    chainActivity,
+    scoreResponseCoinbase,
   ]);
 
   // HYDRATE CONTEXT HERE:
@@ -137,11 +186,13 @@ const ContextProvider = ({ children }: any) => {
     setSecretjs(storageHelper.get('secretjs'));
     setSecretAddress(storageHelper.get('secretAddress'));
     setCoinbaseToken(storageHelper.get('coinbaseToken'));
-    setPlaidMetadata(storageHelper.get('plaidMetadata'));
     setPlaidPublicToken(storageHelper.get('plaidPublicToken'));
     setPlaidPublicExchangeResponse(
       storageHelper.get('plaidPublicExchangeResponse')
     );
+    setScoreResponsePlaid(storageHelper.get('scoreResponsePlaid'));
+    setScoreResponsePlaid(storageHelper.get('scoreResponseCoinbase'));
+    setChainActivity(storageHelper.get('chainActivity'));
 
     setLoading(false);
   }, []);
@@ -162,10 +213,14 @@ const ContextProvider = ({ children }: any) => {
         coinbaseToken,
         setPlaidPublicToken,
         plaidPublicToken,
-        plaidPublicExchangeResponse,
-        setPlaidPublicExchangeResponse,
-        plaidMetadata,
-        setPlaidMetadata,
+        scoreResponsePlaid,
+        setScoreResponsePlaid,
+        chainActivity,
+        setChainActivity,
+        permissionSig,
+        setPermissionSig,
+        scoreResponseCoinbase,
+        setScoreResponseCoinbase,
       }}
     >
       {children}

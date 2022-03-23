@@ -348,9 +348,6 @@ const ScorePage = () => {
           <div className="flex justify-center items-center flex-col">
             {container}
           </div>
-          {/* <Title className="text-center px-5" style={{ fontWeight: 500 }}>
-            Welcome to <span className="text-primary">SCRTsybil</span>
-          </Title> */}
         </Content>
       </div>
     </Layout>

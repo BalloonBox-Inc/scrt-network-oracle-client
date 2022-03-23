@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
-  reactStrictMode: true,
+  reactStrictMode: false,
   env: {
     PLAID_CLIENT_ID: process.env.PLAID_CLIENT_ID,
     PLAID_URL_SANDBOX: process.env.PLAID_URL_SANDBOX,
