@@ -14,6 +14,7 @@ import { StdSignature } from 'secretjs/types/types';
 
 import { NOTIFICATIONS } from '../constants';
 import { ICoinbaseTokenCreateResponse } from '../pages/api/coinbase';
+import { IScoreResponseCoinbase, IScoreResponsePlaid } from '../types/types';
 import { handleKeplrOpen } from '../utils';
 
 interface ISecretContext {
@@ -36,10 +37,13 @@ interface ISecretContext {
     React.SetStateAction<undefined | PlaidToken>
   >;
   plaidPublicToken: PlaidToken | undefined;
-  scoreResponsePlaid: any;
-  setScoreResponsePlaid: any;
-  scoreResponseCoinbase: any;
-  setScoreResponseCoinbase: any;
+
+  setScoreResponse: React.Dispatch<
+    React.SetStateAction<
+      IScoreResponseCoinbase | IScoreResponsePlaid | undefined
+    >
+  >;
+  scoreResponse: IScoreResponseCoinbase | IScoreResponsePlaid | undefined;
   chainActivity: null | IChainActivity;
   setChainActivity: React.Dispatch<React.SetStateAction<IChainActivity | null>>;
   permissionSig?: StdSignature;
@@ -87,9 +91,9 @@ const ContextProvider = ({ children }: any) => {
   const [secretjs, setSecretjs] = useState<SigningCosmWasmClient | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [connectRequest, setConnectRequest] = useState<boolean>(false);
-  const [scoreResponsePlaid, setScoreResponsePlaid] = useState<any>(undefined);
-  const [scoreResponseCoinbase, setScoreResponseCoinbase] =
-    useState<any>(undefined);
+  const [scoreResponse, setScoreResponse] = useState<
+    IScoreResponseCoinbase | IScoreResponsePlaid | undefined
+  >(undefined);
   const [coinbaseToken, setCoinbaseToken] = useState<
     ICoinbaseTokenCreateResponse | undefined
   >(undefined);
@@ -155,10 +159,7 @@ const ContextProvider = ({ children }: any) => {
   useEffect(() => {
     secretjs && storageHelper.persist('secretjs', secretjs);
     secretAddress && storageHelper.persist('secretAddress', secretAddress);
-    scoreResponsePlaid &&
-      storageHelper.persist('scoreResponsePlaid', scoreResponsePlaid);
-    scoreResponseCoinbase &&
-      storageHelper.persist('scoreResponseCoinbase', scoreResponseCoinbase);
+    scoreResponse && storageHelper.persist('scoreResponse', scoreResponse);
     coinbaseToken && storageHelper.persist('coinbaseToken', coinbaseToken);
     plaidPublicToken &&
       storageHelper.persist('plaidPublicToken', plaidPublicToken);
@@ -176,9 +177,8 @@ const ContextProvider = ({ children }: any) => {
     coinbaseToken,
     plaidPublicToken,
     plaidPublicExchangeResponse,
-    scoreResponsePlaid,
+    scoreResponse,
     chainActivity,
-    scoreResponseCoinbase,
   ]);
 
   // HYDRATE CONTEXT HERE:
@@ -190,12 +190,13 @@ const ContextProvider = ({ children }: any) => {
     setPlaidPublicExchangeResponse(
       storageHelper.get('plaidPublicExchangeResponse')
     );
-    setScoreResponsePlaid(storageHelper.get('scoreResponsePlaid'));
-    setScoreResponsePlaid(storageHelper.get('scoreResponseCoinbase'));
+    setScoreResponse(storageHelper.get('scoreResponse'));
     setChainActivity(storageHelper.get('chainActivity'));
 
     setLoading(false);
   }, []);
+
+  console.log({ Context: { chainActivity, scoreResponse } });
 
   return (
     <Context.Provider
@@ -213,14 +214,12 @@ const ContextProvider = ({ children }: any) => {
         coinbaseToken,
         setPlaidPublicToken,
         plaidPublicToken,
-        scoreResponsePlaid,
-        setScoreResponsePlaid,
+        scoreResponse,
+        setScoreResponse,
         chainActivity,
         setChainActivity,
         permissionSig,
         setPermissionSig,
-        scoreResponseCoinbase,
-        setScoreResponseCoinbase,
       }}
     >
       {children}

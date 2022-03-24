@@ -6,6 +6,8 @@ export const NOTIFICATIONS = {
   PLAID_CONNECTION_ERROR:
     'There was an error connecting to your Plaid account. Please try again.',
   PLAID_CONNECTION_SUCCESS: 'Successfully connected to account via Plaid.',
+  PLAID_CLOSED:
+    'The Plaid window was closed! Unable to connect to your account.',
 };
 
 // const CHAIN_ID = 'holodeck-2'; //THIS NO LONGER WORKS!

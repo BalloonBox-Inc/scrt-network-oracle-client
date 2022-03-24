@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
-import { Typography, Button } from 'antd';
-import { useRouter } from 'next/router';
+import { Button } from 'antd';
 
 import Layout from '@scrtsybil/src/components/Layout';
 import LogoLoader from '@scrtsybil/src/components/LogoLoader';
@@ -10,9 +9,7 @@ import { useSecretContext } from '@scrtsybil/src/context';
 const keplr = '/images/keplr.svg';
 
 const Home = () => {
-  const navigate = useRouter();
-  const { secretjs, loading, connectRequest, setConnectRequest } =
-    useSecretContext();
+  const { loading, connectRequest, setConnectRequest } = useSecretContext();
 
   const handleDisconnectRequest = () => {
     setConnectRequest(false);

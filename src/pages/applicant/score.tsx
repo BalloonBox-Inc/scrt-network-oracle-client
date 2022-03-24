@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { Input, Modal } from 'antd';
+import { useRouter } from 'next/router';
 import { ClipLoader } from 'react-spinners';
 
 import BgImage from '@scrtsybil/src/components/BgImage';
@@ -14,14 +15,21 @@ import {
 
 const ApplicantScorePage = () => {
   const {
-    scoreResponsePlaid,
     setChainActivity,
     chainActivity,
     setPermissionSig,
     permissionSig,
-    scoreResponseCoinbase,
-    setScoreResponseCoinbase,
+    scoreResponse,
+    loading,
   } = useSecretContext();
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!scoreResponse && !loading) {
+      router.push('/applicant/generate');
+    }
+  }, [loading, scoreResponse, router]);
 
   const [showScore, setShowScore] = useState<boolean>(false);
   const [permitQueryModal, setPermitQueryModal] = useState<boolean>(false);
@@ -38,9 +46,14 @@ const ApplicantScorePage = () => {
   const isLoading = status === 'loading';
 
   const handleSaveToBlockchain = () => {
-    chainActivity?.scoreSubmitted
+    chainActivity?.scoreSubmitted && scoreResponse
       ? setModalWarn(true)
-      : handleSetScore({ setStatus, scoreResponse: scoreResponsePlaid });
+      : handleSetScore({
+          setStatus,
+          scoreResponse,
+          setChainActivity,
+          chainActivity,
+        });
   };
 
   const submitQueryAttempt = async () => {
@@ -53,7 +66,7 @@ const ApplicantScorePage = () => {
       if (permissionCreate?.signature) {
         setChainActivity({
           ...chainActivity,
-          queryPermit: chainActivity?.queryPermit
+          queryPermit: chainActivity?.queryPermit?.length
             ? [...chainActivity.queryPermit, permitName]
             : [permitName],
         });
@@ -66,6 +79,7 @@ const ApplicantScorePage = () => {
       setChainActivity({
         ...chainActivity,
         scoreSubmitted: true,
+        scoreAmount: scoreResponse?.score,
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess, setChainActivity]);
@@ -98,25 +112,52 @@ const ApplicantScorePage = () => {
             <h3 className="text-lg mr-2 uppercase font-semibold ">Warning</h3>
           </div>
 
-          <div>
-            You have already submitted your score of{' '}
-            {chainActivity?.scoreAmount}. Are you sure you want to submit a new
-            score of {scoreResponsePlaid?.score || scoreResponseCoinbase?.score}
-            ?
-          </div>
+          {chainActivity?.scoreAmount === scoreResponse?.score ? (
+            <div>
+              You have already submitted a score of {scoreResponse?.score},
+              submit anyway?
+            </div>
+          ) : (
+            <div>
+              You have already submitted your score of{' '}
+              {chainActivity?.scoreAmount}. Are you sure you want to submit a
+              new score of {scoreResponse?.score}?
+            </div>
+          )}
 
-          <div className="flex items-center mt-8">
+          <div className="flex items-center mt-12 space-x-5">
             <Button
               text="Submit to blockchain"
+              classes={{ button: 'text-xs' }}
               onClick={() => {
-                setScoreResponseCoinbase(undefined);
-                storageHelper.persist('scoreAnimationViewed', false);
-                submitQueryAttempt();
+                const scoreSubmitted = chainActivity?.scoreSubmitted;
+                if (scoreSubmitted) {
+                  setChainActivity(null);
+                }
+                storageHelper.persist('chainActivity', null);
+                handleSetScore({
+                  setStatus,
+                  scoreResponse,
+                  setChainActivity,
+                  chainActivity,
+                });
+                setModalWarn(false);
               }}
             />
             <Button
+              text="Create a Permission"
+              style={BUTTON_STYLES.OUTLINE}
+              classes={{ button: 'text-xs' }}
+              onClick={() => {
+                router.push('/applicant/permit');
+              }}
+            />
+          </div>
+          <div className=" w-max mt-6">
+            <Button
               text="Cancel"
               style={BUTTON_STYLES.LINK}
+              classes={{ button: 'text-xs text-left hover:text-blue' }}
               onClick={() => {
                 setModalWarn(false);
               }}
@@ -208,40 +249,43 @@ const ApplicantScorePage = () => {
           </div>
         </div>
       </div>
-      {scoreResponsePlaid?.score ? (
+      {scoreResponse?.score && (
         <div className="flex w-full justify-center">
           <ScoreSpeedometer
             showScore={showScore}
-            score={Math.round(scoreResponsePlaid?.score)}
-          />
-        </div>
-      ) : (
-        <div className="flex w-full justify-center">
-          <ScoreSpeedometer
-            showScore={showScore}
-            score={Math.round(scoreResponseCoinbase?.score)}
+            score={Math.round(scoreResponse?.score)}
           />
         </div>
       )}
-      {showScore && !isSuccess && (
-        <>
-          <div className="px-8 flex -mt-16 justify-center rounded-md z-50 duration-500">
-            <Button
-              onClick={() => setShowScoreDescription(true)}
-              style={BUTTON_STYLES.OUTLINE}
-              text="Explain my score"
-              classes={{ button: 'text-xs' }}
-            />
-          </div>
-          <div className="z-50 flex justify-center mt-8">
-            <Button
-              onClick={() => handleSaveToBlockchain()}
-              style={BUTTON_STYLES.DEFAULT}
-              text={'Save To Blockchain'}
-            />
-          </div>
-        </>
-      )}
+
+      <div
+        className={`px-8 flex -mt-20 justify-center rounded-md z-50 duration-500 ${
+          showScore && !isSuccess ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        <Button
+          onClick={() => setShowScoreDescription(true)}
+          style={BUTTON_STYLES.LINK}
+          text="Explain my score"
+          classes={{ button: 'text-xs text-white hover:text-blue' }}
+        />
+      </div>
+      <div
+        className={`z-50 flex  ${
+          showScore ? 'opacity-100' : 'opacity-0'
+        } justify-center mt-8 duration-500`}
+      >
+        <Button
+          onClick={() =>
+            !isSuccess
+              ? handleSaveToBlockchain()
+              : router.push('/applicant/permit')
+          }
+          style={BUTTON_STYLES.DEFAULT}
+          text={!isSuccess ? 'Save To Blockchain' : 'Create a permission'}
+        />
+      </div>
+
       <Modal
         visible={showScoreDescription}
         footer={null}
@@ -257,7 +301,7 @@ const ApplicantScorePage = () => {
           <div className="p-8 rounded-lg z-50  max-w-xl w-full ">
             <h3 className="text-lg uppercase font-semibold mb-4">Summary</h3>
             <p className="sm:text-base leading-7">
-              {scoreResponsePlaid?.message || scoreResponseCoinbase?.message}
+              {scoreResponse?.message || scoreResponse?.message}
             </p>
           </div>
         </div>
@@ -274,7 +318,6 @@ const ApplicantScorePage = () => {
         size={120}
         color={'rgba(85,42,170, 10)'}
       />
-
       <p className="mt-5 text-sm">Submitting score to the blockchain.</p>
     </div>
   );

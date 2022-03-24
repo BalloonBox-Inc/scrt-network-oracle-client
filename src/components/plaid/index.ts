@@ -1,7 +1,13 @@
 import { useEffect } from 'react';
 
 import { notification } from 'antd';
-import { usePlaidLink, PlaidLinkOptionsWithLinkToken } from 'react-plaid-link';
+import router from 'next/router';
+import {
+  usePlaidLink,
+  PlaidLinkOptionsWithLinkToken,
+  PlaidLinkError,
+  PlaidLinkOnExitMetadata,
+} from 'react-plaid-link';
 
 import { NOTIFICATIONS } from '@scrtsybil/src/constants';
 import { useSecretContext } from '@scrtsybil/src/context';
@@ -15,15 +21,16 @@ interface Props {
   children?: React.ReactNode;
   router: any;
   setAwaitingScoreResponse: any;
+  setStartPlaidLink: any;
 }
 
 const LaunchLink = (props: Props) => {
-  const { setScoreResponsePlaid, scoreResponsePlaid } = useSecretContext();
+  const { setScoreResponse, scoreResponse } = useSecretContext();
   const onSuccess = async (publicToken: string, metadata: any) => {
     const { plaid_score_res } = await exchangePlaidToken({ publicToken });
-
     if (plaid_score_res.status_code === 200) {
-      setScoreResponsePlaid(plaid_score_res);
+      router.replace('/applicant/generate?type=plaid&status=success');
+      setScoreResponse(plaid_score_res);
     } else {
       props.router.replace('/applicant/generate');
       notification.error({
@@ -33,16 +40,33 @@ const LaunchLink = (props: Props) => {
     props.setAwaitingScoreResponse(false);
   };
 
+  const onExit = async (
+    error: null | PlaidLinkError,
+    metadata: PlaidLinkOnExitMetadata
+  ) => {
+    props.setAwaitingScoreResponse(false);
+    props.router.replace('/applicant/generate');
+    props.setStartPlaidLink(false);
+    notification.error({
+      message: NOTIFICATIONS.PLAID_CLOSED,
+    });
+  };
+
   const config: PlaidLinkOptionsWithLinkToken = {
     onSuccess,
     token: props.token,
+    onExit,
   };
 
   const { open } = usePlaidLink(config);
 
   useEffect(() => {
-    !scoreResponsePlaid && open();
-  }, [open, scoreResponsePlaid]);
+    if (scoreResponse?.endpoint.includes('plaid')) {
+      router.replace('/applicant/generate?type=plaid&status=success');
+    } else {
+      open();
+    }
+  }, [open, scoreResponse]);
 
   return null;
 };
