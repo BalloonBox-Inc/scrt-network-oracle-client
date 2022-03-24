@@ -21,7 +21,6 @@ const Connect = () => {
   const [shrinkAnimation, setShrinkAnimation] = useState<boolean>(false); // added so that it doesn't shrink on load
 
   const {
-    secretjs,
     setSecretjs,
     secretAddress,
     setSecretAddress,
@@ -61,8 +60,7 @@ const Connect = () => {
       <div
         className={`flex justify-center items-center bg-gradient-to-b from-purple to-blue hover:opacity-75
         ${showWallet ? 'growLeft' : undefined} 
-        ${!showWallet && shrinkAnimation ? 'shrinkRight' : undefined}
-        ${secretjs ? 'opacity-100' : 'opacity-100'} `}
+        ${!showWallet && shrinkAnimation ? 'shrinkRight' : undefined}`}
         style={{
           width: secretAddress ? '2.8rem' : 'fit-content',
           height: '2.8rem',
@@ -100,7 +98,7 @@ const Connect = () => {
             alt="keplr_logo"
             src={logoImage}
           />
-          {!secretjs && <p className="pl-2 pr-4">Connect</p>}
+          {!secretAddress && <p className="pl-2 pr-4">Connect</p>}
         </div>
         {secretAddress && (
           <div className={`mx-2 flex text-xs items-center overflow-x-hidden`}>

@@ -22,9 +22,8 @@ const GenerateScorePage = () => {
     setPlaidPublicToken,
     plaidPublicToken,
     setCoinbaseToken,
-    scoreResponsePlaid,
-    setScoreResponsePlaid,
-    setScoreResponseCoinbase,
+    setScoreResponse,
+    scoreResponse,
   } = useSecretContext();
 
   const router = useRouter();
@@ -40,18 +39,13 @@ const GenerateScorePage = () => {
     storageHelper.persist('scoreAnimationViewed', false);
     setStartPlaidLink(false);
     setAwaitingScoreResponse(false);
-    setScoreResponsePlaid(undefined);
+    setScoreResponse(undefined);
     setPlaidPublicToken(undefined);
-    setScoreResponseCoinbase(undefined);
     router.replace('/applicant/generate');
   };
 
   useEffect(() => {
     router.query.status === 'loading' && setAwaitingScoreResponse(true);
-    router.query.status === 'error' &&
-      typeof router?.query?.type === 'string' &&
-      setAwaitingScoreResponse(false) &&
-      connectionError(router?.query?.type);
   }, [router.query]);
 
   useEffect(() => {
@@ -70,12 +64,16 @@ const GenerateScorePage = () => {
           );
 
           const { coinbaseScore } = await coinbaseRes.json();
-
           if (coinbaseScore.status === 'success') {
-            setScoreResponseCoinbase(coinbaseScore);
+            setScoreResponse(coinbaseScore);
             router.replace('/applicant/generate?type=coinbase&status=success');
           } else {
-            router.replace('/applicant/generate?type=coinbase&status=error');
+            setScoreResponse(undefined);
+            router.replace('/applicant/generate');
+            setAwaitingScoreResponse(false);
+            notification.error({
+              message: 'Error connecting to Coinbase, try again later',
+            });
           }
         }
       } catch (error) {
@@ -87,38 +85,39 @@ const GenerateScorePage = () => {
     if (router?.query?.code) {
       getCoinbaseToken(router.query.code as string);
     }
-  }, [router, setCoinbaseToken, setScoreResponseCoinbase]);
+  }, [router, setCoinbaseToken, setScoreResponse]);
 
   const handleCoinbaseConnect = async () => {
-    setAwaitingScoreResponse(true);
-    const res = await fetch('/api/coinbase');
-    const resJson = await res.json();
-    if (resJson.url) {
-      window.location.href = resJson.url;
+    if (scoreResponse?.endpoint.includes('coinbase')) {
+      router.replace('/applicant/generate?type=coinbase&status=success');
+    } else {
+      setAwaitingScoreResponse(true);
+      const res = await fetch('/api/coinbase');
+      const resJson = await res.json();
+      if (resJson.url) {
+        window.location.href = resJson.url;
+      }
     }
   };
 
   const handlePlaidConnect = async () => {
-    router.replace('/applicant/generate?type=plaid&status=loading');
-    try {
-      const plaidRes = await fetch('/api/plaid');
-      const plaidResJson: IPlaidTokenCreateResponse = await plaidRes.json();
-      setAwaitingScoreResponse(true);
-      if (plaidResJson?.link_token) {
-        setStartPlaidLink(true);
-        setPlaidPublicToken({ publicToken: plaidResJson.link_token });
+    if (plaidPublicToken) {
+      setStartPlaidLink(true);
+    } else {
+      router.replace('/applicant/generate?type=plaid&status=loading');
+      try {
+        const plaidRes = await fetch('/api/plaid');
+        const plaidResJson: IPlaidTokenCreateResponse = await plaidRes.json();
+        setAwaitingScoreResponse(true);
+        if (plaidResJson?.link_token) {
+          setStartPlaidLink(true);
+          setPlaidPublicToken({ publicToken: plaidResJson.link_token });
+        }
+      } catch (error) {
+        connectionError('plaid');
       }
-    } catch (error) {
-      connectionError('plaid');
     }
   };
-  useEffect(() => {
-    queryType !== 'coinbase' &&
-      scoreResponsePlaid &&
-      awaitingScoreResponse &&
-      router.replace('/applicant/generate?type=plaid&status=success') &&
-      setAwaitingScoreResponse(false);
-  }, [router, queryType, scoreResponsePlaid, awaitingScoreResponse]);
 
   const loadingContainer = (
     <div className="w-full flex-col  flex justify-center items-center z-50">
@@ -135,7 +134,11 @@ const GenerateScorePage = () => {
     <Modal
       footer={null}
       style={{ top: '30%' }}
-      closable={false}
+      closable={true}
+      onCancel={() => {
+        router.push('/applicant/generate');
+        setAwaitingScoreResponse(false);
+      }}
       visible={queryStatus === 'success'}
     >
       <div className="h-60 w-full space-y-2 flex justify-center items-center flex-col">
@@ -160,7 +163,9 @@ const GenerateScorePage = () => {
       <div className="flex flex-col w-full justify-center items-center">
         <div className=" w-max">
           <Button
-            onClick={() => router.push('/applicant/score')}
+            onClick={() => {
+              router.push('/applicant/score');
+            }}
             text="Continue to score calculation"
             style={BUTTON_STYLES.DEFAULT}
           />
@@ -184,6 +189,7 @@ const GenerateScorePage = () => {
           setAwaitingScoreResponse={setAwaitingScoreResponse}
           router={router}
           token={plaidPublicToken.publicToken}
+          setStartPlaidLink={setStartPlaidLink}
         />
       )}
       {awaitingScoreResponse && loadingContainer}

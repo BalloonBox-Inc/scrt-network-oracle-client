@@ -8,7 +8,7 @@ import { BORDER_GRADIENT_STYLE } from '@scrtsybil/src/constants';
 
 const ApplicantServicesPage = () => {
   const [selection, setSelection] = useState<
-    null | 'generate' | 'query' | 'revoke' | 'create'
+    null | 'generate' | 'query' | 'permit?type=revoke' | 'permit'
   >(null);
   return (
     <div className="px-14 py-20 ">
@@ -68,11 +68,11 @@ const ApplicantServicesPage = () => {
             className="flex z-50 justify-center w-80  sm:w-115  rounded-md p-1"
             style={{
               background:
-                selection === 'create' ? BORDER_GRADIENT_STYLE : 'transparent',
+                selection === 'permit' ? BORDER_GRADIENT_STYLE : 'transparent',
             }}
           >
             <div
-              onClick={() => setSelection('create')}
+              onClick={() => setSelection('permit')}
               className={`bg-gray-900 cursor-pointer w-full rounded-md`}
             >
               <div className="text-center">
@@ -86,11 +86,13 @@ const ApplicantServicesPage = () => {
             className="flex z-50 justify-center w-80  sm:w-115  rounded-md p-1"
             style={{
               background:
-                selection === 'revoke' ? BORDER_GRADIENT_STYLE : 'transparent',
+                selection === 'permit?type=revoke'
+                  ? BORDER_GRADIENT_STYLE
+                  : 'transparent',
             }}
           >
             <div
-              onClick={() => setSelection('revoke')}
+              onClick={() => setSelection('permit?type=revoke')}
               className={`bg-gray-900 cursor-pointer w-full rounded-md`}
             >
               <div className="text-center">
