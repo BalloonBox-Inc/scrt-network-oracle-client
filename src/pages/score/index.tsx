@@ -54,6 +54,7 @@ const ScorePage = () => {
       window.getEnigmaUtils(CHAIN_ID)
       // CUSTOM_FEES
     );
+
     const getScore = { get_score: { address: addr } };
 
     const response = await cosmJS.queryContractSmart(contractAddress, getScore);
@@ -71,7 +72,7 @@ const ScorePage = () => {
     const keplrOfflineSigner = window.getOfflineSigner(CHAIN_ID);
     const accounts = await keplrOfflineSigner.getAccounts();
     // @ts-ignore
-    const addr = accounts[0].address;
+    const [{ address: addr }] = accounts;
 
     const cosmJS = new SigningCosmWasmClient(
       REST_URL,
@@ -85,13 +86,14 @@ const ScorePage = () => {
 
     const getScoreWithPermission = {
       with_permit: {
+        // address: 'secret1nl7dnjcs9w2a4mn4q43nwyptf3uyllp3xh44j0',
         query: { balance: {} },
         permit: {
           params: {
             permit_name: permissionName,
+            permissions: ['balance'],
             allowed_tokens: [contractAddress],
             chain_id: CHAIN_ID,
-            permissions: ['balance'],
           },
           signature: {
             pub_key: {
@@ -165,6 +167,26 @@ const ScorePage = () => {
       });
     }
   };
+  // TODO:
+  // const handleCreateViewingKey = async () => {
+  //   try {
+  //     // @ts-ignore
+  //     const keplrOfflineSigner = window.getOfflineSigner(CHAIN_ID);
+  //     const accounts = await keplrOfflineSigner.getAccounts();
+  //     // @ts-ignore
+  //     const addr = accounts[0].address;
+
+  //     const cosmJS = new SigningCosmWasmClient(
+  //       REST_URL,
+  //       addr,
+  //       keplrOfflineSigner as any,
+  //       // @ts-ignore
+  //       window.getEnigmaUtils(CHAIN_ID),
+  //       CUSTOM_FEES
+  //     );
+  //     // eslint-disable-next-line no-empty
+  //   } catch (error) {}
+  // };
 
   const handlePermissionRevoke = async () => {
     // @ts-ignore
@@ -212,7 +234,9 @@ const ScorePage = () => {
       CUSTOM_FEES
     );
 
-    const handleMsg = { record: { score: 400 } };
+    const handleMsg = {
+      record: { score: 400, description: 'this is a description of the score' },
+    };
     const response = await cosmJS.execute(contractAddress, handleMsg);
     const str = Buffer.from(response.data.buffer).toString();
 

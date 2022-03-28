@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 
 import { notification, Modal } from 'antd';
 import { useRouter } from 'next/router';
-import ClipLoader from 'react-spinners/ClipLoader';
 
 import BgImage from '@scrtsybil/src/components/BgImage';
 import Button, { BUTTON_STYLES } from '@scrtsybil/src/components/Button';
+import { LoadingContainer } from '@scrtsybil/src/components/LoadingContainer';
 import LaunchLink from '@scrtsybil/src/components/plaid';
 import { BORDER_GRADIENT_STYLE } from '@scrtsybil/src/constants';
 import { storageHelper, useSecretContext } from '@scrtsybil/src/context';
@@ -101,6 +101,8 @@ const GenerateScorePage = () => {
   };
 
   const handlePlaidConnect = async () => {
+    // todo:
+    // Handle expired token error: "provided link token is expired" is returned
     if (plaidPublicToken) {
       setStartPlaidLink(true);
     } else {
@@ -118,17 +120,6 @@ const GenerateScorePage = () => {
       }
     }
   };
-
-  const loadingContainer = (
-    <div className="w-full flex-col  flex justify-center items-center z-50">
-      <ClipLoader
-        speedMultiplier={0.75}
-        size={120}
-        color={'rgba(85,42,170, 10)'}
-      />
-      <p className="mt-5 text-sm">Requesting Score, this may take a minute.</p>
-    </div>
-  );
 
   const scoreResponseModal = (
     <Modal
@@ -192,7 +183,9 @@ const GenerateScorePage = () => {
           setStartPlaidLink={setStartPlaidLink}
         />
       )}
-      {awaitingScoreResponse && loadingContainer}
+      {awaitingScoreResponse && (
+        <LoadingContainer text="Requesting Score, this may take a minute." />
+      )}
       {!awaitingScoreResponse && (
         <>
           <div className="w-full text-center">

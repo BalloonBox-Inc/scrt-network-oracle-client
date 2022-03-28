@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 
 import { Input, Modal } from 'antd';
 import { useRouter } from 'next/router';
-import { ClipLoader } from 'react-spinners';
 
 import BgImage from '@scrtsybil/src/components/BgImage';
 import Button, { BUTTON_STYLES } from '@scrtsybil/src/components/Button';
+import { LoadingContainer } from '@scrtsybil/src/components/LoadingContainer';
 import ScoreSpeedometer from '@scrtsybil/src/components/score';
 import { storageHelper, useSecretContext } from '@scrtsybil/src/context';
 import {
@@ -311,21 +311,14 @@ const ApplicantScorePage = () => {
     </div>
   );
 
-  const loadingContainer = (
-    <div className="w-full flex-col  flex justify-center items-center z-50">
-      <ClipLoader
-        speedMultiplier={0.75}
-        size={120}
-        color={'rgba(85,42,170, 10)'}
-      />
-      <p className="mt-5 text-sm">Submitting score to the blockchain.</p>
-    </div>
-  );
-
   return (
     <>
       <BgImage />
-      {isLoading ? loadingContainer : mainScoreContainer}
+      {isLoading ? (
+        <LoadingContainer text="Submitting score to the blockchain." />
+      ) : (
+        mainScoreContainer
+      )}
     </>
   );
 };
