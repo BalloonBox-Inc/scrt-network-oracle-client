@@ -4,8 +4,8 @@ import { Configuration, PlaidApi, PlaidEnvironments } from 'plaid';
 const ENV_URL = process.env.PLAID_URL_SANDBOX;
 const CLIENT_ID = process.env.PLAID_CLIENT_ID;
 const SECRET_KEY = process.env.PLAID_SECRET_KEY_SANDBOX;
+const { COINMARKET_KEY } = process.env;
 const PLAID_ENDPOINT = `${process.env.BACKEND_BASE_URL}/credit_score/plaid`;
-const REDIRECT_URL = `${process.env.NEXT_BASE_URL}/applicant/generate?type=plaid&status=loading`;
 const clientConfiguration = new Configuration({
   basePath: PlaidEnvironments.sandbox,
   baseOptions: {
@@ -83,6 +83,7 @@ export default async function handler(
         plaid_token: access_token,
         plaid_client_id: CLIENT_ID,
         plaid_client_secret: SECRET_KEY,
+        coinmarketcap_key: COINMARKET_KEY,
       };
 
       let plaid_score_res = await get_plaid_data(req, res, body);
