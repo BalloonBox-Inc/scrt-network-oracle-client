@@ -6,3 +6,10 @@ export interface IPermitQueryResponse {
     timstamp: number;
   };
 }
+
+export interface IScoreQueryResponse {
+  description: string;
+  score: number;
+  status: string;
+  timstamp: number;
+}

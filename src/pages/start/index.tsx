@@ -37,9 +37,8 @@ const StartPage = () => {
               <div className="text-left ">
                 <h3 className="text-lg sm:text-xl">Applicant</h3>
                 <p className="text-xs font-thin">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Fugiat ipsum, voluptate incidunt quos, ullam error voluptates
-                  magnam ab.
+                  I would like to generate a credit score and store it on the
+                  SCRT Network.
                 </p>
               </div>
             </div>
@@ -60,9 +59,8 @@ const StartPage = () => {
               <div className="text-left">
                 <h3 className="text-lg sm:text-xl">Service Provider</h3>
                 <p className="text-xs font-thin">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Fugiat ipsum, voluptate incidunt quos, ullam error voluptates
-                  magnam ab.
+                  I would like to see an applicant&apos;s score already stored
+                  on the SCRT Network.
                 </p>
               </div>
             </div>

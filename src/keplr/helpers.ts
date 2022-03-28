@@ -10,11 +10,47 @@ import {
   CHAIN_ID,
 } from '@scrtsybil/src/constants';
 import { IChainActivity } from '@scrtsybil/src/context';
-import { IPermitQueryResponse } from '@scrtsybil/src/types/contract';
+import {
+  IPermitQueryResponse,
+  IScoreQueryResponse,
+} from '@scrtsybil/src/types/contract';
 import {
   IScoreResponsePlaid,
   IScoreResponseCoinbase,
 } from '@scrtsybil/src/types/types';
+
+export const handleQueryScore = async () => {
+  try {
+    // @ts-ignore
+    const keplrOfflineSigner = window.getOfflineSigner(CHAIN_ID);
+    const accounts = await keplrOfflineSigner.getAccounts();
+    // @ts-ignore
+    const addr = accounts[0].address;
+
+    const cosmJS = new SigningCosmWasmClient(
+      REST_URL,
+      addr,
+      keplrOfflineSigner as any,
+      // @ts-ignore
+      window.getEnigmaUtils(CHAIN_ID)
+      // CUSTOM_FEES
+    );
+
+    const getScore = { get_score: { address: addr } };
+
+    const response: IScoreQueryResponse = await cosmJS.queryContractSmart(
+      SECRET_CONTRACT_ADDR,
+      getScore
+    );
+
+    if (response.score) {
+      return { status: 'success', response };
+    }
+    return { status: 'error', response };
+  } catch (error) {
+    return { status: 'error', error };
+  }
+};
 
 export const handleSetScore = async ({
   setStatus,
