@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 
-import { Modal, notification } from 'antd';
+import { Modal } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { isEmpty, replace } from 'ramda';
-import { ClipLoader } from 'react-spinners';
 import { StdSignature } from 'secretjs/types/types';
 
 import BgImage from '@scrtsybil/src/components/BgImage';
 import Button from '@scrtsybil/src/components/Button';
+import { LoadingContainer } from '@scrtsybil/src/components/LoadingContainer';
 import { useSecretContext } from '@scrtsybil/src/context';
 import {
   generatePermission,
@@ -31,8 +31,6 @@ const PermissionPage = () => {
   const isRevoke = revokeOrCreate === 'revoke';
 
   useEffect(() => {
-    // if(router.query)
-
     isEmpty(router.query) && router.replace('/applicant/permit?type=create');
   }, [router]);
 
@@ -47,25 +45,41 @@ const PermissionPage = () => {
 
   const { setChainActivity, chainActivity } = useSecretContext();
 
+  const handleRevokePermit = async () => {
+    if (inputData) {
+      setStatus('loading');
+      const permitRevokeRes = await handlePermissionRevoke({
+        permissionName: inputData,
+        setChainActivity,
+        chainActivity,
+      });
+      if (permitRevokeRes) {
+        setStatus(undefined);
+        setinputData(undefined);
+      }
+    }
+  };
+
+  const handleCreatePermit = async () => {
+    if (inputData) {
+      setStatus('loading');
+      const inputDataWithoutSpaces = replace(/ /g, '_', inputData.trim());
+      const permitCreateRes = await generatePermission({
+        permissionName: inputDataWithoutSpaces,
+      });
+      setStatus(undefined);
+      if (permitCreateRes?.signature) {
+        setPermissionSig(permitCreateRes?.signature);
+      }
+    }
+  };
+
   const inputDataInput = (onChange?: (e?: any) => void) => (
     <input
       onChange={onChange}
       className=" z-50 focus-visible:outline-blue-600 focus-visible:outline-none  font-mono text-blue-600 bg-input-bg w-full py-3 px-3 rounded-md mb-4"
       type={'text'}
     />
-  );
-
-  const loadingContainer = (
-    <div className="w-full flex-col  flex justify-center items-center z-50">
-      <ClipLoader
-        speedMultiplier={0.75}
-        size={120}
-        color={'rgba(85,42,170, 10)'}
-      />
-      <p className="mt-5 text-sm">
-        {isRevoke ? 'Revoking Permit Query' : 'Creating a Permit'}
-      </p>
-    </div>
   );
 
   const permitModal = (
@@ -135,42 +149,9 @@ const PermissionPage = () => {
             text={isCreate ? 'Create' : 'Revoke'}
             classes={{ container: 'mr-3' }}
             isDisabled={!inputData}
-            onClick={async () => {
-              if (inputData) {
-                setStatus('loading');
-                if (isRevoke) {
-                  const permitRevokeRes = await handlePermissionRevoke({
-                    permissionName: inputData,
-                    setChainActivity,
-                    chainActivity,
-                  });
-                  if (permitRevokeRes) {
-                    setStatus(undefined);
-                    setinputData(undefined);
-                  }
-                }
-                if (isCreate) {
-                  const inputDataWithoutSpaces = replace(
-                    / /g,
-                    '_',
-                    inputData.trim()
-                  );
-                  const permitCreateRes = await generatePermission({
-                    permissionName: inputDataWithoutSpaces,
-                  });
-                  setStatus(undefined);
-
-                  if (permitCreateRes?.signature) {
-                    setPermissionSig(permitCreateRes?.signature);
-                  } else {
-                    notification.error({
-                      message:
-                        'There was an error creating your permit. Please try again.',
-                    });
-                  }
-                }
-              }
-            }}
+            onClick={() =>
+              isRevoke ? handleRevokePermit() : handleCreatePermit()
+            }
           />
           <Link
             href={
@@ -191,7 +172,13 @@ const PermissionPage = () => {
   return (
     <>
       <BgImage />
-      {status ? loadingContainer : mainContainer}
+      {status ? (
+        <LoadingContainer
+          text={isRevoke ? 'Revoking Permit Query' : 'Creating a Permit'}
+        />
+      ) : (
+        mainContainer
+      )}
       {permitModal}
     </>
   );

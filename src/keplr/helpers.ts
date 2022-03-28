@@ -8,9 +8,13 @@ import {
   CUSTOM_FEES,
   SECRET_CONTRACT_ADDR,
   CHAIN_ID,
-} from '../constants';
-import { IChainActivity } from '../context';
-import { IScoreResponsePlaid, IScoreResponseCoinbase } from '../types/types';
+} from '@scrtsybil/src/constants';
+import { IChainActivity } from '@scrtsybil/src/context';
+import { IPermitQueryResponse } from '@scrtsybil/src/types/contract';
+import {
+  IScoreResponsePlaid,
+  IScoreResponseCoinbase,
+} from '@scrtsybil/src/types/types';
 
 export const handleSetScore = async ({
   setStatus,
@@ -239,5 +243,81 @@ export const generatePermission = async ({
       message: 'There was an error creating your permit. Please try again.',
     });
     return { status: error };
+  }
+};
+
+// PROVIDER HELPERS
+
+interface IRequestAsProviderData {
+  permitName: string;
+  publicAddress: string;
+  permitSignature: string;
+}
+
+export const queryAsServProvider = async ({
+  requestData,
+}: {
+  requestData: IRequestAsProviderData;
+}) => {
+  try {
+    // @ts-ignore
+    const keplrOfflineSigner = window.getOfflineSigner(CHAIN_ID);
+    const accounts = await keplrOfflineSigner.getAccounts();
+    // @ts-ignore
+    const addr = accounts[0].address;
+
+    const cosmJS = new SigningCosmWasmClient(
+      REST_URL,
+      addr,
+      keplrOfflineSigner as any,
+      // @ts-ignore
+      window.getEnigmaUtils(CHAIN_ID),
+      CUSTOM_FEES
+    );
+
+    const getScoreWithPermission = {
+      with_permit: {
+        query: { balance: {} },
+        permit: {
+          params: {
+            permit_name: requestData.permitName,
+            allowed_tokens: [SECRET_CONTRACT_ADDR],
+            chain_id: CHAIN_ID,
+            permissions: ['balance'],
+          },
+          signature: {
+            pub_key: {
+              type: 'tendermint/PubKeySecp256k1',
+              value: requestData?.publicAddress,
+            },
+            signature: requestData?.permitSignature,
+          },
+        },
+      },
+    };
+
+    const response: IPermitQueryResponse = await cosmJS.queryContractSmart(
+      SECRET_CONTRACT_ADDR,
+      getScoreWithPermission
+    );
+
+    if (response.Ok) {
+      notification.success({
+        message: `Score queried: ${response.Ok.score}`,
+      });
+      return { status: 'success', response };
+    }
+
+    notification.error({
+      message:
+        "There was an error querying the user's score. Please verify that your details are correct.",
+    });
+    return { status: 'error', response };
+  } catch (error) {
+    notification.error({
+      message:
+        "There was an error querying the user's score.  Please verify that your details are correct.",
+    });
+    return { status: 'error', error };
   }
 };
