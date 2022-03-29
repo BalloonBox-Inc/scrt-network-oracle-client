@@ -1,5 +1,6 @@
+import React from 'react';
+
 import { notification } from 'antd';
-import { without } from 'ramda';
 import { SigningCosmWasmClient } from 'secretjs';
 import { StdSignature } from 'secretjs/types/types';
 
@@ -9,8 +10,9 @@ import {
   SECRET_CONTRACT_ADDR,
   CHAIN_ID,
 } from '@scrtsybil/src/constants';
-import { IChainActivity } from '@scrtsybil/src/context';
+import { CHAIN_ACTIVITIES } from '@scrtsybil/src/context';
 import {
+  IGenerateViewingKeyResponse,
   IPermitQueryResponse,
   IScoreQueryResponse,
 } from '@scrtsybil/src/types/contract';
@@ -19,49 +21,17 @@ import {
   IScoreResponseCoinbase,
 } from '@scrtsybil/src/types/types';
 
-export const handleQueryScore = async () => {
-  try {
-    // @ts-ignore
-    const keplrOfflineSigner = window.getOfflineSigner(CHAIN_ID);
-    const accounts = await keplrOfflineSigner.getAccounts();
-    // @ts-ignore
-    const addr = accounts[0].address;
-
-    const cosmJS = new SigningCosmWasmClient(
-      REST_URL,
-      addr,
-      keplrOfflineSigner as any,
-      // @ts-ignore
-      window.getEnigmaUtils(CHAIN_ID)
-      // CUSTOM_FEES
-    );
-
-    const getScore = { get_score: { address: addr } };
-
-    const response: IScoreQueryResponse = await cosmJS.queryContractSmart(
-      SECRET_CONTRACT_ADDR,
-      getScore
-    );
-
-    if (response.score) {
-      return { status: 'success', response };
-    }
-    return { status: 'error', response };
-  } catch (error) {
-    return { status: 'error', error };
-  }
-};
-
 export const handleSetScore = async ({
   setStatus,
   scoreResponse,
-  setChainActivity,
-  chainActivity,
+  handleAddToChainActivity,
 }: {
   setStatus: (s: 'loading' | 'error' | 'success' | undefined) => void;
   scoreResponse: IScoreResponsePlaid | IScoreResponseCoinbase | undefined;
-  setChainActivity: React.Dispatch<React.SetStateAction<IChainActivity | null>>;
-  chainActivity: IChainActivity | null;
+  handleAddToChainActivity: (
+    k: CHAIN_ACTIVITIES,
+    value: string | number | boolean
+  ) => void;
 }) => {
   if (scoreResponse) {
     setStatus('loading');
@@ -92,12 +62,12 @@ export const handleSetScore = async ({
 
       if (str.includes('Score recorded')) {
         setStatus('success');
-        setChainActivity({
-          ...chainActivity,
-          scoreAmount: scoreResponse.score,
-          scoreSubmitted: true,
-          dataProvider: 'coinbase',
-        });
+        handleAddToChainActivity(
+          CHAIN_ACTIVITIES.scoreAmount,
+          scoreResponse.score
+        );
+        handleAddToChainActivity(CHAIN_ACTIVITIES.scoreSubmitted, true);
+        handleAddToChainActivity(CHAIN_ACTIVITIES.dataProvider, 'coinbase');
 
         return notification.success({
           message: 'Score recorded to blockchain 🎉',
@@ -114,12 +84,71 @@ export const handleSetScore = async ({
   return null;
 };
 
+export const handleSetViewingKey = async ({ entropy }: { entropy: string }) => {
+  try {
+    // @ts-ignore
+    const keplrOfflineSigner = window.getOfflineSigner(CHAIN_ID);
+    const accounts = await keplrOfflineSigner.getAccounts();
+    // @ts-ignore
+    const addr = accounts[0].address;
+
+    const cosmJS = new SigningCosmWasmClient(
+      REST_URL,
+      addr,
+      keplrOfflineSigner as any,
+      // @ts-ignore
+      window.getEnigmaUtils(CHAIN_ID),
+      CUSTOM_FEES
+    );
+
+    const handleMsg = {
+      generate_viewing_key: {
+        padding: 'extra padding',
+        entropy,
+      },
+    };
+    const response = await cosmJS.execute(SECRET_CONTRACT_ADDR, handleMsg);
+
+    const responseParsed: IGenerateViewingKeyResponse = await JSON.parse(
+      Buffer.from(response.data.buffer).toString()
+    );
+
+    if (responseParsed?.generate_viewing_key?.key) {
+      notification.success({
+        message: 'Viewing Key generated successfully.',
+      });
+
+      return { response: responseParsed, status: 'success' };
+    }
+    return { response: responseParsed, status: 'error' };
+    // if (str.includes('Score recorded')) {
+    //   setChainActivity({
+    //     ...chainActivity,
+    //     scoreAmount: scoreResponse.score,
+    //     scoreSubmitted: true,
+    //     dataProvider: 'coinbase',
+    //   });
+
+    //   return notification.success({
+    //     message: 'Score recorded to blockchain 🎉',
+    //   });
+    // }
+  } catch (error) {
+    notification.error({
+      message: 'Viewing key was not generated. Please try again.',
+    });
+    return { error, status: 'error' };
+  }
+};
+
 export const handleGeneratePermissionQuery = async ({
   permissionName,
   setPermissionSig,
 }: {
   permissionName: string;
-  setPermissionSig: ({ pub_key, signature }: StdSignature) => void;
+  setPermissionSig: React.Dispatch<
+    React.SetStateAction<{ name: string; signature: StdSignature } | undefined>
+  >;
 }) => {
   try {
     const allowedTokens = [SECRET_CONTRACT_ADDR];
@@ -162,7 +191,7 @@ export const handleGeneratePermissionQuery = async ({
           }
         );
 
-      setPermissionSig(signature);
+      setPermissionSig({ name: permissionName, signature });
       notification.success({ message: 'Success!' });
       return { status: 'success', signature };
     }
@@ -177,12 +206,8 @@ export const handleGeneratePermissionQuery = async ({
 
 export const handlePermissionRevoke = async ({
   permissionName,
-  chainActivity,
-  setChainActivity,
 }: {
   permissionName: string;
-  chainActivity: IChainActivity | null;
-  setChainActivity: React.Dispatch<React.SetStateAction<IChainActivity | null>>;
 }) => {
   try {
     // @ts-ignore
@@ -204,13 +229,8 @@ export const handlePermissionRevoke = async ({
     const response = await cosmJS.execute(SECRET_CONTRACT_ADDR, handleMsg);
 
     const str = Buffer.from(response.data.buffer).toString();
+
     if (str.includes('success')) {
-      setChainActivity({
-        ...chainActivity,
-        queryPermit: chainActivity?.queryPermit?.includes(permissionName)
-          ? without([permissionName], [...chainActivity.queryPermit])
-          : [],
-      });
       notification.success({
         message: `Successfully revoked ${permissionName}!`,
       });
@@ -282,15 +302,49 @@ export const generatePermission = async ({
   }
 };
 
-// PROVIDER HELPERS
+export const queryScoreWithViewingKey = async (
+  address: string,
+  viewingKey: string
+) => {
+  try {
+    // @ts-ignore
+    const keplrOfflineSigner = window.getOfflineSigner(CHAIN_ID);
+    const accounts = await keplrOfflineSigner.getAccounts();
+    // @ts-ignore
+    const addr = accounts[0].address;
 
+    const cosmJS = new SigningCosmWasmClient(
+      REST_URL,
+      addr,
+      keplrOfflineSigner as any,
+      // @ts-ignore
+      window.getEnigmaUtils(CHAIN_ID)
+      // CUSTOM_FEES
+    );
+
+    const viewingKeyMsg = { read: { address, key: viewingKey } };
+
+    const response: IScoreQueryResponse = await cosmJS.queryContractSmart(
+      SECRET_CONTRACT_ADDR,
+      viewingKeyMsg
+    );
+
+    if (response.score) {
+      notification.success({ message: 'Success!' });
+      return { status: 'success', response };
+    }
+    return { status: 'error', response };
+  } catch (error) {
+    return { status: 'error', error };
+  }
+};
 interface IRequestAsProviderData {
   permitName: string;
   publicAddress: string;
   permitSignature: string;
 }
 
-export const queryAsServProvider = async ({
+export const queryScoreWithPermit = async ({
   requestData,
 }: {
   requestData: IRequestAsProviderData;

@@ -11,14 +11,18 @@ import Image from 'next/image';
 import logoImage from '@scrtsybil/public/images/keplr.svg';
 import { useSecretContext } from '@scrtsybil/src/context';
 
-const Connect = () => {
+const MIN_WIDTH_TO_SHOW_ADDRESS = 440;
+
+const Connect = ({ showWallet, setShowWallet }: any) => {
   const handleKeyStoreChange = () => {
     // eslint-disable-next-line no-restricted-globals
     location.reload();
   };
-  const [showWallet, setShowWallet] = useState<boolean>(false);
+  // const [showWallet, setShowWallet] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [shrinkAnimation, setShrinkAnimation] = useState<boolean>(false); // added so that it doesn't shrink on load
+
+  const [windowWidth, setWindowWidth] = useState<number | undefined>(undefined);
 
   const {
     setSecretjs,
@@ -29,6 +33,26 @@ const Connect = () => {
     connectRequest,
     setConnectRequest,
   } = useSecretContext();
+
+  useEffect(() => {
+    const handleWindowResize = () => {
+      setWindowWidth(window.innerWidth);
+      if (
+        windowWidth &&
+        windowWidth > MIN_WIDTH_TO_SHOW_ADDRESS &&
+        showWallet
+      ) {
+        setShowWallet(false);
+      }
+    };
+
+    if (typeof window !== 'undefined') {
+      handleWindowResize();
+      window.addEventListener('resize', handleWindowResize);
+      () => window.removeEventListener('resize', handleWindowResize);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -55,11 +79,20 @@ const Connect = () => {
     connectWallet();
   };
 
+  const handleShowWallet = () => {
+    if (windowWidth && windowWidth > MIN_WIDTH_TO_SHOW_ADDRESS) {
+      setShowWallet(true);
+    }
+  };
+
   return (
     <div role={'presentation'} className="h-full">
       <div
-        className={`flex justify-center items-center bg-gradient-to-b from-purple to-blue hover:opacity-75
-        ${showWallet ? 'growLeft' : undefined} 
+        onClick={() => {
+          secretAddress ? handleShowWallet() : handleConnectRequest();
+        }}
+        className={`flex justify-center overflow-hidden items-center bg-gradient-to-b from-purple to-blue 
+        ${showWallet ? 'growLeft' : 'hover:opacity-75'} 
         ${!showWallet && shrinkAnimation ? 'shrinkRight' : undefined}`}
         style={{
           width: secretAddress ? '2.8rem' : 'fit-content',
@@ -70,9 +103,6 @@ const Connect = () => {
         }}
       >
         <div
-          onClick={() => {
-            secretAddress ? setShowWallet(true) : handleConnectRequest();
-          }}
           className={`flex items-center justify-center h-10 ${
             !showWallet && 'ml-4'
           }`}
@@ -85,7 +115,7 @@ const Connect = () => {
                 setShowWallet(false);
               }}
               role={'presentation'}
-              className="mr-2 -mt-1"
+              className="mr-2 -mt-1 z-50"
             >
               <CloseOutlined />
             </div>
@@ -108,10 +138,11 @@ const Connect = () => {
                 navigator.clipboard.writeText(secretAddress);
                 message.success({
                   content: 'Copied to clipboard',
-                  className: 'absolute left-0 items-center',
+                  className: 'absolute right-0 items-center',
                   style: {
                     borderRadius: '20px',
                   },
+                  duration: '.3',
                 });
               }}
               className="text-lg mx-2 mb-2 transition-colors hover:text-green-400"

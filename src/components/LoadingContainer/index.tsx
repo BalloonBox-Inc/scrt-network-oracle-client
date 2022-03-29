@@ -1,7 +1,7 @@
 import ClipLoader from 'react-spinners/ClipLoader';
 
 export const LoadingContainer = ({
-  text = 'Requesting Score, this may take a minute.',
+  text = 'Requesting score, this may take a minute.',
 }: {
   text: String;
 }) => (
