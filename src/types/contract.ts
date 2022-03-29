@@ -13,3 +13,9 @@ export interface IScoreQueryResponse {
   status: string;
   timstamp: number;
 }
+
+export interface IGenerateViewingKeyResponse {
+  generate_viewing_key: {
+    key: string;
+  };
+}

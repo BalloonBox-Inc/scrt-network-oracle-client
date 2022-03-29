@@ -9,8 +9,12 @@ import BgImage from '@scrtsybil/src/components/BgImage';
 import Button, { BUTTON_STYLES } from '@scrtsybil/src/components/Button';
 import { LoadingContainer } from '@scrtsybil/src/components/LoadingContainer';
 import ScoreSpeedometer from '@scrtsybil/src/components/score';
-import { handleQueryScore } from '@scrtsybil/src/keplr/helpers';
-import { IScoreQueryResponse } from '@scrtsybil/src/types/contract';
+import { useSecretContext } from '@scrtsybil/src/context';
+import { queryScoreWithPermit } from '@scrtsybil/src/keplr/helpers';
+import {
+  IPermitQueryResponse,
+  IScoreQueryResponse,
+} from '@scrtsybil/src/types/contract';
 
 const QueryScorePage = () => {
   const [queryResponse, setQueryResponse] = useState<
@@ -20,20 +24,38 @@ const QueryScorePage = () => {
     useState<boolean>(false);
   const [status, setStatus] = useState<
     'loading' | 'error' | 'success' | undefined
-  >('loading');
+  >(undefined);
+
+  const { permissionSig, chainActivity } = useSecretContext();
+
+  const PERMIT_FORM_ORIGINAL = {
+    permitName: '',
+    publicAddress: '',
+    permitSignature: '',
+  };
+  const [permitData, setPermitData] = useState(PERMIT_FORM_ORIGINAL);
+
+  const getScore = async () => {
+    setStatus('loading');
+    const queryWithPermit: {
+      response?: IPermitQueryResponse;
+      status: 'error' | 'success' | string;
+      error?: any;
+    } = await queryScoreWithPermit({
+      requestData: permitData,
+    });
+
+    if (queryWithPermit?.response?.Ok) {
+      setQueryResponse(queryWithPermit.response.Ok);
+      setStatus('success');
+    } else {
+      setStatus('error');
+    }
+  };
 
   useEffect(() => {
-    const getScore = async () => {
-      const queryScoreResponse = await handleQueryScore();
-      if (queryScoreResponse.status === 'success') {
-        setQueryResponse(queryScoreResponse.response);
-        setStatus('success');
-      } else {
-        setStatus('error');
-      }
-    };
-    getScore();
-  }, []);
+    chainActivity?.scoreAmount && setStatus('success');
+  }, [chainActivity]);
 
   const router = useRouter();
 
@@ -91,6 +113,73 @@ const QueryScorePage = () => {
     </>
   );
 
+  const inputDataInput = (value: string, onChange?: (e?: any) => void) => (
+    <input
+      onChange={onChange}
+      className=" focus-visible:outline-blue-600 z-50 focus-visible:outline-none  font-mono text-blue-600 bg-input-bg w-full py-3 px-3 rounded-md mb-4"
+      type={'text'}
+      value={value}
+    />
+  );
+
+  const noScoreForm = (
+    <div className="w-full text-center z-50 sm:px-20 lg:px-40 flex flex-col ">
+      <form className="flex flex-col items-start mt-8  w-full">
+        <label className="text-left mb-1">Permit Name</label>
+        {inputDataInput(permitData.permitName, (e) =>
+          setPermitData({
+            ...permitData,
+            permitName: e.target.value,
+          })
+        )}
+        <label className="text-left mb-1">Public Address</label>
+        {inputDataInput(permitData.publicAddress, (e) =>
+          setPermitData({
+            ...permitData,
+            publicAddress: e.target.value,
+          })
+        )}
+        <label className="text-left mb-1">Signature</label>
+        {inputDataInput(permitData.permitSignature, (e) =>
+          setPermitData({
+            ...permitData,
+            permitSignature: e.target.value,
+          })
+        )}
+      </form>
+      <div className="flex items-center mt-8">
+        <Button
+          text={'Get my score'}
+          classes={{ container: 'mr-3' }}
+          isDisabled={
+            !permitData.permitName ||
+            !permitData?.publicAddress ||
+            !permitData?.permitSignature
+          }
+          onClick={() => getScore()}
+        />
+        {/* <Link href={'#'}>
+          <a className="z-50">{'Create a permission'}</a>
+        </Link> */}
+        {permissionSig?.name && (
+          <Button
+            text={'Autofill form?'}
+            classes={{ container: 'mr-3 reappear' }}
+            style={BUTTON_STYLES.OUTLINE}
+            // isDisabled={!inputData}
+            onClick={() =>
+              setPermitData({
+                permitName: permissionSig.name,
+                permitSignature: permissionSig.signature.signature,
+                publicAddress: permissionSig.signature.pub_key.value,
+              })
+            }
+          />
+        )}
+      </div>
+    </div>
+  );
+
   const errorContainer = (
     <>
       <div className="w-full flex flex-col text-center">
@@ -121,10 +210,11 @@ const QueryScorePage = () => {
   return (
     <div className="px-14 py-20 ">
       {status === 'loading' && (
-        <LoadingContainer text="Requesting Score, this may take a minute." />
+        <LoadingContainer text="Requesting score, this may take a minute." />
       )}
       {status === 'success' && mainContainer}
       {status === 'error' && errorContainer}
+      {status === undefined && noScoreForm}
       {scoreDescriptionModal}
       <BgImage />
     </div>

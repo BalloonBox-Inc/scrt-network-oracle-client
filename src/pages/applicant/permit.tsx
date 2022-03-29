@@ -7,7 +7,7 @@ import { isEmpty, replace } from 'ramda';
 import { StdSignature } from 'secretjs/types/types';
 
 import BgImage from '@scrtsybil/src/components/BgImage';
-import Button from '@scrtsybil/src/components/Button';
+import Button, { BUTTON_STYLES } from '@scrtsybil/src/components/Button';
 import { LoadingContainer } from '@scrtsybil/src/components/LoadingContainer';
 import { useSecretContext } from '@scrtsybil/src/context';
 import {
@@ -18,9 +18,9 @@ import {
 const PermissionPage = () => {
   const [inputData, setinputData] = useState<string>();
   const [status, setStatus] = useState<string | undefined>(undefined);
-  const [permissionSig, setPermissionSig] = useState<StdSignature | undefined>(
-    undefined
-  );
+  // const [permissionSig, setPermissionSig] = useState<StdSignature | undefined>(
+  //   undefined
+  // );
 
   const [revokeOrCreate, setRevokeOrCreate] = useState<
     'revoke' | 'create' | null
@@ -43,15 +43,13 @@ const PermissionPage = () => {
     }
   }, [router]);
 
-  const { setChainActivity, chainActivity } = useSecretContext();
+  const { setPermissionSig, permissionSig } = useSecretContext();
 
   const handleRevokePermit = async () => {
     if (inputData) {
       setStatus('loading');
       const permitRevokeRes = await handlePermissionRevoke({
         permissionName: inputData,
-        setChainActivity,
-        chainActivity,
       });
       if (permitRevokeRes) {
         setStatus(undefined);
@@ -69,7 +67,10 @@ const PermissionPage = () => {
       });
       setStatus(undefined);
       if (permitCreateRes?.signature) {
-        setPermissionSig(permitCreateRes?.signature);
+        setPermissionSig({
+          name: inputData,
+          signature: permitCreateRes.signature,
+        });
       }
     }
   };
@@ -106,13 +107,17 @@ const PermissionPage = () => {
           </p>
           <p className="mb-3 font-semibold">
             Public Key:{' '}
-            <span className="font-thin">{permissionSig?.pub_key.value}</span>
+            <span className="font-thin">
+              {permissionSig?.signature?.pub_key.value}
+            </span>
           </p>
           <p className="mb-3 font-semibold">
             Signature:{' '}
-            <span className="font-thin">{permissionSig?.signature}</span>
+            <span className="font-thin">
+              {permissionSig?.signature?.signature}
+            </span>
           </p>
-          <div className="flex">
+          <div className="flex items-center mt-10">
             <Button
               text="I have saved these keys"
               onClick={() => {
@@ -120,6 +125,16 @@ const PermissionPage = () => {
                 setPermissionSig(undefined);
               }}
             />
+            <div>
+              <Button
+                text="Query Score"
+                style={BUTTON_STYLES.LINK}
+                classes={{ button: 'hover:text-blue' }}
+                onClick={() => {
+                  router.push('/applicant/query');
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>

@@ -7,7 +7,11 @@ import BgImage from '@scrtsybil/src/components/BgImage';
 import Button, { BUTTON_STYLES } from '@scrtsybil/src/components/Button';
 import { LoadingContainer } from '@scrtsybil/src/components/LoadingContainer';
 import ScoreSpeedometer from '@scrtsybil/src/components/score';
-import { storageHelper, useSecretContext } from '@scrtsybil/src/context';
+import {
+  CHAIN_ACTIVITIES,
+  storageHelper,
+  useSecretContext,
+} from '@scrtsybil/src/context';
 import {
   handleGeneratePermissionQuery,
   handleSetScore,
@@ -21,6 +25,7 @@ const ApplicantScorePage = () => {
     permissionSig,
     scoreResponse,
     loading,
+    handleAddToChainActivity,
   } = useSecretContext();
 
   const router = useRouter();
@@ -51,27 +56,12 @@ const ApplicantScorePage = () => {
       : handleSetScore({
           setStatus,
           scoreResponse,
-          setChainActivity,
-          chainActivity,
+          handleAddToChainActivity,
         });
   };
 
   const submitQueryAttempt = async () => {
     setPermissionLoading(true);
-    if (permitName) {
-      const permissionCreate = await handleGeneratePermissionQuery({
-        permissionName: permitName,
-        setPermissionSig,
-      });
-      if (permissionCreate?.signature) {
-        setChainActivity({
-          ...chainActivity,
-          queryPermit: chainActivity?.queryPermit?.length
-            ? [...chainActivity.queryPermit, permitName]
-            : [permitName],
-        });
-      }
-    }
   };
 
   useEffect(() => {
@@ -103,7 +93,7 @@ const ApplicantScorePage = () => {
       onCancel={() => {
         setModalWarn(false);
       }}
-      style={{ top: '30%' }}
+      centered
       bodyStyle={{ background: '#242630' }}
     >
       <div className={`px-8 flex py-5 justify-center rounded-md z-50`}>
@@ -138,8 +128,7 @@ const ApplicantScorePage = () => {
                 handleSetScore({
                   setStatus,
                   scoreResponse,
-                  setChainActivity,
-                  chainActivity,
+                  handleAddToChainActivity,
                 });
                 setModalWarn(false);
               }}
@@ -177,7 +166,7 @@ const ApplicantScorePage = () => {
         setPermissionLoading(false);
         setPermitQueryModal(false);
       }}
-      style={{ top: '30%' }}
+      centered
       bodyStyle={{ background: '#242630' }}
     >
       <div className={`px-8 flex py-5 justify-center rounded-md z-50`}>
@@ -196,11 +185,15 @@ const ApplicantScorePage = () => {
             </p>
             <p className="mb-3 font-semibold">
               Public Key:{' '}
-              <span className="font-thin">{permissionSig.pub_key.value}</span>
+              <span className="font-thin">
+                {permissionSig.signature.pub_key.value}
+              </span>
             </p>
             <p className="mb-3 font-semibold">
               Signature:{' '}
-              <span className="font-thin">{permissionSig.signature}</span>
+              <span className="font-thin">
+                {permissionSig.signature.signature}
+              </span>
             </p>
             <div className="flex">
               <Button

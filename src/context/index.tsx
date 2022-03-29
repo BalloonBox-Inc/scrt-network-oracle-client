@@ -46,19 +46,31 @@ interface ISecretContext {
   scoreResponse: IScoreResponseCoinbase | IScoreResponsePlaid | undefined;
   chainActivity: null | IChainActivity;
   setChainActivity: React.Dispatch<React.SetStateAction<IChainActivity | null>>;
-  permissionSig?: StdSignature;
+  permissionSig?: { name: string; signature: StdSignature };
   setPermissionSig: React.Dispatch<
-    React.SetStateAction<StdSignature | undefined>
+    React.SetStateAction<{ name: string; signature: StdSignature } | undefined>
   >;
+  handleAddToChainActivity: (
+    k: CHAIN_ACTIVITIES,
+    value: string | number | boolean
+  ) => void;
 }
 
+export enum CHAIN_ACTIVITIES {
+  scoreSubmitted = 'scoreSubmitted',
+  permissionKeys = 'permissionKeys',
+  viewingKeys = 'viewingKeys',
+  shareableLink = 'shareableLink',
+  dataProvider = 'dataProvider',
+  scoreAmount = 'scoreAmount',
+}
 export interface IChainActivity {
-  scoreSubmitted?: boolean;
-  queryPermit?: string[];
-  permissionKey?: string[];
-  shareableLink?: boolean;
-  dataProvider?: 'coinbase' | 'plaid';
-  scoreAmount?: number;
+  [CHAIN_ACTIVITIES.scoreSubmitted]?: boolean;
+  [CHAIN_ACTIVITIES.permissionKeys]?: string[];
+  [CHAIN_ACTIVITIES.viewingKeys]?: string[];
+  [CHAIN_ACTIVITIES.shareableLink]?: boolean;
+  [CHAIN_ACTIVITIES.dataProvider]?: 'coinbase' | 'plaid';
+  [CHAIN_ACTIVITIES.scoreAmount]?: number;
 }
 
 interface PlaidToken {
@@ -106,9 +118,38 @@ const ContextProvider = ({ children }: any) => {
   const [plaidPublicExchangeResponse, setPlaidPublicExchangeResponse] =
     useState<undefined | ItemPublicTokenExchangeResponse>(undefined);
 
-  const [permissionSig, setPermissionSig] = useState<StdSignature | undefined>(
-    undefined
-  );
+  const [permissionSig, setPermissionSig] = useState<
+    { name: string; signature: StdSignature } | undefined
+  >(undefined);
+
+  const handleAddToChainActivity = (
+    key: CHAIN_ACTIVITIES,
+    value: string | number | boolean
+  ) => {
+    if (chainActivity) {
+      const existingValue = chainActivity[key];
+      if (
+        key === CHAIN_ACTIVITIES.permissionKeys ||
+        key === CHAIN_ACTIVITIES.viewingKeys
+      ) {
+        const doesNewValueExist = (existingValue as string[]).includes(
+          value as string
+        );
+        if (doesNewValueExist) return;
+        setChainActivity({
+          ...chainActivity,
+          [key]: (existingValue as string[])?.length
+            ? [...(existingValue as string[]), value]
+            : [value],
+        });
+      } else {
+        setChainActivity({
+          ...chainActivity,
+          [key]: value,
+        });
+      }
+    }
+  };
 
   const setClearLocalStorage = () => {
     !!secretjs && storageHelper.persist('secretjs', null);
@@ -117,6 +158,7 @@ const ContextProvider = ({ children }: any) => {
     plaidPublicToken && storageHelper.persist('plaidPublicToken', null);
     plaidPublicExchangeResponse &&
       storageHelper.persist('plaidPublicExchangeResponse', null);
+    permissionSig?.name && storageHelper.persist('permissionSig', null);
   };
 
   const disconnectWallet = () => {
@@ -155,6 +197,10 @@ const ContextProvider = ({ children }: any) => {
     handleKeplrOpen(setSecretjs, setSecretAddress);
   };
 
+  useEffect(() => {
+    chainActivity && storageHelper.persist('chainActivity', chainActivity);
+  }, [chainActivity]);
+
   // PERSIST TO STORAGE HERE:
   useEffect(() => {
     secretjs && storageHelper.persist('secretjs', secretjs);
@@ -169,7 +215,7 @@ const ContextProvider = ({ children }: any) => {
         plaidPublicExchangeResponse
       );
     chainActivity && storageHelper.persist('chainActivity', chainActivity);
-
+    permissionSig && storageHelper.persist('permissionSig', permissionSig);
     setLoading(false);
   }, [
     secretjs,
@@ -179,6 +225,7 @@ const ContextProvider = ({ children }: any) => {
     plaidPublicExchangeResponse,
     scoreResponse,
     chainActivity,
+    permissionSig,
   ]);
 
   // HYDRATE CONTEXT HERE:
@@ -192,11 +239,9 @@ const ContextProvider = ({ children }: any) => {
     );
     setScoreResponse(storageHelper.get('scoreResponse'));
     setChainActivity(storageHelper.get('chainActivity'));
-
+    setPermissionSig(storageHelper.get('permissionSig'));
     setLoading(false);
   }, []);
-
-  console.log({ Context: { chainActivity, scoreResponse } });
 
   return (
     <Context.Provider
@@ -220,6 +265,7 @@ const ContextProvider = ({ children }: any) => {
         setChainActivity,
         permissionSig,
         setPermissionSig,
+        handleAddToChainActivity,
       }}
     >
       {children}

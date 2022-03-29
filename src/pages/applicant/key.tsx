@@ -1,14 +1,11 @@
 import { useState } from 'react';
 
-import { Card, Typography, Tooltip, Input, Form, Modal, Button } from 'antd';
-import { StdSignature } from 'secretjs/types/types';
+import { Card, Typography, Input, Form, Modal, Button } from 'antd';
 
 const GeneratePermissionPage = () => {
   const [formStatus, setFormStatus] = useState<
     'loading' | 'success' | 'error' | undefined
   >(undefined);
-
-  const [permissionSig, setPermissionSig] = useState<StdSignature | null>(null);
 
   const isLoading = formStatus === 'loading';
   const shouldShowModal = formStatus === 'success' || formStatus === 'error';

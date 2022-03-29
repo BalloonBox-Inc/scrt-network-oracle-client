@@ -124,7 +124,7 @@ const GenerateScorePage = () => {
   const scoreResponseModal = (
     <Modal
       footer={null}
-      style={{ top: '30%' }}
+      centered
       closable={true}
       onCancel={() => {
         router.push('/applicant/generate');
@@ -184,7 +184,7 @@ const GenerateScorePage = () => {
         />
       )}
       {awaitingScoreResponse && (
-        <LoadingContainer text="Requesting Score, this may take a minute." />
+        <LoadingContainer text="Requesting score, this may take a minute." />
       )}
       {!awaitingScoreResponse && (
         <>
