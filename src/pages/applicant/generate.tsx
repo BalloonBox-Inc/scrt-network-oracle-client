@@ -17,6 +17,9 @@ const GenerateScorePage = () => {
   const [awaitingScoreResponse, setAwaitingScoreResponse] =
     useState<boolean>(false);
   const [startPlaidLink, setStartPlaidLink] = useState<boolean>(false);
+  const [isExistingScore, setIsExistingScore] = useState<
+    'loading' | true | false
+  >('loading');
 
   const {
     setPlaidPublicToken,
@@ -24,7 +27,15 @@ const GenerateScorePage = () => {
     setCoinbaseToken,
     setScoreResponse,
     scoreResponse,
+    chainActivity,
+    handleSetChainActivity,
   } = useSecretContext();
+
+  useEffect(() => {
+    if (chainActivity?.scoreSubmitted) {
+      setIsExistingScore(true);
+    } else setIsExistingScore(false);
+  }, [chainActivity]);
 
   const router = useRouter();
   const queryType = router.query?.type;
@@ -103,8 +114,10 @@ const GenerateScorePage = () => {
   const handlePlaidConnect = async () => {
     // todo:
     // Handle expired token error: "provided link token is expired" is returned
+
     if (plaidPublicToken) {
       setStartPlaidLink(true);
+      router.replace('/applicant/generate?type=plaid&status=success');
     } else {
       router.replace('/applicant/generate?type=plaid&status=loading');
       try {
@@ -172,8 +185,132 @@ const GenerateScorePage = () => {
     </Modal>
   );
 
+  const existingScoreModal = (
+    <Modal footer={null} centered closable={false} visible={!!isExistingScore}>
+      <div className="py-6 w-full space-y-2 flex justify-center items-center flex-col">
+        <p className="text-base text-center font-semibold">
+          You have already submitted a score using {chainActivity?.dataProvider}
+          .
+        </p>
+      </div>
+      <div className="flex w-full justify-center items-center space-x-4">
+        <div>
+          <Button
+            onClick={() => {
+              router.push('/applicant/score');
+            }}
+            text="See Score"
+            style={BUTTON_STYLES.DEFAULT}
+          />
+        </div>
+        <div>
+          <Button
+            onClick={() => {
+              // setChainActivity({});
+              handleSetChainActivity(null);
+              startOver();
+            }}
+            text="Generate New Score"
+            style={BUTTON_STYLES.LINK}
+          />
+        </div>
+      </div>
+    </Modal>
+  );
+
+  const mainContainer = (
+    <>
+      <div className="w-full text-center">
+        <div className=" flex flex-col items-center space-y-5  justify-center w-full">
+          <div className="z-50 opacity-100 px-0 sm:p-10">
+            <h2 className="z-50 font-semibold text-2xl sm:text-3xl md:text-3xl lg:text-4xl p-0">
+              Choose a Provider
+            </h2>
+            <p className="z-50 font-thin text-md sm:text-lg md:text-xl lg:text-2xl p-0">
+              Select one of the following providers to qualify for a credit
+              check.
+            </p>
+          </div>
+          <div
+            className="flex z-50 justify-center w-60  sm:w-95  rounded-md p-1 "
+            style={{
+              background:
+                selection === 'coinbase'
+                  ? BORDER_GRADIENT_STYLE
+                  : 'transparent',
+            }}
+          >
+            <div
+              onClick={() => setSelection('coinbase')}
+              className={`bg-gray-900 py-6 flex justify-center  cursor-pointer w-full rounded-md`}
+            >
+              <img
+                alt="coinbase_logo"
+                src={'../../images/coinbaseLogo.svg'}
+                className="w-2/3 sm:w-2/4"
+              />
+            </div>
+          </div>
+          <div
+            className="flex z-50 justify-center w-60  sm:w-95  rounded-md p-1 "
+            style={{
+              background:
+                selection === 'plaid' ? BORDER_GRADIENT_STYLE : 'transparent',
+            }}
+          >
+            <div
+              onClick={() => setSelection('plaid')}
+              className={`bg-gray-900 py-6 flex justify-center  cursor-pointer w-full rounded-md`}
+            >
+              <img
+                width={'60%'}
+                alt="plaid_logo"
+                src={'../../images/plaidLogo.svg'}
+                className="w-2/3 sm:w-2/4"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className=" sm:px-10 flex justify-between">
+        <div className="pt-16 z-30 flex justify-start">
+          <div>
+            <Button
+              onClick={() => {
+                router.push(`/applicant`);
+              }}
+              text="Back"
+              style={BUTTON_STYLES.OUTLINE}
+            />
+          </div>
+        </div>
+        <div className="pt-16 z-30 flex justify-end">
+          <div>
+            <Button
+              onClick={() => {
+                selection === 'coinbase'
+                  ? handleCoinbaseConnect()
+                  : handlePlaidConnect();
+              }}
+              // isDisabled={!selection}
+              text="Continue"
+              style={BUTTON_STYLES.DEFAULT}
+            />
+          </div>
+        </div>
+      </div>
+    </>
+  );
+  if (isExistingScore === 'loading') {
+    return (
+      <div className="px-14 py-10">
+        <LoadingContainer text={''} />
+      </div>
+    );
+  }
+
   return (
-    <div className="px-14 py-20 ">
+    <div className="px-14 py-10">
       {queryStatus === 'success' && scoreResponseModal}
       {startPlaidLink && plaidPublicToken?.publicToken && (
         <LaunchLink
@@ -186,91 +323,9 @@ const GenerateScorePage = () => {
       {awaitingScoreResponse && (
         <LoadingContainer text="Requesting score, this may take a minute." />
       )}
-      {!awaitingScoreResponse && (
-        <>
-          <div className="w-full text-center">
-            <div className=" flex flex-col items-center space-y-5  justify-center w-full">
-              <div className="z-50 opacity-100 px-0 sm:p-10">
-                <h2 className="z-50 font-semibold text-2xl sm:text-3xl md:text-3xl lg:text-4xl p-0">
-                  Choose a Provider
-                </h2>
-                <p className="z-50 font-thin text-md sm:text-lg md:text-xl lg:text-2xl p-0">
-                  Select one of the following providers to qualify for a credit
-                  check.
-                </p>
-              </div>
-              <div
-                className="flex z-50 justify-center w-60  sm:w-95  rounded-md p-1 "
-                style={{
-                  background:
-                    selection === 'coinbase'
-                      ? BORDER_GRADIENT_STYLE
-                      : 'transparent',
-                }}
-              >
-                <div
-                  onClick={() => setSelection('coinbase')}
-                  className={`bg-gray-900 py-6 flex justify-center  cursor-pointer w-full rounded-md`}
-                >
-                  <img
-                    alt="coinbase_logo"
-                    src={'../../images/coinbaseLogo.svg'}
-                    className="w-2/3 sm:w-2/4"
-                  />
-                </div>
-              </div>
-              <div
-                className="flex z-50 justify-center w-60  sm:w-95  rounded-md p-1 "
-                style={{
-                  background:
-                    selection === 'plaid'
-                      ? BORDER_GRADIENT_STYLE
-                      : 'transparent',
-                }}
-              >
-                <div
-                  onClick={() => setSelection('plaid')}
-                  className={`bg-gray-900 py-6 flex justify-center  cursor-pointer w-full rounded-md`}
-                >
-                  <img
-                    width={'60%'}
-                    alt="plaid_logo"
-                    src={'../../images/plaidLogo.svg'}
-                    className="w-2/3 sm:w-2/4"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className=" sm:px-10 flex justify-between">
-            <div className="pt-16 z-30 flex justify-start">
-              <div>
-                <Button
-                  onClick={() => {
-                    router.push(`/applicant`);
-                  }}
-                  text="Back"
-                  style={BUTTON_STYLES.OUTLINE}
-                />
-              </div>
-            </div>
-            <div className="pt-16 z-30 flex justify-end">
-              <div>
-                <Button
-                  onClick={() => {
-                    selection === 'coinbase'
-                      ? handleCoinbaseConnect()
-                      : handlePlaidConnect();
-                  }}
-                  // isDisabled={!selection}
-                  text="Continue"
-                  style={BUTTON_STYLES.DEFAULT}
-                />
-              </div>
-            </div>
-          </div>
-        </>
-      )}
+
+      {!awaitingScoreResponse && mainContainer}
+      {existingScoreModal}
 
       <BgImage />
     </div>

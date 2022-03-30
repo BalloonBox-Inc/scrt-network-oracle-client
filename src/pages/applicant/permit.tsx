@@ -4,7 +4,6 @@ import { Modal } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { isEmpty, replace } from 'ramda';
-import { StdSignature } from 'secretjs/types/types';
 
 import BgImage from '@scrtsybil/src/components/BgImage';
 import Button, { BUTTON_STYLES } from '@scrtsybil/src/components/Button';
@@ -18,9 +17,6 @@ import {
 const PermissionPage = () => {
   const [inputData, setinputData] = useState<string>();
   const [status, setStatus] = useState<string | undefined>(undefined);
-  // const [permissionSig, setPermissionSig] = useState<StdSignature | undefined>(
-  //   undefined
-  // );
 
   const [revokeOrCreate, setRevokeOrCreate] = useState<
     'revoke' | 'create' | null

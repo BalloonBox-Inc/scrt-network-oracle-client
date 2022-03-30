@@ -9,24 +9,17 @@ import React, {
 import { notification } from 'antd';
 import router from 'next/router';
 import { ItemPublicTokenExchangeResponse } from 'plaid';
-import { SigningCosmWasmClient } from 'secretjs';
 import { StdSignature } from 'secretjs/types/types';
 
 import { NOTIFICATIONS } from '../constants';
 import { ICoinbaseTokenCreateResponse } from '../pages/api/coinbase';
 import { IScoreResponseCoinbase, IScoreResponsePlaid } from '../types/types';
-import { handleKeplrOpen } from '../utils';
 
 interface ISecretContext {
-  secretjs: SigningCosmWasmClient | null;
   secretAddress: string | null;
   setSecretAddress: React.Dispatch<React.SetStateAction<string | null>>;
-  setSecretjs: React.Dispatch<
-    React.SetStateAction<SigningCosmWasmClient | null>
-  >;
   loading: boolean;
   disconnectWallet: () => void;
-  connectWallet: () => void;
   connectRequest: boolean;
   setConnectRequest: React.Dispatch<React.SetStateAction<boolean>>;
   setCoinbaseToken: React.Dispatch<
@@ -44,8 +37,8 @@ interface ISecretContext {
     >
   >;
   scoreResponse: IScoreResponseCoinbase | IScoreResponsePlaid | undefined;
-  chainActivity: null | IChainActivity;
-  setChainActivity: React.Dispatch<React.SetStateAction<IChainActivity | null>>;
+  chainActivity: IChainActivity;
+  setChainActivity: React.Dispatch<React.SetStateAction<IChainActivity>>;
   permissionSig?: { name: string; signature: StdSignature };
   setPermissionSig: React.Dispatch<
     React.SetStateAction<{ name: string; signature: StdSignature } | undefined>
@@ -54,6 +47,7 @@ interface ISecretContext {
     k: CHAIN_ACTIVITIES,
     value: string | number | boolean
   ) => void;
+  handleSetChainActivity: any;
 }
 
 export enum CHAIN_ACTIVITIES {
@@ -98,9 +92,17 @@ export const storageHelper = {
   },
 };
 
+const CHAIN_ACTIVITY_INIT = {
+  scoreSubmitted: undefined,
+  permissionKeys: undefined,
+  viewingKeys: undefined,
+  shareableLink: undefined,
+  dataProvider: undefined,
+  scoreAmount: undefined,
+};
+
 const ContextProvider = ({ children }: any) => {
   const [secretAddress, setSecretAddress] = useState<string | null>(null);
-  const [secretjs, setSecretjs] = useState<SigningCosmWasmClient | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [connectRequest, setConnectRequest] = useState<boolean>(false);
   const [scoreResponse, setScoreResponse] = useState<
@@ -112,9 +114,8 @@ const ContextProvider = ({ children }: any) => {
   const [plaidPublicToken, setPlaidPublicToken] = useState<
     undefined | PlaidToken
   >(undefined);
-  const [chainActivity, setChainActivity] = useState<IChainActivity | null>(
-    null
-  );
+  const [chainActivity, setChainActivity] =
+    useState<IChainActivity>(CHAIN_ACTIVITY_INIT);
   const [plaidPublicExchangeResponse, setPlaidPublicExchangeResponse] =
     useState<undefined | ItemPublicTokenExchangeResponse>(undefined);
 
@@ -151,29 +152,16 @@ const ContextProvider = ({ children }: any) => {
     }
   };
 
-  const setClearLocalStorage = () => {
-    !!secretjs && storageHelper.persist('secretjs', null);
-    secretAddress && storageHelper.persist('secretAddress', null);
-    coinbaseToken && storageHelper.persist('coinbaseToken', null);
-    plaidPublicToken && storageHelper.persist('plaidPublicToken', null);
-    plaidPublicExchangeResponse &&
-      storageHelper.persist('plaidPublicExchangeResponse', null);
-    permissionSig?.name && storageHelper.persist('permissionSig', null);
-  };
-
   const disconnectWallet = () => {
     setSecretAddress(null);
-    setSecretjs(null);
     setConnectRequest(false);
     setCoinbaseToken(undefined);
     setPlaidPublicToken(undefined);
     setPlaidPublicExchangeResponse(undefined);
-    setClearLocalStorage();
-    if (!secretjs) {
-      notification.success({
-        message: NOTIFICATIONS.WALLET_DISCONNECT_SUCCESS,
-      });
-    }
+    localStorage.clear();
+    notification.success({
+      message: NOTIFICATIONS.WALLET_DISCONNECT_SUCCESS,
+    });
   };
 
   const returnHome = useCallback(() => {
@@ -193,17 +181,22 @@ const ContextProvider = ({ children }: any) => {
     secretAddress && setConnectRequest(false);
   }, [secretAddress]);
 
-  const connectWallet = () => {
-    handleKeplrOpen(setSecretjs, setSecretAddress);
+  const handleSetChainActivity = (val: any) => {
+    if (val) {
+      setChainActivity({
+        ...chainActivity,
+        ...val,
+      });
+      storageHelper.persist('chainActivity', val);
+    } else {
+      setChainActivity(CHAIN_ACTIVITY_INIT);
+      storageHelper.persist('chainActivity', CHAIN_ACTIVITY_INIT);
+    }
   };
-
-  useEffect(() => {
-    chainActivity && storageHelper.persist('chainActivity', chainActivity);
-  }, [chainActivity]);
 
   // PERSIST TO STORAGE HERE:
   useEffect(() => {
-    secretjs && storageHelper.persist('secretjs', secretjs);
+    // secretjs && storageHelper.persist('secretjs', secretjs);
     secretAddress && storageHelper.persist('secretAddress', secretAddress);
     scoreResponse && storageHelper.persist('scoreResponse', scoreResponse);
     coinbaseToken && storageHelper.persist('coinbaseToken', coinbaseToken);
@@ -214,11 +207,10 @@ const ContextProvider = ({ children }: any) => {
         'plaidPublicExchangeResponse',
         plaidPublicExchangeResponse
       );
-    chainActivity && storageHelper.persist('chainActivity', chainActivity);
     permissionSig && storageHelper.persist('permissionSig', permissionSig);
     setLoading(false);
   }, [
-    secretjs,
+    // secretjs,
     secretAddress,
     coinbaseToken,
     plaidPublicToken,
@@ -230,7 +222,7 @@ const ContextProvider = ({ children }: any) => {
 
   // HYDRATE CONTEXT HERE:
   useEffect(() => {
-    setSecretjs(storageHelper.get('secretjs'));
+    // setSecretjs(storageHelper.get('secretjs'));
     setSecretAddress(storageHelper.get('secretAddress'));
     setCoinbaseToken(storageHelper.get('coinbaseToken'));
     setPlaidPublicToken(storageHelper.get('plaidPublicToken'));
@@ -247,14 +239,11 @@ const ContextProvider = ({ children }: any) => {
     <Context.Provider
       value={{
         disconnectWallet,
-        connectWallet,
         connectRequest,
         setConnectRequest,
         loading,
         secretAddress,
         setSecretAddress,
-        secretjs,
-        setSecretjs,
         setCoinbaseToken,
         coinbaseToken,
         setPlaidPublicToken,
@@ -266,6 +255,7 @@ const ContextProvider = ({ children }: any) => {
         permissionSig,
         setPermissionSig,
         handleAddToChainActivity,
+        handleSetChainActivity,
       }}
     >
       {children}

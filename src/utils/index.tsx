@@ -1,7 +1,6 @@
 import { Window as KeplrWindow } from '@keplr-wallet/types';
 import { notification } from 'antd';
 import { SigningCosmWasmClient } from 'secretjs';
-import { StdSignature } from 'secretjs/types/types';
 
 import {
   CHAIN_ID,
@@ -21,9 +20,6 @@ declare global {
 }
 
 export const handleKeplrOpen = async (
-  setSecretjs: React.Dispatch<
-    React.SetStateAction<SigningCosmWasmClient | null>
-  >,
   setSecretAddress: React.Dispatch<React.SetStateAction<string | null>>
 ) => {
   if (EXPERIMENTAL) {
@@ -112,66 +108,15 @@ export const handleKeplrOpen = async (
         }
       );
 
-      const account = await cosmJS.getAccount(secretAddress);
+      await cosmJS.getAccount(secretAddress);
 
       setSecretAddress(secretAddress);
-      cosmJS && setSecretjs(cosmJS);
+      // cosmJS && setSecretjs(cosmJS);
     } catch {
       // eslint-disable-next-line no-alert
       alert('Failed to suggest the chain');
     }
   }
-};
-
-const generatePermission = async ({
-  contractAddress,
-  permissionName,
-}: {
-  contractAddress: String;
-  permissionName: String;
-}) => {
-  const allowedTokens = [contractAddress];
-  const permissions = ['balance'];
-  // @ts-ignore
-  const keplrOfflineSigner = window.getOfflineSigner(CHAIN_ID);
-  const accounts = await keplrOfflineSigner.getAccounts();
-  // @ts-ignore
-  const addr = accounts[0].address;
-  if (typeof window !== 'undefined') {
-    // @ts-ignore
-    const { signature }: { signature: StdSignature } =
-      // eslint-disable-next-line no-unsafe-optional-chaining
-      await window.keplr?.signAmino(
-        CHAIN_ID,
-        addr,
-        {
-          chain_id: CHAIN_ID,
-          account_number: '0', // Must be 0
-          sequence: '0', // Must be 0
-          fee: {
-            amount: [{ denom: 'uscrt', amount: '0' }], // Must be 0 uscrt
-            gas: '1', // Must be 1
-          },
-          msgs: [
-            {
-              type: 'query_permit', // Must be "query_permit"
-              value: {
-                permit_name: permissionName,
-                allowed_tokens: allowedTokens,
-                permissions,
-              },
-            },
-          ],
-          memo: '', // Must be empty
-        },
-        {
-          preferNoSetFee: true, // Fee must be 0, so hide it from the user
-          preferNoSetMemo: true, // Memo must be empty, so hide it from the user
-        }
-      );
-    return signature;
-  }
-  return null;
 };
 
 export const queryAsServProvider = async ({
@@ -230,7 +175,6 @@ export const queryAsServProvider = async ({
       });
     }
   } catch (error) {
-    console.log({ error });
     notification.error({
       message: 'There was an error',
     });

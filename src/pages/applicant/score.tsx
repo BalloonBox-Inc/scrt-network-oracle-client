@@ -7,25 +7,17 @@ import BgImage from '@scrtsybil/src/components/BgImage';
 import Button, { BUTTON_STYLES } from '@scrtsybil/src/components/Button';
 import { LoadingContainer } from '@scrtsybil/src/components/LoadingContainer';
 import ScoreSpeedometer from '@scrtsybil/src/components/score';
-import {
-  CHAIN_ACTIVITIES,
-  storageHelper,
-  useSecretContext,
-} from '@scrtsybil/src/context';
-import {
-  handleGeneratePermissionQuery,
-  handleSetScore,
-} from '@scrtsybil/src/keplr/helpers';
+import { storageHelper, useSecretContext } from '@scrtsybil/src/context';
+import { handleSetScore } from '@scrtsybil/src/keplr/helpers';
 
 const ApplicantScorePage = () => {
   const {
-    setChainActivity,
     chainActivity,
     setPermissionSig,
     permissionSig,
     scoreResponse,
     loading,
-    handleAddToChainActivity,
+    handleSetChainActivity,
   } = useSecretContext();
 
   const router = useRouter();
@@ -50,14 +42,25 @@ const ApplicantScorePage = () => {
   const isSuccess = status === 'success';
   const isLoading = status === 'loading';
 
-  const handleSaveToBlockchain = () => {
-    chainActivity?.scoreSubmitted && scoreResponse
-      ? setModalWarn(true)
-      : handleSetScore({
-          setStatus,
-          scoreResponse,
-          handleAddToChainActivity,
+  const handleSaveToBlockchain = async () => {
+    if (chainActivity?.scoreSubmitted && scoreResponse) {
+      setModalWarn(true);
+    } else {
+      const setScoreRes = await handleSetScore({
+        setStatus,
+        scoreResponse,
+      });
+
+      if (setScoreRes?.status === 'success') {
+        handleSetChainActivity({
+          scoreAmount: scoreResponse?.score,
+          scoreSubmitted: true,
+          dataProvider: scoreResponse?.endpoint.includes('plaid')
+            ? 'plaid'
+            : 'coinbase',
         });
+      }
+    }
   };
 
   const submitQueryAttempt = async () => {
@@ -65,14 +68,11 @@ const ApplicantScorePage = () => {
   };
 
   useEffect(() => {
-    isSuccess &&
-      setChainActivity({
-        ...chainActivity,
-        scoreSubmitted: true,
-        scoreAmount: scoreResponse?.score,
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSuccess, setChainActivity]);
+    // Check from local storage is score was submitted
+    if (chainActivity?.scoreSubmitted) {
+      setStatus('success');
+    }
+  }, [chainActivity]);
 
   useEffect(() => {
     const scoreAnimated = storageHelper.get('scoreAnimationViewed');
@@ -120,17 +120,8 @@ const ApplicantScorePage = () => {
               text="Submit to blockchain"
               classes={{ button: 'text-xs' }}
               onClick={() => {
-                const scoreSubmitted = chainActivity?.scoreSubmitted;
-                if (scoreSubmitted) {
-                  setChainActivity(null);
-                }
-                storageHelper.persist('chainActivity', null);
-                handleSetScore({
-                  setStatus,
-                  scoreResponse,
-                  handleAddToChainActivity,
-                });
-                setModalWarn(false);
+                handleSetChainActivity(null);
+                handleSaveToBlockchain();
               }}
             />
             <Button
@@ -263,6 +254,11 @@ const ApplicantScorePage = () => {
           classes={{ button: 'text-xs text-white hover:text-blue' }}
         />
       </div>
+      {isSuccess && (
+        <p className="text-center -my-4">
+          This score was saved to the blockchain.
+        </p>
+      )}
       <div
         className={`z-50 flex  ${
           showScore ? 'opacity-100' : 'opacity-0'
