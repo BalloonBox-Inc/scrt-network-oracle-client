@@ -1,22 +1,23 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { notification, Modal } from 'antd';
 import { useRouter } from 'next/router';
 
 import BgImage from '@scrtsybil/src/components/BgImage';
 import Button, { BUTTON_STYLES } from '@scrtsybil/src/components/Button';
+import Coinbase from '@scrtsybil/src/components/Coinbase';
 import { LoadingContainer } from '@scrtsybil/src/components/LoadingContainer';
 import LaunchLink from '@scrtsybil/src/components/plaid';
 import { BORDER_GRADIENT_STYLE } from '@scrtsybil/src/constants';
 import { storageHelper, useSecretContext } from '@scrtsybil/src/context';
 import { IPlaidTokenCreateResponse } from '@scrtsybil/src/pages/api/plaid';
-import { handleCoinbaseCode } from '@scrtsybil/src/services';
 
 const GenerateScorePage = () => {
   const [selection, setSelection] = useState<string | undefined>(undefined);
   const [awaitingScoreResponse, setAwaitingScoreResponse] =
     useState<boolean>(false);
   const [startPlaidLink, setStartPlaidLink] = useState<boolean>(false);
+  const [startCoinbase, setStartCoinbase] = useState<boolean>(false);
   const [isExistingScore, setIsExistingScore] = useState<
     'loading' | true | false
   >('loading');
@@ -24,12 +25,9 @@ const GenerateScorePage = () => {
   const {
     setPlaidPublicToken,
     plaidPublicToken,
-    setCoinbaseToken,
     setScoreResponse,
-    scoreResponse,
     chainActivity,
     handleSetChainActivity,
-    coinbaseToken,
   } = useSecretContext();
 
   const router = useRouter();
@@ -51,6 +49,7 @@ const GenerateScorePage = () => {
   const startOver = () => {
     storageHelper.persist('scoreAnimationViewed', false);
     setStartPlaidLink(false);
+    setStartCoinbase(false);
     setAwaitingScoreResponse(false);
     setScoreResponse(null);
     setPlaidPublicToken(null);
@@ -60,89 +59,6 @@ const GenerateScorePage = () => {
   useEffect(() => {
     router.query.status === 'loading' && setAwaitingScoreResponse(true);
   }, [router.query]);
-
-  const getCoinbaseSdkUrl = async () => {
-    setAwaitingScoreResponse(true);
-    const res = await fetch('/api/coinbase');
-    const resJson = await res.json();
-    if (resJson.url) {
-      window.location.href = resJson.url;
-    }
-  };
-
-  const fetchCoinbaseWithToken = useCallback(
-    async ({ access_token, refresh_token }) => {
-      const coinbaseRes = await fetch(
-        `/api/coinbase?access_token=${access_token}&refresh_token=${refresh_token}`
-      );
-
-      const { coinbaseScore } = await coinbaseRes.json();
-
-      if (coinbaseScore.status === 'success') {
-        setScoreResponse(coinbaseScore);
-        router.replace('/applicant/generate?type=coinbase&status=success');
-      } else if (coinbaseScore.message === 'The access token expired') {
-        setScoreResponse(null);
-        getCoinbaseSdkUrl();
-      } else {
-        setScoreResponse(null);
-        router.replace('/applicant/generate');
-        setAwaitingScoreResponse(false);
-        notification.error({
-          message: 'Error connecting to Coinbase, try again later',
-        });
-      }
-    },
-    [router, setScoreResponse]
-  );
-
-  const handleCoinbaseConnect = async () => {
-    // check if access token + refresh token exist in cache
-    if (coinbaseToken?.access_token) {
-      router.replace('/applicant/generate?type=coinbase&status=loading');
-      fetchCoinbaseWithToken({
-        access_token: coinbaseToken.access_token,
-        refresh_token: coinbaseToken.refresh_token,
-      });
-      return;
-    }
-    // check if we have a score calculated with CB in storage
-    if (scoreResponse?.endpoint?.includes('coinbase')) {
-      router.replace('/applicant/generate?type=coinbase&status=success');
-    } else {
-      // Trigger SDK
-      getCoinbaseSdkUrl();
-    }
-  };
-
-  useEffect(() => {
-    const getCoinbaseTokens = async (code: string) => {
-      try {
-        // Send the code we got from the SDK to retrieve access_token + refresh_token
-        const resJson = await handleCoinbaseCode(code);
-
-        if (resJson.error) {
-          router.replace('/applicant/generate');
-          connectionError('coinbase');
-        }
-        if (resJson.access_token) {
-          setCoinbaseToken(resJson);
-          router.replace('/applicant/generate?type=coinbase&status=loading');
-          fetchCoinbaseWithToken({
-            access_token: resJson.access_token,
-            refresh_token: resJson.refresh_token,
-          });
-        }
-      } catch (error) {
-        router.pathname = '/applicant/generate';
-        connectionError('coinbase');
-      }
-    };
-
-    if (router?.query?.code) {
-      getCoinbaseTokens(router.query.code as string);
-    }
-  }, [fetchCoinbaseWithToken, router, setCoinbaseToken, setScoreResponse]);
 
   const handlePlaidConnect = async () => {
     if (plaidPublicToken) {
@@ -172,6 +88,7 @@ const GenerateScorePage = () => {
       onCancel={() => {
         router.push('/applicant/generate');
         setAwaitingScoreResponse(false);
+        setStartCoinbase(false);
       }}
       visible={queryStatus === 'success'}
     >
@@ -236,7 +153,6 @@ const GenerateScorePage = () => {
         <div>
           <Button
             onClick={() => {
-              // setChainActivity({});
               handleSetChainActivity(null);
               startOver();
             }}
@@ -319,7 +235,7 @@ const GenerateScorePage = () => {
             <Button
               onClick={() => {
                 selection === 'coinbase'
-                  ? handleCoinbaseConnect()
+                  ? setStartCoinbase(true)
                   : handlePlaidConnect();
               }}
               text="Continue"
@@ -347,6 +263,13 @@ const GenerateScorePage = () => {
           router={router}
           token={plaidPublicToken.publicToken}
           setStartPlaidLink={setStartPlaidLink}
+        />
+      )}
+      {startCoinbase && (
+        <Coinbase
+          router={router}
+          setAwaitingScoreResponse={setAwaitingScoreResponse}
+          connectionError={connectionError}
         />
       )}
       {awaitingScoreResponse && (
