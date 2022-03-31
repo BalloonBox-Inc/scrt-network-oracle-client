@@ -23,25 +23,21 @@ interface ISecretContext {
   connectRequest: boolean;
   setConnectRequest: React.Dispatch<React.SetStateAction<boolean>>;
   setCoinbaseToken: React.Dispatch<
-    React.SetStateAction<ICoinbaseTokenCreateResponse | undefined>
+    React.SetStateAction<ICoinbaseTokenCreateResponse | null>
   >;
-  coinbaseToken: ICoinbaseTokenCreateResponse | undefined;
-  setPlaidPublicToken: React.Dispatch<
-    React.SetStateAction<undefined | PlaidToken>
-  >;
-  plaidPublicToken: PlaidToken | undefined;
+  coinbaseToken: ICoinbaseTokenCreateResponse | null;
+  setPlaidPublicToken: React.Dispatch<React.SetStateAction<null | PlaidToken>>;
+  plaidPublicToken: PlaidToken | null;
 
   setScoreResponse: React.Dispatch<
-    React.SetStateAction<
-      IScoreResponseCoinbase | IScoreResponsePlaid | undefined
-    >
+    React.SetStateAction<IScoreResponseCoinbase | IScoreResponsePlaid | null>
   >;
-  scoreResponse: IScoreResponseCoinbase | IScoreResponsePlaid | undefined;
+  scoreResponse: IScoreResponseCoinbase | IScoreResponsePlaid | null;
   chainActivity: IChainActivity;
   setChainActivity: React.Dispatch<React.SetStateAction<IChainActivity>>;
-  permissionSig?: { name: string; signature: StdSignature };
+  permissionSig: { name: string; signature: StdSignature } | null;
   setPermissionSig: React.Dispatch<
-    React.SetStateAction<{ name: string; signature: StdSignature } | undefined>
+    React.SetStateAction<{ name: string; signature: StdSignature } | null>
   >;
   handleAddToChainActivity: (
     k: CHAIN_ACTIVITIES,
@@ -106,22 +102,21 @@ const ContextProvider = ({ children }: any) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [connectRequest, setConnectRequest] = useState<boolean>(false);
   const [scoreResponse, setScoreResponse] = useState<
-    IScoreResponseCoinbase | IScoreResponsePlaid | undefined
-  >(undefined);
-  const [coinbaseToken, setCoinbaseToken] = useState<
-    ICoinbaseTokenCreateResponse | undefined
-  >(undefined);
-  const [plaidPublicToken, setPlaidPublicToken] = useState<
-    undefined | PlaidToken
-  >(undefined);
+    IScoreResponseCoinbase | IScoreResponsePlaid | null
+  >(null);
+  const [coinbaseToken, setCoinbaseToken] =
+    useState<ICoinbaseTokenCreateResponse | null>(null);
+  const [plaidPublicToken, setPlaidPublicToken] = useState<null | PlaidToken>(
+    null
+  );
   const [chainActivity, setChainActivity] =
     useState<IChainActivity>(CHAIN_ACTIVITY_INIT);
   const [plaidPublicExchangeResponse, setPlaidPublicExchangeResponse] =
-    useState<undefined | ItemPublicTokenExchangeResponse>(undefined);
-
-  const [permissionSig, setPermissionSig] = useState<
-    { name: string; signature: StdSignature } | undefined
-  >(undefined);
+    useState<null | ItemPublicTokenExchangeResponse>(null);
+  const [permissionSig, setPermissionSig] = useState<{
+    name: string;
+    signature: StdSignature;
+  } | null>(null);
 
   const handleAddToChainActivity = (
     key: CHAIN_ACTIVITIES,
@@ -155,9 +150,9 @@ const ContextProvider = ({ children }: any) => {
   const disconnectWallet = () => {
     setSecretAddress(null);
     setConnectRequest(false);
-    setCoinbaseToken(undefined);
-    setPlaidPublicToken(undefined);
-    setPlaidPublicExchangeResponse(undefined);
+    setCoinbaseToken(null);
+    setPlaidPublicToken(null);
+    setPlaidPublicExchangeResponse(null);
     localStorage.clear();
     notification.success({
       message: NOTIFICATIONS.WALLET_DISCONNECT_SUCCESS,
@@ -194,23 +189,20 @@ const ContextProvider = ({ children }: any) => {
     }
   };
 
-  // PERSIST TO STORAGE HERE:
+  // PERSIST TO STORAGE HERE (after loading from storage, we update local when state changes)
   useEffect(() => {
-    // secretjs && storageHelper.persist('secretjs', secretjs);
-    secretAddress && storageHelper.persist('secretAddress', secretAddress);
-    scoreResponse && storageHelper.persist('scoreResponse', scoreResponse);
-    coinbaseToken && storageHelper.persist('coinbaseToken', coinbaseToken);
-    plaidPublicToken &&
+    if (!loading) {
+      storageHelper.persist('secretAddress', secretAddress);
+      storageHelper.persist('scoreResponse', scoreResponse);
+      storageHelper.persist('coinbaseToken', coinbaseToken);
       storageHelper.persist('plaidPublicToken', plaidPublicToken);
-    plaidPublicExchangeResponse &&
       storageHelper.persist(
         'plaidPublicExchangeResponse',
         plaidPublicExchangeResponse
       );
-    permissionSig && storageHelper.persist('permissionSig', permissionSig);
-    setLoading(false);
+      storageHelper.persist('permissionSig', permissionSig);
+    }
   }, [
-    // secretjs,
     secretAddress,
     coinbaseToken,
     plaidPublicToken,
@@ -218,11 +210,11 @@ const ContextProvider = ({ children }: any) => {
     scoreResponse,
     chainActivity,
     permissionSig,
+    loading,
   ]);
 
-  // HYDRATE CONTEXT HERE:
+  // (THIS WILL RUN FIRST ON LOAD) HYDRATE CONTEXT HERE:
   useEffect(() => {
-    // setSecretjs(storageHelper.get('secretjs'));
     setSecretAddress(storageHelper.get('secretAddress'));
     setCoinbaseToken(storageHelper.get('coinbaseToken'));
     setPlaidPublicToken(storageHelper.get('plaidPublicToken'));

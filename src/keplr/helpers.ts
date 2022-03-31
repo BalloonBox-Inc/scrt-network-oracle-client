@@ -25,7 +25,7 @@ export const handleSetScore = async ({
   scoreResponse,
 }: {
   setStatus: (s: 'loading' | 'error' | 'success' | undefined) => void;
-  scoreResponse: IScoreResponsePlaid | IScoreResponseCoinbase | undefined;
+  scoreResponse: IScoreResponsePlaid | IScoreResponseCoinbase | null;
 }) => {
   if (scoreResponse) {
     setStatus('loading');

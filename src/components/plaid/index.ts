@@ -37,7 +37,7 @@ const LaunchLink = (props: Props) => {
         ? NOTIFICATIONS.PLAID_CLOSED
         : NOTIFICATIONS.PLAID_CONNECTION_ERROR,
     });
-    setPlaidPublicToken(undefined);
+    setPlaidPublicToken(null);
   };
 
   const onSuccess = async (publicToken: string, metadata: any) => {

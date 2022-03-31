@@ -125,7 +125,7 @@ const ApplicantScorePage = () => {
               }}
             />
             <Button
-              text="Create a Permission"
+              text="Create a query permit"
               style={BUTTON_STYLES.OUTLINE}
               classes={{ button: 'text-xs' }}
               onClick={() => {
@@ -193,7 +193,7 @@ const ApplicantScorePage = () => {
                   setPermitName(undefined);
                   setPermissionLoading(false);
                   setPermitQueryModal(false);
-                  setPermissionSig(undefined);
+                  setPermissionSig(null);
                 }}
               />
             </div>
@@ -244,7 +244,7 @@ const ApplicantScorePage = () => {
 
       <div
         className={`px-8 flex -mt-20 justify-center rounded-md z-50 duration-500 ${
-          showScore && !isSuccess ? 'opacity-100' : 'opacity-0'
+          showScore || !isSuccess ? 'opacity-100' : 'opacity-0'
         }`}
       >
         <Button
@@ -255,7 +255,7 @@ const ApplicantScorePage = () => {
         />
       </div>
       {isSuccess && (
-        <p className="text-center -my-4">
+        <p className="text-center mt-2">
           This score was saved to the blockchain.
         </p>
       )}
@@ -271,7 +271,7 @@ const ApplicantScorePage = () => {
               : router.push('/applicant/permit')
           }
           style={BUTTON_STYLES.DEFAULT}
-          text={!isSuccess ? 'Save To Blockchain' : 'Create a permission'}
+          text={!isSuccess ? 'Save To Blockchain' : 'Create a query permit'}
         />
       </div>
 

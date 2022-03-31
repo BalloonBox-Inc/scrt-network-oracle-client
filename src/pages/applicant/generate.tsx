@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { notification, Modal } from 'antd';
 import { useRouter } from 'next/router';
@@ -29,17 +29,19 @@ const GenerateScorePage = () => {
     scoreResponse,
     chainActivity,
     handleSetChainActivity,
+    coinbaseToken,
   } = useSecretContext();
-
-  useEffect(() => {
-    if (chainActivity?.scoreSubmitted) {
-      setIsExistingScore(true);
-    } else setIsExistingScore(false);
-  }, [chainActivity]);
 
   const router = useRouter();
   const queryType = router.query?.type;
   const queryStatus = router.query?.status;
+
+  useEffect(() => {
+    if (chainActivity?.scoreSubmitted) {
+      setIsExistingScore(true);
+      !!queryType && router.replace('/applicant/generate');
+    } else setIsExistingScore(false);
+  }, [chainActivity, queryType, router]);
 
   const connectionError = (client: 'coinbase' | 'plaid' | string) =>
     notification.error({
@@ -50,8 +52,8 @@ const GenerateScorePage = () => {
     storageHelper.persist('scoreAnimationViewed', false);
     setStartPlaidLink(false);
     setAwaitingScoreResponse(false);
-    setScoreResponse(undefined);
-    setPlaidPublicToken(undefined);
+    setScoreResponse(null);
+    setPlaidPublicToken(null);
     router.replace('/applicant/generate');
   };
 
@@ -59,10 +61,66 @@ const GenerateScorePage = () => {
     router.query.status === 'loading' && setAwaitingScoreResponse(true);
   }, [router.query]);
 
+  const getCoinbaseSdkUrl = async () => {
+    setAwaitingScoreResponse(true);
+    const res = await fetch('/api/coinbase');
+    const resJson = await res.json();
+    if (resJson.url) {
+      window.location.href = resJson.url;
+    }
+  };
+
+  const fetchCoinbaseWithToken = useCallback(
+    async ({ access_token, refresh_token }) => {
+      const coinbaseRes = await fetch(
+        `/api/coinbase?access_token=${access_token}&refresh_token=${refresh_token}`
+      );
+
+      const { coinbaseScore } = await coinbaseRes.json();
+
+      if (coinbaseScore.status === 'success') {
+        setScoreResponse(coinbaseScore);
+        router.replace('/applicant/generate?type=coinbase&status=success');
+      } else if (coinbaseScore.message === 'The access token expired') {
+        setScoreResponse(null);
+        getCoinbaseSdkUrl();
+      } else {
+        setScoreResponse(null);
+        router.replace('/applicant/generate');
+        setAwaitingScoreResponse(false);
+        notification.error({
+          message: 'Error connecting to Coinbase, try again later',
+        });
+      }
+    },
+    [router, setScoreResponse]
+  );
+
+  const handleCoinbaseConnect = async () => {
+    // check if access token + refresh token exist in cache
+    if (coinbaseToken?.access_token) {
+      router.replace('/applicant/generate?type=coinbase&status=loading');
+      fetchCoinbaseWithToken({
+        access_token: coinbaseToken.access_token,
+        refresh_token: coinbaseToken.refresh_token,
+      });
+      return;
+    }
+    // check if we have a score calculated with CB in storage
+    if (scoreResponse?.endpoint?.includes('coinbase')) {
+      router.replace('/applicant/generate?type=coinbase&status=success');
+    } else {
+      // Trigger SDK
+      getCoinbaseSdkUrl();
+    }
+  };
+
   useEffect(() => {
-    const getCoinbaseToken = async (code: string) => {
+    const getCoinbaseTokens = async (code: string) => {
       try {
+        // Send the code we got from the SDK to retrieve access_token + refresh_token
         const resJson = await handleCoinbaseCode(code);
+
         if (resJson.error) {
           router.replace('/applicant/generate');
           connectionError('coinbase');
@@ -70,22 +128,10 @@ const GenerateScorePage = () => {
         if (resJson.access_token) {
           setCoinbaseToken(resJson);
           router.replace('/applicant/generate?type=coinbase&status=loading');
-          const coinbaseRes = await fetch(
-            `/api/coinbase?access_token=${resJson.access_token}&refresh_token=${resJson.refresh_token}`
-          );
-
-          const { coinbaseScore } = await coinbaseRes.json();
-          if (coinbaseScore.status === 'success') {
-            setScoreResponse(coinbaseScore);
-            router.replace('/applicant/generate?type=coinbase&status=success');
-          } else {
-            setScoreResponse(undefined);
-            router.replace('/applicant/generate');
-            setAwaitingScoreResponse(false);
-            notification.error({
-              message: 'Error connecting to Coinbase, try again later',
-            });
-          }
+          fetchCoinbaseWithToken({
+            access_token: resJson.access_token,
+            refresh_token: resJson.refresh_token,
+          });
         }
       } catch (error) {
         router.pathname = '/applicant/generate';
@@ -94,27 +140,11 @@ const GenerateScorePage = () => {
     };
 
     if (router?.query?.code) {
-      getCoinbaseToken(router.query.code as string);
+      getCoinbaseTokens(router.query.code as string);
     }
-  }, [router, setCoinbaseToken, setScoreResponse]);
-
-  const handleCoinbaseConnect = async () => {
-    if (scoreResponse?.endpoint.includes('coinbase')) {
-      router.replace('/applicant/generate?type=coinbase&status=success');
-    } else {
-      setAwaitingScoreResponse(true);
-      const res = await fetch('/api/coinbase');
-      const resJson = await res.json();
-      if (resJson.url) {
-        window.location.href = resJson.url;
-      }
-    }
-  };
+  }, [fetchCoinbaseWithToken, router, setCoinbaseToken, setScoreResponse]);
 
   const handlePlaidConnect = async () => {
-    // todo:
-    // Handle expired token error: "provided link token is expired" is returned
-
     if (plaidPublicToken) {
       setStartPlaidLink(true);
       router.replace('/applicant/generate?type=plaid&status=success');
@@ -292,7 +322,6 @@ const GenerateScorePage = () => {
                   ? handleCoinbaseConnect()
                   : handlePlaidConnect();
               }}
-              // isDisabled={!selection}
               text="Continue"
               style={BUTTON_STYLES.DEFAULT}
             />

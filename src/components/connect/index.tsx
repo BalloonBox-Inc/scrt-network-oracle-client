@@ -39,9 +39,9 @@ const Connect = ({ showWallet, setShowWallet }: any) => {
   const disconnectWallet = () => {
     setSecretAddress(null);
     setConnectRequest(false);
-    setCoinbaseToken(undefined);
-    setPlaidPublicToken(undefined);
-    setScoreResponse(undefined);
+    setCoinbaseToken(null);
+    setPlaidPublicToken(null);
+    setScoreResponse(null);
     localStorage.clear();
     notification.success({
       message: NOTIFICATIONS.WALLET_DISCONNECT_SUCCESS,

@@ -36,12 +36,12 @@ const ApplicantServicesPage = () => {
           <ServiceSelector
             selected={selection === 'permit'}
             onClick={() => setSelection('permit')}
-            text="Create a permission"
+            text="Create a query permit"
           />
           <ServiceSelector
             selected={selection === 'permit?type=revoke'}
             onClick={() => setSelection('permit?type=revoke')}
-            text="Revoke a permission"
+            text="Revoke a query permit"
           />
           <ServiceSelector
             selected={selection === 'viewingKey'}
