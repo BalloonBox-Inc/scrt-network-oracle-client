@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 
 import BgImage from '@scrtsybil/src/components/BgImage';
 import Button from '@scrtsybil/src/components/Button';
-import { BORDER_GRADIENT_STYLE } from '@scrtsybil/src/constants';
+import ServiceSelector from '@scrtsybil/src/components/ServiceSelector';
 
 const StartPage = () => {
   const router = useRouter();
@@ -21,50 +21,21 @@ const StartPage = () => {
               Select Your User Type
             </h2>
           </div>
-          <div
-            className="flex z-50 justify-center w-80  sm:w-115  rounded-md p-1 "
-            style={{
-              background:
-                userTypeSelection === 'applicant'
-                  ? BORDER_GRADIENT_STYLE
-                  : 'transparent',
-            }}
-          >
-            <div
-              onClick={() => setUserTypeSelection('applicant')}
-              className={`bg-gray-900  z-50  cursor-pointer  rounded-md p-5 px-8`}
-            >
-              <div className="text-left ">
-                <h3 className="text-lg sm:text-xl">Applicant</h3>
-                <p className="text-xs font-thin">
-                  I would like to generate a credit score and store it on the
-                  SCRT Network.
-                </p>
-              </div>
-            </div>
-          </div>
-          <div
-            className="flex z-50  w-80  sm:w-115 justify-center   rounded-md p-1"
-            style={{
-              background:
-                userTypeSelection === 'provider'
-                  ? BORDER_GRADIENT_STYLE
-                  : 'transparent',
-            }}
-          >
-            <div
-              onClick={() => setUserTypeSelection('provider')}
-              className={`bg-gray-900  z-50 cursor-pointer  rounded-md px-8 p-5 `}
-            >
-              <div className="text-left">
-                <h3 className="text-lg sm:text-xl">Service Provider</h3>
-                <p className="text-xs font-thin">
-                  I would like to see an applicant&apos;s score already stored
-                  on the SCRT Network.
-                </p>
-              </div>
-            </div>
-          </div>
+
+          <ServiceSelector
+            title="Applicant"
+            onClick={() => setUserTypeSelection('applicant')}
+            selected={userTypeSelection === 'applicant'}
+            text="I would like to generate a credit score and store it on the
+                  SCRT Network."
+          />
+          <ServiceSelector
+            title="Service Provider"
+            onClick={() => setUserTypeSelection('provider')}
+            selected={userTypeSelection === 'provider'}
+            text="I would like to see an applicant's score already stored
+            on the SCRT Network."
+          />
         </div>
       </div>
       <div className="pt-16 z-30 flex justify-end">

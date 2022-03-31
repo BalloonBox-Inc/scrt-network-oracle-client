@@ -8,7 +8,7 @@ import BgImage from '@scrtsybil/src/components/BgImage';
 import Button, { BUTTON_STYLES } from '@scrtsybil/src/components/Button';
 import { LoadingContainer } from '@scrtsybil/src/components/LoadingContainer';
 import ScoreSpeedometer from '@scrtsybil/src/components/score';
-import { BORDER_GRADIENT_STYLE } from '@scrtsybil/src/constants';
+import ServiceSelector from '@scrtsybil/src/components/ServiceSelector';
 import {
   queryScoreWithPermit,
   queryScoreWithViewingKey,
@@ -177,7 +177,7 @@ const ProviderServicesPage = () => {
   );
 
   const mainContainer = (
-    <div className="px-14 py-20 ">
+    <div className="px-14 py-10">
       <div className="w-full text-center">
         <div className=" flex flex-col items-center space-y-5  justify-center w-full">
           <div className="z-50 opacity-100 px-0 sm:p-10">
@@ -188,40 +188,16 @@ const ProviderServicesPage = () => {
               User Type: Provider
             </p>
           </div>
-          <div
-            className="flex z-50 justify-center w-80  sm:w-115  rounded-md p-1 "
-            style={{
-              background:
-                selection === 'permit' ? BORDER_GRADIENT_STYLE : 'transparent',
-            }}
-          >
-            <div
-              onClick={() => setSelection('permit')}
-              className={`bg-gray-900  cursor-pointer w-full  rounded-md`}
-            >
-              <div className="text-center">
-                <p className="text-base p-0 m-0 py-4">I have a Query Permit</p>
-              </div>
-            </div>
-          </div>
-          <div
-            className="flex z-50 justify-center w-80  sm:w-115  rounded-md p-1 "
-            style={{
-              background:
-                selection === 'viewingKey'
-                  ? BORDER_GRADIENT_STYLE
-                  : 'transparent',
-            }}
-          >
-            <div
-              onClick={() => setSelection('viewingKey')}
-              className={`bg-gray-900  cursor-pointer w-full  rounded-md`}
-            >
-              <div className="text-center">
-                <p className="text-base p-0 m-0 py-4">I have a Viewing Key</p>
-              </div>
-            </div>
-          </div>
+          <ServiceSelector
+            selected={selection === 'permit'}
+            onClick={() => setSelection('permit')}
+            text="I have a Query Permit"
+          />
+          <ServiceSelector
+            selected={selection === 'viewingKey'}
+            onClick={() => setSelection('viewingKey')}
+            text="I have a Viewing Key"
+          />
         </div>
       </div>
       <div className=" sm:px-10 flex justify-between">

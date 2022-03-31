@@ -5,11 +5,13 @@ import {
   CopyOutlined,
   DisconnectOutlined,
 } from '@ant-design/icons';
-import { Modal, message } from 'antd';
+import { Modal, message, notification } from 'antd';
 import Image from 'next/image';
 
 import logoImage from '@scrtsybil/public/images/keplr.svg';
+import { NOTIFICATIONS } from '@scrtsybil/src/constants';
 import { useSecretContext } from '@scrtsybil/src/context';
+import { handleKeplrOpen } from '@scrtsybil/src/utils';
 
 const MIN_WIDTH_TO_SHOW_ADDRESS = 440;
 
@@ -25,14 +27,26 @@ const Connect = ({ showWallet, setShowWallet }: any) => {
   const [windowWidth, setWindowWidth] = useState<number | undefined>(undefined);
 
   const {
-    setSecretjs,
     secretAddress,
     setSecretAddress,
-    disconnectWallet,
-    connectWallet,
     connectRequest,
     setConnectRequest,
+    setCoinbaseToken,
+    setPlaidPublicToken,
+    setScoreResponse,
   } = useSecretContext();
+
+  const disconnectWallet = () => {
+    setSecretAddress(null);
+    setConnectRequest(false);
+    setCoinbaseToken(null);
+    setPlaidPublicToken(null);
+    setScoreResponse(null);
+    localStorage.clear();
+    notification.success({
+      message: NOTIFICATIONS.WALLET_DISCONNECT_SUCCESS,
+    });
+  };
 
   useEffect(() => {
     const handleWindowResize = () => {
@@ -72,11 +86,11 @@ const Connect = ({ showWallet, setShowWallet }: any) => {
         alert('Please install keplr extension');
       }
     }
-  }, [setSecretAddress, setSecretjs]);
+  }, [setSecretAddress]);
 
   const handleConnectRequest = () => {
     setConnectRequest(!connectRequest);
-    connectWallet();
+    handleKeplrOpen(setSecretAddress);
   };
 
   const handleShowWallet = () => {

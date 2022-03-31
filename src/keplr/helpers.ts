@@ -10,7 +10,6 @@ import {
   SECRET_CONTRACT_ADDR,
   CHAIN_ID,
 } from '@scrtsybil/src/constants';
-import { CHAIN_ACTIVITIES } from '@scrtsybil/src/context';
 import {
   IGenerateViewingKeyResponse,
   IPermitQueryResponse,
@@ -24,14 +23,9 @@ import {
 export const handleSetScore = async ({
   setStatus,
   scoreResponse,
-  handleAddToChainActivity,
 }: {
   setStatus: (s: 'loading' | 'error' | 'success' | undefined) => void;
-  scoreResponse: IScoreResponsePlaid | IScoreResponseCoinbase | undefined;
-  handleAddToChainActivity: (
-    k: CHAIN_ACTIVITIES,
-    value: string | number | boolean
-  ) => void;
+  scoreResponse: IScoreResponsePlaid | IScoreResponseCoinbase | null;
 }) => {
   if (scoreResponse) {
     setStatus('loading');
@@ -58,20 +52,15 @@ export const handleSetScore = async ({
         },
       };
       const response = await cosmJS.execute(SECRET_CONTRACT_ADDR, handleMsg);
-      const str = Buffer.from(response.data.buffer).toString();
+      const str = await JSON.parse(
+        Buffer.from(response.data.buffer).toString()
+      );
 
-      if (str.includes('Score recorded')) {
-        setStatus('success');
-        handleAddToChainActivity(
-          CHAIN_ACTIVITIES.scoreAmount,
-          scoreResponse.score
-        );
-        handleAddToChainActivity(CHAIN_ACTIVITIES.scoreSubmitted, true);
-        handleAddToChainActivity(CHAIN_ACTIVITIES.dataProvider, 'coinbase');
-
-        return notification.success({
+      if (str?.record?.status === 'Score recorded!') {
+        notification.success({
           message: 'Score recorded to blockchain 🎉',
         });
+        return { status: 'success' };
       }
       return null;
     } catch (error) {

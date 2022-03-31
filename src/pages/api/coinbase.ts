@@ -59,6 +59,7 @@ export default async function handler(
         }
       );
       const tokenResJson = await tokenRes.json();
+
       res.send({ ...tokenResJson });
     } catch (error: unknown | ICoinbaseTokenError) {
       res.send({ error });

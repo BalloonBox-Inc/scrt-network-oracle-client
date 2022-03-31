@@ -24,9 +24,9 @@ const QueryScorePage = () => {
     useState<boolean>(false);
   const [status, setStatus] = useState<
     'loading' | 'error' | 'success' | undefined
-  >(undefined);
+  >('loading');
 
-  const { permissionSig, chainActivity } = useSecretContext();
+  const { permissionSig, chainActivity, scoreResponse } = useSecretContext();
 
   const PERMIT_FORM_ORIGINAL = {
     permitName: '',
@@ -73,7 +73,7 @@ const QueryScorePage = () => {
         <div className="p-8 rounded-lg z-50  max-w-xl w-full ">
           <h3 className="text-lg uppercase font-semibold mb-4">Summary</h3>
           <p className="sm:text-base leading-7">
-            {queryResponse?.description || queryResponse?.description}
+            {scoreResponse?.message || queryResponse?.description}
           </p>
         </div>
       </div>
@@ -84,7 +84,12 @@ const QueryScorePage = () => {
     <>
       <div className="w-full text-center">
         <div className=" flex flex-col items-center   justify-center w-full">
-          <ScoreSpeedometer showScore score={queryResponse?.score as number} />
+          <ScoreSpeedometer
+            showScore
+            score={
+              chainActivity?.scoreAmount || (queryResponse?.score as number)
+            }
+          />
           <div
             className={`px-8 flex -mt-20 justify-center rounded-md z-50 duration-500`}
           >
@@ -93,19 +98,6 @@ const QueryScorePage = () => {
               style={BUTTON_STYLES.LINK}
               text="Explain my score"
               classes={{ button: 'text-xs text-white hover:text-blue' }}
-            />
-          </div>
-        </div>
-      </div>
-      <div className=" sm:px-10 flex justify-between">
-        <div className="pt-16 z-30 flex justify-start">
-          <div>
-            <Button
-              onClick={() => {
-                router.push(`/applicant`);
-              }}
-              text="Back"
-              style={BUTTON_STYLES.OUTLINE}
             />
           </div>
         </div>
@@ -158,9 +150,7 @@ const QueryScorePage = () => {
           }
           onClick={() => getScore()}
         />
-        {/* <Link href={'#'}>
-          <a className="z-50">{'Create a permission'}</a>
-        </Link> */}
+
         {permissionSig?.name && (
           <Button
             text={'Autofill form?'}
@@ -182,33 +172,36 @@ const QueryScorePage = () => {
 
   const errorContainer = (
     <>
-      <div className="w-full flex flex-col text-center">
+      <div className="w-full flex flex-col text-center items-center">
         <div className=" flex  items-center  text-2xl justify-center w-full">
           <ExclamationCircleOutlined />
           <p className=" ml-3">No score found!</p>
         </div>
-        <Link href={'/applicant/generate'}>
-          <a className="z-50 mt-6">Generate a score.</a>
-        </Link>
-      </div>
-      <div className=" sm:px-10 flex justify-between">
-        <div className="pt-16 z-30 flex justify-start">
-          <div>
-            <Button
-              onClick={() => {
-                router.push(`/applicant`);
-              }}
-              text="Back"
-              style={BUTTON_STYLES.OUTLINE}
-            />
-          </div>
+        <div className="flex items-center mt-6  space-x-3">
+          {' '}
+          <Link href={'/applicant/generate'}>
+            <a className="z-50 w-max">Generate a score</a>
+          </Link>
+          <p>or</p>
+          <Link href={'/applicant'}>
+            <a className="z-50  w-max">go back</a>
+          </Link>
         </div>
       </div>
     </>
   );
 
   return (
-    <div className="px-14 py-20 ">
+    <div className="px-14 py-10 ">
+      {status !== 'error' && (
+        <div className="w-full text-center">
+          <div className="z-50 opacity-100 px-0 sm:p-10">
+            <h2 className="z-50 font-semibold text-2xl sm:text-3xl md:text-3xl lg:text-4xl p-0">
+              Query Your Score
+            </h2>
+          </div>
+        </div>
+      )}
       {status === 'loading' && (
         <LoadingContainer text="Requesting score, this may take a minute." />
       )}
@@ -216,6 +209,17 @@ const QueryScorePage = () => {
       {status === 'error' && errorContainer}
       {status === undefined && noScoreForm}
       {scoreDescriptionModal}
+      {status !== 'error' && (
+        <div className="pt-16 z-50 sm:px-20 flex justify-start">
+          <Button
+            onClick={() => {
+              router.push(`/applicant`);
+            }}
+            text="Back"
+            style={BUTTON_STYLES.OUTLINE}
+          />
+        </div>
+      )}
       <BgImage />
     </div>
   );

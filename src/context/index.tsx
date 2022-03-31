@@ -9,51 +9,41 @@ import React, {
 import { notification } from 'antd';
 import router from 'next/router';
 import { ItemPublicTokenExchangeResponse } from 'plaid';
-import { SigningCosmWasmClient } from 'secretjs';
 import { StdSignature } from 'secretjs/types/types';
 
 import { NOTIFICATIONS } from '../constants';
 import { ICoinbaseTokenCreateResponse } from '../pages/api/coinbase';
 import { IScoreResponseCoinbase, IScoreResponsePlaid } from '../types/types';
-import { handleKeplrOpen } from '../utils';
 
 interface ISecretContext {
-  secretjs: SigningCosmWasmClient | null;
   secretAddress: string | null;
   setSecretAddress: React.Dispatch<React.SetStateAction<string | null>>;
-  setSecretjs: React.Dispatch<
-    React.SetStateAction<SigningCosmWasmClient | null>
-  >;
   loading: boolean;
   disconnectWallet: () => void;
-  connectWallet: () => void;
   connectRequest: boolean;
   setConnectRequest: React.Dispatch<React.SetStateAction<boolean>>;
   setCoinbaseToken: React.Dispatch<
-    React.SetStateAction<ICoinbaseTokenCreateResponse | undefined>
+    React.SetStateAction<ICoinbaseTokenCreateResponse | null>
   >;
-  coinbaseToken: ICoinbaseTokenCreateResponse | undefined;
-  setPlaidPublicToken: React.Dispatch<
-    React.SetStateAction<undefined | PlaidToken>
-  >;
-  plaidPublicToken: PlaidToken | undefined;
+  coinbaseToken: ICoinbaseTokenCreateResponse | null;
+  setPlaidPublicToken: React.Dispatch<React.SetStateAction<null | PlaidToken>>;
+  plaidPublicToken: PlaidToken | null;
 
   setScoreResponse: React.Dispatch<
-    React.SetStateAction<
-      IScoreResponseCoinbase | IScoreResponsePlaid | undefined
-    >
+    React.SetStateAction<IScoreResponseCoinbase | IScoreResponsePlaid | null>
   >;
-  scoreResponse: IScoreResponseCoinbase | IScoreResponsePlaid | undefined;
-  chainActivity: null | IChainActivity;
-  setChainActivity: React.Dispatch<React.SetStateAction<IChainActivity | null>>;
-  permissionSig?: { name: string; signature: StdSignature };
+  scoreResponse: IScoreResponseCoinbase | IScoreResponsePlaid | null;
+  chainActivity: IChainActivity;
+  setChainActivity: React.Dispatch<React.SetStateAction<IChainActivity>>;
+  permissionSig: { name: string; signature: StdSignature } | null;
   setPermissionSig: React.Dispatch<
-    React.SetStateAction<{ name: string; signature: StdSignature } | undefined>
+    React.SetStateAction<{ name: string; signature: StdSignature } | null>
   >;
   handleAddToChainActivity: (
     k: CHAIN_ACTIVITIES,
     value: string | number | boolean
   ) => void;
+  handleSetChainActivity: any;
 }
 
 export enum CHAIN_ACTIVITIES {
@@ -98,29 +88,35 @@ export const storageHelper = {
   },
 };
 
+const CHAIN_ACTIVITY_INIT = {
+  scoreSubmitted: undefined,
+  permissionKeys: undefined,
+  viewingKeys: undefined,
+  shareableLink: undefined,
+  dataProvider: undefined,
+  scoreAmount: undefined,
+};
+
 const ContextProvider = ({ children }: any) => {
   const [secretAddress, setSecretAddress] = useState<string | null>(null);
-  const [secretjs, setSecretjs] = useState<SigningCosmWasmClient | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [connectRequest, setConnectRequest] = useState<boolean>(false);
   const [scoreResponse, setScoreResponse] = useState<
-    IScoreResponseCoinbase | IScoreResponsePlaid | undefined
-  >(undefined);
-  const [coinbaseToken, setCoinbaseToken] = useState<
-    ICoinbaseTokenCreateResponse | undefined
-  >(undefined);
-  const [plaidPublicToken, setPlaidPublicToken] = useState<
-    undefined | PlaidToken
-  >(undefined);
-  const [chainActivity, setChainActivity] = useState<IChainActivity | null>(
+    IScoreResponseCoinbase | IScoreResponsePlaid | null
+  >(null);
+  const [coinbaseToken, setCoinbaseToken] =
+    useState<ICoinbaseTokenCreateResponse | null>(null);
+  const [plaidPublicToken, setPlaidPublicToken] = useState<null | PlaidToken>(
     null
   );
+  const [chainActivity, setChainActivity] =
+    useState<IChainActivity>(CHAIN_ACTIVITY_INIT);
   const [plaidPublicExchangeResponse, setPlaidPublicExchangeResponse] =
-    useState<undefined | ItemPublicTokenExchangeResponse>(undefined);
-
-  const [permissionSig, setPermissionSig] = useState<
-    { name: string; signature: StdSignature } | undefined
-  >(undefined);
+    useState<null | ItemPublicTokenExchangeResponse>(null);
+  const [permissionSig, setPermissionSig] = useState<{
+    name: string;
+    signature: StdSignature;
+  } | null>(null);
 
   const handleAddToChainActivity = (
     key: CHAIN_ACTIVITIES,
@@ -151,29 +147,16 @@ const ContextProvider = ({ children }: any) => {
     }
   };
 
-  const setClearLocalStorage = () => {
-    !!secretjs && storageHelper.persist('secretjs', null);
-    secretAddress && storageHelper.persist('secretAddress', null);
-    coinbaseToken && storageHelper.persist('coinbaseToken', null);
-    plaidPublicToken && storageHelper.persist('plaidPublicToken', null);
-    plaidPublicExchangeResponse &&
-      storageHelper.persist('plaidPublicExchangeResponse', null);
-    permissionSig?.name && storageHelper.persist('permissionSig', null);
-  };
-
   const disconnectWallet = () => {
     setSecretAddress(null);
-    setSecretjs(null);
     setConnectRequest(false);
-    setCoinbaseToken(undefined);
-    setPlaidPublicToken(undefined);
-    setPlaidPublicExchangeResponse(undefined);
-    setClearLocalStorage();
-    if (!secretjs) {
-      notification.success({
-        message: NOTIFICATIONS.WALLET_DISCONNECT_SUCCESS,
-      });
-    }
+    setCoinbaseToken(null);
+    setPlaidPublicToken(null);
+    setPlaidPublicExchangeResponse(null);
+    localStorage.clear();
+    notification.success({
+      message: NOTIFICATIONS.WALLET_DISCONNECT_SUCCESS,
+    });
   };
 
   const returnHome = useCallback(() => {
@@ -193,32 +176,33 @@ const ContextProvider = ({ children }: any) => {
     secretAddress && setConnectRequest(false);
   }, [secretAddress]);
 
-  const connectWallet = () => {
-    handleKeplrOpen(setSecretjs, setSecretAddress);
+  const handleSetChainActivity = (val: any) => {
+    if (val) {
+      setChainActivity({
+        ...chainActivity,
+        ...val,
+      });
+      storageHelper.persist('chainActivity', val);
+    } else {
+      setChainActivity(CHAIN_ACTIVITY_INIT);
+      storageHelper.persist('chainActivity', CHAIN_ACTIVITY_INIT);
+    }
   };
 
+  // PERSIST TO STORAGE HERE (after loading from storage, we update local when state changes)
   useEffect(() => {
-    chainActivity && storageHelper.persist('chainActivity', chainActivity);
-  }, [chainActivity]);
-
-  // PERSIST TO STORAGE HERE:
-  useEffect(() => {
-    secretjs && storageHelper.persist('secretjs', secretjs);
-    secretAddress && storageHelper.persist('secretAddress', secretAddress);
-    scoreResponse && storageHelper.persist('scoreResponse', scoreResponse);
-    coinbaseToken && storageHelper.persist('coinbaseToken', coinbaseToken);
-    plaidPublicToken &&
+    if (!loading) {
+      storageHelper.persist('secretAddress', secretAddress);
+      storageHelper.persist('scoreResponse', scoreResponse);
+      storageHelper.persist('coinbaseToken', coinbaseToken);
       storageHelper.persist('plaidPublicToken', plaidPublicToken);
-    plaidPublicExchangeResponse &&
       storageHelper.persist(
         'plaidPublicExchangeResponse',
         plaidPublicExchangeResponse
       );
-    chainActivity && storageHelper.persist('chainActivity', chainActivity);
-    permissionSig && storageHelper.persist('permissionSig', permissionSig);
-    setLoading(false);
+      storageHelper.persist('permissionSig', permissionSig);
+    }
   }, [
-    secretjs,
     secretAddress,
     coinbaseToken,
     plaidPublicToken,
@@ -226,11 +210,11 @@ const ContextProvider = ({ children }: any) => {
     scoreResponse,
     chainActivity,
     permissionSig,
+    loading,
   ]);
 
-  // HYDRATE CONTEXT HERE:
+  // (THIS WILL RUN FIRST ON LOAD) HYDRATE CONTEXT HERE:
   useEffect(() => {
-    setSecretjs(storageHelper.get('secretjs'));
     setSecretAddress(storageHelper.get('secretAddress'));
     setCoinbaseToken(storageHelper.get('coinbaseToken'));
     setPlaidPublicToken(storageHelper.get('plaidPublicToken'));
@@ -247,14 +231,11 @@ const ContextProvider = ({ children }: any) => {
     <Context.Provider
       value={{
         disconnectWallet,
-        connectWallet,
         connectRequest,
         setConnectRequest,
         loading,
         secretAddress,
         setSecretAddress,
-        secretjs,
-        setSecretjs,
         setCoinbaseToken,
         coinbaseToken,
         setPlaidPublicToken,
@@ -266,6 +247,7 @@ const ContextProvider = ({ children }: any) => {
         permissionSig,
         setPermissionSig,
         handleAddToChainActivity,
+        handleSetChainActivity,
       }}
     >
       {children}

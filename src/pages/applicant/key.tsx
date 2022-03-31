@@ -16,7 +16,7 @@ const GeneratePermissionPage = () => {
         <Typography.Title level={2}>Generate a Viewing Key</Typography.Title>
         <div className="flex flex-col items-center space-y-5 mt-8 justify-center w-full">
           <Form>
-            <Input type={'text'} placeholder="Name of Permission" />
+            <Input type={'text'} placeholder="Name of query permit" />
           </Form>
           <Card type="inner">
             Name of label Lorem ipsum dolor sit amet consectetur adipisicing

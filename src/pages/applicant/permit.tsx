@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 
+import { DownloadOutlined } from '@ant-design/icons';
 import { Modal } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { isEmpty, replace } from 'ramda';
-import { StdSignature } from 'secretjs/types/types';
+import { isEmpty, replace, type } from 'ramda';
 
 import BgImage from '@scrtsybil/src/components/BgImage';
 import Button, { BUTTON_STYLES } from '@scrtsybil/src/components/Button';
@@ -18,9 +18,6 @@ import {
 const PermissionPage = () => {
   const [inputData, setinputData] = useState<string>();
   const [status, setStatus] = useState<string | undefined>(undefined);
-  // const [permissionSig, setPermissionSig] = useState<StdSignature | undefined>(
-  //   undefined
-  // );
 
   const [revokeOrCreate, setRevokeOrCreate] = useState<
     'revoke' | 'create' | null
@@ -88,11 +85,11 @@ const PermissionPage = () => {
       visible={!!permissionSig}
       footer={null}
       onCancel={() => {
-        setPermissionSig(undefined);
+        setPermissionSig(null);
       }}
       bodyStyle={{ background: '#242630' }}
     >
-      <div className={`px-8 flex py-5 justify-center rounded-md z-50`}>
+      <div className={`px-8 flex pt-5 justify-center rounded-md z-50`}>
         <div className="p-8 px-2 rounded-lg z-50  max-w-xl w-full ">
           <div className="flex items-center mb-6">
             <h3 className="text-lg mr-2 uppercase font-semibold ">
@@ -122,7 +119,7 @@ const PermissionPage = () => {
               text="I have saved these keys"
               onClick={() => {
                 setinputData(undefined);
-                setPermissionSig(undefined);
+                setPermissionSig(null);
               }}
             />
             <div>
@@ -136,27 +133,56 @@ const PermissionPage = () => {
               />
             </div>
           </div>
+          <div
+            role={'presentation'}
+            className="mt-10 text-xs flex items-center  text-blue cursor-pointer"
+            onClick={() => {
+              const element = document.createElement('a');
+              const file = new Blob(
+                [
+                  JSON.stringify({
+                    permit_name: inputData,
+                    public_key: permissionSig?.signature?.pub_key.value,
+                    signature: permissionSig?.signature?.signature,
+                  }),
+                ],
+                {
+                  type: 'text/plain',
+                }
+              );
+              element.href = URL.createObjectURL(file);
+              element.download = 'query_permit.txt';
+              document.body.appendChild(element); // Required for this to work in FireFox
+              element.click();
+              document.body.removeChild(element);
+            }}
+          >
+            <span className="mr-1 text-base">
+              <DownloadOutlined />
+            </span>
+            <p className="mt-2">download permit</p>
+          </div>
         </div>
       </div>
     </Modal>
   );
 
   const mainContainer = (
-    <div className="px-10 sm:px-14 z-50 mt-20 mb-20 sm:mt-20 md:-mt-8">
+    <div className="px-10 sm:px-14 z-50 mt-20 mb-20 sm:mt-10">
       <div className="w-full text-center">
         <div className="z-50 opacity-100 px-0 sm:p-10 flex flex-col">
           <h2 className="z-50 font-semibold text-2xl sm:text-3xl md:text-3xl lg:text-4xl p-0">
-            {isCreate ? 'Create a Permission' : 'Revoke a Permission'}
+            {isCreate ? 'Create a query permit' : 'Revoke a query permit'}
           </h2>
           <p className="z-50 font-thin text-sm sm:text-base p-0">
-            Please enter the name of the permission you would like to{' '}
+            Please enter the name of the query permit you would like to{' '}
             {isCreate ? 'create' : 'revoke'}
           </p>
         </div>
       </div>
       <div className="w-full text-center z-50 sm:px-20 lg:px-40 flex flex-col ">
         <form className="flex flex-col items-start mt-8  w-full">
-          <label className="text-left mb-1">Permission name or phrase</label>
+          <label className="text-left mb-1">query permit name or phrase</label>
           {inputDataInput((e) => setinputData(e.target.value))}
         </form>
         <div className="flex items-center mt-8">
@@ -176,7 +202,7 @@ const PermissionPage = () => {
             }
           >
             <a className="z-50">
-              {isCreate ? 'Revoke a permission' : 'Create a permission'}
+              {isCreate ? 'Revoke a query permit' : 'Create a query permit'}
             </a>
           </Link>
         </div>
