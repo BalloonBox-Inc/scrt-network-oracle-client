@@ -266,9 +266,13 @@ const ProviderServicesPage = () => {
           </div>
           <div className="bg-navy p-3 mx-10 -mt-20 mb-10">
             <p>
-              {convertScoreDescriptionForProvider(
-                queryViewingKeyResponse?.description as string
-              )}
+              {selection === 'permit'
+                ? convertScoreDescriptionForProvider(
+                    queryPermitResponse?.Ok?.description as string
+                  )
+                : convertScoreDescriptionForProvider(
+                    queryViewingKeyResponse?.description as string
+                  )}
             </p>
           </div>
         </>
