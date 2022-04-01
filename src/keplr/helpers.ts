@@ -110,18 +110,6 @@ export const handleSetViewingKey = async ({ entropy }: { entropy: string }) => {
       return { response: responseParsed, status: 'success' };
     }
     return { response: responseParsed, status: 'error' };
-    // if (str.includes('Score recorded')) {
-    //   setChainActivity({
-    //     ...chainActivity,
-    //     scoreAmount: scoreResponse.score,
-    //     scoreSubmitted: true,
-    //     dataProvider: 'coinbase',
-    //   });
-
-    //   return notification.success({
-    //     message: 'Score recorded to blockchain 🎉',
-    //   });
-    // }
   } catch (error) {
     notification.error({
       message: 'Viewing key was not generated. Please try again.',
@@ -318,12 +306,17 @@ export const queryScoreWithViewingKey = async (
       viewingKeyMsg
     );
 
+    console.log({ response });
     if (response.score) {
       notification.success({ message: 'Success!' });
       return { status: 'success', response };
     }
     return { status: 'error', response };
   } catch (error) {
+    notification.error({
+      message:
+        'There was an error getting the user data, please check your key or try again later.',
+    });
     return { status: 'error', error };
   }
 };

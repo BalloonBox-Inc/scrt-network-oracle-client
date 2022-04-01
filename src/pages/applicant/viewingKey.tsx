@@ -18,7 +18,7 @@ const ViewingKeyPage = () => {
     IGenerateViewingKeyResponse | undefined
   >(undefined);
 
-  const { handleAddToChainActivity } = useSecretContext();
+  const { setChainActivity, chainActivity } = useSecretContext();
 
   const handleCreateViewingKey = async () => {
     if (inputData) {
@@ -36,10 +36,11 @@ const ViewingKeyPage = () => {
         viewingKeyRes.status === 'success' &&
         viewingKeyRes.response?.generate_viewing_key?.key
       ) {
-        handleAddToChainActivity(
-          CHAIN_ACTIVITIES.viewingKeys,
-          viewingKeyRes.response.generate_viewing_key.key
-        );
+        setChainActivity({
+          ...chainActivity,
+          [CHAIN_ACTIVITIES.viewingKey]:
+            viewingKeyRes.response.generate_viewing_key.key,
+        });
 
         setStatus('success');
         setViewingKeyResponse(viewingKeyRes.response);
