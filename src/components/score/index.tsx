@@ -44,7 +44,7 @@ const ScoreSpeedometer = ({
   }, []);
 
   return (
-    <div className="flex w-full justify-center">
+    <div className="flex w-full justify-center pt-10">
       <div className="inline-block relative z-50">
         {/* WEB */}
         <div className="hidden sm:block" style={{ width: '575px' }}>

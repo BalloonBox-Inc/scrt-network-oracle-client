@@ -39,29 +39,31 @@ interface ISecretContext {
   setPermissionSig: React.Dispatch<
     React.SetStateAction<{ name: string; signature: StdSignature } | null>
   >;
-  handleAddToChainActivity: (
-    k: CHAIN_ACTIVITIES,
-    value: string | number | boolean
-  ) => void;
   handleSetChainActivity: any;
 }
 
 export enum CHAIN_ACTIVITIES {
   scoreSubmitted = 'scoreSubmitted',
-  permissionKeys = 'permissionKeys',
-  viewingKeys = 'viewingKeys',
   shareableLink = 'shareableLink',
   dataProvider = 'dataProvider',
   scoreAmount = 'scoreAmount',
+  viewingKey = 'viewingKey',
 }
 export interface IChainActivity {
   [CHAIN_ACTIVITIES.scoreSubmitted]?: boolean;
-  [CHAIN_ACTIVITIES.permissionKeys]?: string[];
-  [CHAIN_ACTIVITIES.viewingKeys]?: string[];
   [CHAIN_ACTIVITIES.shareableLink]?: boolean;
   [CHAIN_ACTIVITIES.dataProvider]?: 'coinbase' | 'plaid';
   [CHAIN_ACTIVITIES.scoreAmount]?: number;
+  [CHAIN_ACTIVITIES.viewingKey]?: string;
 }
+
+const CHAIN_ACTIVITY_INIT = {
+  scoreSubmitted: undefined,
+  shareableLink: undefined,
+  dataProvider: undefined,
+  scoreAmount: undefined,
+  viewingKey: undefined,
+};
 
 interface PlaidToken {
   publicToken: string;
@@ -88,15 +90,6 @@ export const storageHelper = {
   },
 };
 
-const CHAIN_ACTIVITY_INIT = {
-  scoreSubmitted: undefined,
-  permissionKeys: undefined,
-  viewingKeys: undefined,
-  shareableLink: undefined,
-  dataProvider: undefined,
-  scoreAmount: undefined,
-};
-
 const ContextProvider = ({ children }: any) => {
   const [secretAddress, setSecretAddress] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -117,35 +110,6 @@ const ContextProvider = ({ children }: any) => {
     name: string;
     signature: StdSignature;
   } | null>(null);
-
-  const handleAddToChainActivity = (
-    key: CHAIN_ACTIVITIES,
-    value: string | number | boolean
-  ) => {
-    if (chainActivity) {
-      const existingValue = chainActivity[key];
-      if (
-        key === CHAIN_ACTIVITIES.permissionKeys ||
-        key === CHAIN_ACTIVITIES.viewingKeys
-      ) {
-        const doesNewValueExist = (existingValue as string[]).includes(
-          value as string
-        );
-        if (doesNewValueExist) return;
-        setChainActivity({
-          ...chainActivity,
-          [key]: (existingValue as string[])?.length
-            ? [...(existingValue as string[]), value]
-            : [value],
-        });
-      } else {
-        setChainActivity({
-          ...chainActivity,
-          [key]: value,
-        });
-      }
-    }
-  };
 
   const disconnectWallet = () => {
     setSecretAddress(null);
@@ -201,6 +165,7 @@ const ContextProvider = ({ children }: any) => {
         plaidPublicExchangeResponse
       );
       storageHelper.persist('permissionSig', permissionSig);
+      storageHelper.persist('chainActivity', chainActivity);
     }
   }, [
     secretAddress,
@@ -246,7 +211,6 @@ const ContextProvider = ({ children }: any) => {
         setChainActivity,
         permissionSig,
         setPermissionSig,
-        handleAddToChainActivity,
         handleSetChainActivity,
       }}
     >

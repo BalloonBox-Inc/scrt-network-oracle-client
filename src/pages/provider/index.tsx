@@ -3,6 +3,7 @@ import { useState } from 'react';
 // import { Modal } from 'antd';
 import dynamic from 'next/dynamic';
 import router from 'next/router';
+import { pipe, replace, slice } from 'ramda';
 
 import BgImage from '@scrtsybil/src/components/BgImage';
 import Button, { BUTTON_STYLES } from '@scrtsybil/src/components/Button';
@@ -54,6 +55,7 @@ const ProviderServicesPage = () => {
 
   const handleQueryPermit = async () => {
     setStatus('loading');
+    setShowModal(false);
     const queryWithPermit: {
       response?: IPermitQueryResponse;
       status: 'error' | 'success' | string;
@@ -70,6 +72,7 @@ const ProviderServicesPage = () => {
 
   const handleQueryViewingKey = async () => {
     setStatus('loading');
+    setShowModal(false);
     const res: {
       response?: IScoreQueryResponse;
       status: 'error' | 'success' | string;
@@ -79,7 +82,8 @@ const ProviderServicesPage = () => {
     if (res.status === 'success') {
       setQueryViewingKeyResponse(res.response);
       setStatus('success');
-    }
+      setShowModal(false);
+    } else setStatus(undefined);
   };
 
   const requestDataInput = (value: string, onChange?: (e?: any) => void) => (
@@ -230,21 +234,48 @@ const ProviderServicesPage = () => {
     </div>
   );
 
+  const convertScoreDescriptionForProvider = (description: string) => {
+    const initialTransform = pipe(
+      replace(/Your/g, "This user's"),
+      replace(/your/g, 'their'),
+      replace(/you/g, 'them')
+    )(description);
+    const tryAgainIndex = initialTransform.indexOf('Try again');
+    if (tryAgainIndex < 0) {
+      return initialTransform;
+    }
+
+    return slice(0, tryAgainIndex, initialTransform);
+  };
+
   return (
     <>
       {!status && mainContainer}
       {status === 'loading' && <LoadingContainer text={'Querying score'} />}
       {status === 'success' && (
-        <div className="relative">
-          <ScoreSpeedometer
-            showScore
-            score={
-              selection === 'permit'
-                ? Math.round(queryPermitResponse?.Ok?.score as number)
-                : Math.round(queryViewingKeyResponse?.score as number)
-            }
-          />
-        </div>
+        <>
+          <div className="relative pb-10">
+            <ScoreSpeedometer
+              showScore
+              score={
+                selection === 'permit'
+                  ? Math.round(queryPermitResponse?.Ok?.score as number)
+                  : Math.round(queryViewingKeyResponse?.score as number)
+              }
+            />
+          </div>
+          <div className="bg-navy p-3 mx-10 -mt-20 mb-10">
+            <p>
+              {selection === 'permit'
+                ? convertScoreDescriptionForProvider(
+                    queryPermitResponse?.Ok?.description as string
+                  )
+                : convertScoreDescriptionForProvider(
+                    queryViewingKeyResponse?.description as string
+                  )}
+            </p>
+          </div>
+        </>
       )}
       {queryModal}
     </>
