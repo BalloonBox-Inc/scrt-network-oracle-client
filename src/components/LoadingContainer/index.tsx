@@ -11,6 +11,8 @@ export const LoadingContainer = ({
       size={120}
       color={'rgba(85,42,170, 10)'}
     />
-    <p className="mt-5 text-sm">{text}</p>
+    <p data-testid="loading-text" className="mt-5 text-sm">
+      {text}
+    </p>
   </div>
 );

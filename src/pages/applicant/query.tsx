@@ -54,7 +54,7 @@ const QueryScorePage = () => {
   };
 
   useEffect(() => {
-    chainActivity?.scoreAmount && setStatus('success');
+    chainActivity?.scoreAmount ? setStatus('success') : setStatus(undefined);
   }, [chainActivity]);
 
   const router = useRouter();
@@ -209,7 +209,7 @@ const QueryScorePage = () => {
       {status === 'error' && errorContainer}
       {status === undefined && noScoreForm}
       {scoreDescriptionModal}
-      {status !== 'error' && (
+      {status !== 'error' && status !== 'loading' && (
         <div className="pt-16 z-50 sm:px-20 flex justify-start">
           <Button
             onClick={() => {

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { notification } from 'antd';
-import router from 'next/router';
+import router, { NextRouter } from 'next/router';
 import {
   usePlaidLink,
   PlaidLinkOptionsWithLinkToken,
@@ -19,7 +19,7 @@ interface Props {
   userId?: number;
   itemId?: number | null;
   children?: React.ReactNode;
-  router: any;
+  router: NextRouter;
   setAwaitingScoreResponse: any;
   setStartPlaidLink: any;
 }

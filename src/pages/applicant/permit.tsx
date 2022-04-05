@@ -4,7 +4,7 @@ import { DownloadOutlined } from '@ant-design/icons';
 import { Modal } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { isEmpty, replace, type } from 'ramda';
+import { isEmpty, replace } from 'ramda';
 
 import BgImage from '@scrtsybil/src/components/BgImage';
 import Button, { BUTTON_STYLES } from '@scrtsybil/src/components/Button';
@@ -87,6 +87,7 @@ const PermissionPage = () => {
       onCancel={() => {
         setPermissionSig(null);
       }}
+      centered
       bodyStyle={{ background: '#242630' }}
     >
       <div className={`px-8 flex pt-5 justify-center rounded-md z-50`}>

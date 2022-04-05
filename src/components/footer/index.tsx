@@ -7,7 +7,7 @@ import scrtLogo from '@scrtsybil/public/images/scrtnetwork-logo-white.svg';
 
 export default function Footer() {
   const router = useRouter();
-  const routerIsHome = router.pathname === '/';
+  const routerIsHome = router?.pathname === '/';
   return (
     <footer
       className={`z-50 border-t-2 border-gray-800 w-full p-5 flex justify-between items-end bg-black text-white bg-cover font-sans ${
