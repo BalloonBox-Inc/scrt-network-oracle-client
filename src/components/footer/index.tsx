@@ -7,15 +7,15 @@ import scrtLogo from '@scrtsybil/public/images/scrtnetwork-logo-white.svg';
 
 export default function Footer() {
   const router = useRouter();
-  const routerIsMain = router.pathname === '/' || router.pathname === '/learn';
+  const routerIsMain = router?.pathname === '/' || router?.pathname === '/learn';
   return (
     <footer
-      className={`z-50 border-t-2 border-gray-800 w-full p-5 flex flex-row justify-between items-end bg-black text-white bg-cover font-sans ${
-        routerIsMain ? 'bg-footer-wave' : undefined
+      className={`z-50 border-t-2 border-gray-800 w-full p-5 flex flex-row justify-between bg-black text-white bg-cover font-sans ${
+        routerIsMain ? 'bg-footer-wave items-end' : 'items-center'
       }`}
     >
       <div>
-        <div>
+        <div className={`${routerIsMain ? 'block': 'hidden'}`}>
           <Link passHref={true} href="/">
             <a>
               <Image
@@ -23,7 +23,7 @@ export default function Footer() {
                 width={'100%'}
                 height={'40%'}
                 alt="scrtsibyl-logo"
-                className="cursor-pointer"
+                className='cursor-pointer'
               />
             </a>
           </Link>

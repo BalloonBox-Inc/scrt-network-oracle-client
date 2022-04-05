@@ -31,8 +31,12 @@ const GenerateScorePage = () => {
   } = useSecretContext();
 
   const router = useRouter();
-  const queryType = router.query?.type;
-  const queryStatus = router.query?.status;
+  const queryType = router?.query?.type;
+  const queryStatus = router?.query?.status;
+
+  useEffect(() => {
+    router?.query?.code && setStartCoinbase(true);
+  }, [router?.query]);
 
   useEffect(() => {
     if (chainActivity?.scoreSubmitted) {
@@ -57,8 +61,8 @@ const GenerateScorePage = () => {
   };
 
   useEffect(() => {
-    router.query.status === 'loading' && setAwaitingScoreResponse(true);
-  }, [router.query]);
+    router?.query?.status === 'loading' && setAwaitingScoreResponse(true);
+  }, [router?.query]);
 
   const handlePlaidConnect = async () => {
     if (plaidPublicToken) {
@@ -67,9 +71,9 @@ const GenerateScorePage = () => {
     } else {
       router.replace('/applicant/generate?type=plaid&status=loading');
       try {
+        setAwaitingScoreResponse(true);
         const plaidRes = await fetch('/api/plaid');
         const plaidResJson: IPlaidTokenCreateResponse = await plaidRes.json();
-        setAwaitingScoreResponse(true);
         if (plaidResJson?.link_token) {
           setStartPlaidLink(true);
           setPlaidPublicToken({ publicToken: plaidResJson.link_token });
@@ -189,6 +193,7 @@ const GenerateScorePage = () => {
             <div
               onClick={() => setSelection('coinbase')}
               className={`bg-gray-900 py-6 flex justify-center  cursor-pointer w-full rounded-md`}
+              data-testid="coinbase-element"
             >
               <img
                 alt="coinbase_logo"
@@ -207,6 +212,7 @@ const GenerateScorePage = () => {
             <div
               onClick={() => setSelection('plaid')}
               className={`bg-gray-900 py-6 flex justify-center  cursor-pointer w-full rounded-md`}
+              data-testid="plaid-element"
             >
               <img
                 width={'60%'}
