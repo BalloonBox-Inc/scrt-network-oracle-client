@@ -29,7 +29,7 @@ const GenerateScorePage = () => {
     chainActivity,
     handleSetChainActivity,
   } = useSecretContext();
-
+  console.log('hello');
   const router = useRouter();
   const queryType = router?.query?.type;
   const queryStatus = router?.query?.status;
