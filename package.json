@@ -11,6 +11,11 @@
     "prepare": "husky install",
     "test": "jest --watch"
   },
+  "lint-staged": {
+    "**/*.ts*": [
+      "jest --bail --findRelatedTests"
+    ]
+  },
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@iov/crypto": "^2.5.0",
