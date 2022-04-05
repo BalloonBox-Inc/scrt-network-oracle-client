@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom';
 import { fireEvent, render } from '@testing-library/react';
 import { RouterContext } from 'next/dist/shared/lib/router-context';
 
