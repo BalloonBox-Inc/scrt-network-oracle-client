@@ -44,6 +44,37 @@
   }
 }
 
+.disappear {
+  animation: disappear 0.7s forwards;
+}
+
+.reappear {
+  animation: reappear 0.7s forwards ease-in-out;
+}
+
+@keyframes disappear {
+  from {
+    opacity: 1;
+
+  }
+  to {
+    opacity: 0;
+    position: absolute
+  }
+}
+
+@keyframes reappear {
+  0% {
+    opacity: 0;
+  }
+  80% {
+    opacity: 0
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 .growLeft {
   animation: growLeft 0.7s forwards;
 }
@@ -57,16 +88,16 @@
     width: 2.8rem;
   }
   to {
-    width: 460px;
+    width: 440px;
 
   }
 }
 
 @keyframes shrinkRight {
   0% {
-    width: 460px;
+    width: 440px;
   }
-  99% {
+  100% {
     width: 2.8rem;
   }
   

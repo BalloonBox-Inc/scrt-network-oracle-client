@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
+import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 import Button, { BUTTON_STYLES } from '@scrtsybil/src/components/Button';
+import Connect from '@scrtsybil/src/components/connect';
 import Layout from '@scrtsybil/src/components/Layout';
 import LogoLoader from '@scrtsybil/src/components/LogoLoader';
 import { useSecretContext } from '@scrtsybil/src/context';
@@ -11,52 +13,72 @@ import { useSecretContext } from '@scrtsybil/src/context';
 const keplr = '/images/keplr.svg';
 
 const Home = () => {
-  const navigate = useRouter();
-  const { secretjs, loading, connectRequest, setConnectRequest } =
+  const { loading, secretAddress, connectRequest, setConnectRequest } =
     useSecretContext();
 
   const handleDisconnectRequest = () => {
     setConnectRequest(false);
   };
-
   const [applicant, setApplicant] = useState(true);
+
+  const textVariants = {
+    hidden: {
+      opacity: 0,
+    },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        delay: 0.05,
+      },
+    },
+  };
+  const router = useRouter();
 
   const CardWithIcons = ({ title, icon, description, style }: any) => {
     return (
-      <div className="bg-black rounded-lg flex flex-col items-center px-5 py-10 mt-10 lg:mt-0 md:w-72 mr-0 md:mr-10">
+      <motion.div
+        className="bg-black rounded-lg flex flex-col items-center px-5 py-10 mt-10 lg:mt-0 md:w-72 mr-0 md:mr-10"
+        whileHover={{ scale: 1.05 }}
+      >
         <img src={icon} alt="icon" className="max-w-sm mb-7" />
         <h3 className="text-lg font-extrabold mb-5">{title}</h3>
         <p className="text-lightgray text-center font-light">{description} </p>
-      </div>
+      </motion.div>
     );
   };
 
   const StepBoxLeft = ({ title, img, description, style }: any) => {
     return (
-      <div
+      <motion.div
         className="bg-black rounded-lg flex flex-col sm:flex-row py-10 px-10 mr-0 md:mr-40"
         style={style}
+        initial={{ x: -100 }}
+        animate={{ x: 0 }}
       >
         <img src={img} alt="icon" className="sm:w-48 mr-10 mb-10 sm:mb-0" />
         <div>
           <h3 className="text-lg font-extrabold mb-5">{title}</h3>
           <p className="text-lightgray max-w-sm font-light">{description} </p>
         </div>
-      </div>
+      </motion.div>
     );
   };
+
   const StepBoxRight = ({ title, img, description, style }: any) => {
     return (
-      <div
+      <motion.div
         className="bg-black rounded-lg flex flex-col sm:flex-row py-10 px-10 ml-0 md:ml-40 items-center"
         style={style}
+        initial={{ x: 100 }}
+        animate={{ x: 0 }}
       >
         <div>
           <h3 className="text-lg font-extrabold mb-5">{title}</h3>
           <p className="text-lightgray max-w-sm font-light">{description} </p>
         </div>
         <img src={img} alt="icon" className="mt-10 sm:mt-0 sm:w-40 ml-10" />
-      </div>
+      </motion.div>
     );
   };
 
@@ -110,7 +132,12 @@ const Home = () => {
             zIndex: -10,
           }}
         />
-        <div className="w-full text-center px-5 sm:px-10 lg:text-left lg:w-1/2 flex flex-col">
+        <motion.div
+          className="w-full text-center px-5 sm:px-10 lg:text-left lg:w-1/2 flex flex-col"
+          initial={textVariants.hidden}
+          animate={textVariants.visible}
+          variants={textVariants}
+        >
           <h1 className="text-4xl lg:text-5xl font-extrabold leading-tight mt-20 lg:mt-0">
             {' '}
             A credit scoring oracle for web 3.0
@@ -120,19 +147,33 @@ const Home = () => {
             Network. Get your credit score, and publish it to the Secret
             Blockchain to share.
           </p>
-          <div className="flex mt-10 mx-auto lg:mx-0 flex-col sm:flex-row">
+          <div className="flex mt-10 mx-auto lg:mx-0 flex-col items-center sm:flex-row">
             <div className="sm:mr-5 sm:mb-0 mb-5">
               {' '}
-              <Button text="Get Started" />
+              {secretAddress ? (
+                <Button
+                  text="Get Started"
+                  onClick={() => {
+                    router.push('/start');
+                  }}
+                />
+              ) : (
+                <Connect />
+              )}
             </div>
             <Link href="/learn">
               <Button style={BUTTON_STYLES.OUTLINE} text="Learn more" />
             </Link>
           </div>
-        </div>
-        <div className="mx-auto max-w-lg lg:w-1/2 flex px-10 sm:px-0 pt-10 lg:pt-0">
+        </motion.div>
+        <motion.div
+          className="mx-auto max-w-lg lg:w-1/2 flex px-10 sm:px-0 pt-10 lg:pt-0"
+          initial={textVariants.hidden}
+          animate={textVariants.visible}
+          variants={textVariants}
+        >
           <img src="./images/hero-svg.svg" alt="hero-img"></img>
-        </div>
+        </motion.div>
       </div>
     </>
   );
@@ -170,7 +211,7 @@ const Home = () => {
   );
 
   const howItWorksSection = (
-    <div className="flex flex-col items-center justify-center px-5 sm:px-10 md:px-0 py-10">
+    <div className="flex flex-col items-center justify-center px-5 sm:px-10 md:px-0 py-10 relative">
       <h2 className="text-4xl font-extrabold mb-10">How it works</h2>
       <div className="flex items-center bg-neutral-800 mb-10 py-1 px-2 rounded-full cursor-pointer">
         <div
@@ -238,12 +279,17 @@ const Home = () => {
           />
         </div>
       ) : (
-        <div>
+        <div className="relative">
           <StepBoxRight
             title="Caculate a score"
             img="./images/credit-gauge.svg"
             description="We run an algorithm on given data to compute a score representing the financial health of a user"
             style={{ marginBottom: '3rem' }}
+          />
+          <img
+            src="./images/arrow-2.svg"
+            alt="arrow-2"
+            className="absolute invisible md:visible right-10 top-40"
           />
           <StepBoxLeft
             title="Integrate with validators"
@@ -251,12 +297,21 @@ const Home = () => {
             description="We acquire users financial data by integrating with two validators : Plaid, Coinbase"
             style={{ marginBottom: '3rem' }}
           />
-
+          <img
+            src="./images/arrow-1.svg"
+            alt="arrow-1"
+            className="absolute top-80 -left-20 invisible md:visible"
+          />
           <StepBoxRight
             title="Share your score"
             img="./images/workicon-combo.svg"
             description="Make the score available to service providers by releasing permission or providing a public link."
             style={{ marginBottom: '3rem' }}
+          />
+          <img
+            src="./images/arrow-2.svg"
+            alt="arrow-2"
+            className="absolute right-10 invisible md:visible"
           />
           <StepBoxLeft
             title="Integrate with validators"
@@ -280,7 +335,17 @@ const Home = () => {
           Simply connect to your Keplr wallet to get started!
         </p>
         <div className="mt-5">
-          <Button text="Get Started" style={BUTTON_STYLES.BLACK} />
+          {secretAddress ? (
+            <Button
+              text="Get Started"
+              style={BUTTON_STYLES.BLACK}
+              onClick={() => {
+                router.push('/start');
+              }}
+            />
+          ) : (
+            <Connect />
+          )}
         </div>
       </div>
     </div>

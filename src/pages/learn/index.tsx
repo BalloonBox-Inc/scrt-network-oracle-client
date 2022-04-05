@@ -1,11 +1,11 @@
 export default function Learn() {
   const howItWorks = (
-    <div className="pt-5 sm:pt-10 md:pt-20">
-      <h1 className="text-4xl font-extrabold leading-tight">
+    <div className="pt-10 sm:pt-10 md:pt-20">
+      <h1 className="text-2xl md:text-4xl font-extrabold leading-tight">
         {' '}
         How SCRTSibyl works
       </h1>
-      <p className="text-lightgray mt-5">
+      <p className="text-xs md:text-sm text-lightgray mt-5">
         The SCRTSibyl credit score oracle retrieves a user&apos;s financial data
         with the help of two financial validators (Coinbase for web3 and Plaid
         for web2). Once data is retrieved, the DApp feeds the data to an
@@ -72,7 +72,7 @@ export default function Learn() {
   );
 
   const howWeCaculate = (
-    <div className="pt-5 sm:pt-10 md:pt-20">
+    <div className="pt-5 sm:pt-10 md:pt-20 relative">
       <img
         src="./images/blue-circle.svg"
         alt="blue-circle"
@@ -84,11 +84,11 @@ export default function Learn() {
         }}
       />
 
-      <h1 className="text-4xl font-extrabold leading-tight mt-20 lg:mt-0">
+      <h1 className="text-2xl md:text-4xl font-extrabold leading-tight mt-20 lg:mt-0">
         {' '}
         How we calculate your score
       </h1>
-      <p className="text-lightgray my-5">
+      <p className="text-xs md:text-sm text-lightgray my-5">
         SCRTCibyl scores are calculated using many pieces of data retrieved from
         either your bank account or your Coinbase account. We developed two
         distinct models, depending on whether you connect your bank data or
@@ -98,7 +98,7 @@ export default function Learn() {
       <div className="bg-black p-10 mt-10 rounded-xl">
         <div className="flex items-center">
           <img src="./images/plaidLogo.svg" alt="plaid-logo" className="w-32" />
-          <h3 className="text-xl ml-3">Model</h3>
+          <h3 className="text-lg md:text-xl ml-3">Model</h3>
         </div>
         <p className="text-lightgray mt-5">
           Your bank account data is grouped into 4 categories: credit, velocity,
@@ -109,7 +109,7 @@ export default function Learn() {
         </p>
 
         <div className="grid grid-rows-3 md:grid-rows-none md:grid-cols-4 gap-2 mt-10">
-          <div className="flex flex-col md:justify-evenly">
+          <div className="flex flex-col justify-evenly">
             <div>
               {' '}
               <div className="flex items-center">
@@ -183,7 +183,7 @@ export default function Learn() {
             alt="coinbase-logo"
             className="w-32"
           />
-          <h3 className="text-xl ml-3">Model</h3>
+          <h3 className="text-lg md:text-xl ml-3">Model</h3>
         </div>
         <p className="text-lightgray mt-5">
           Your Coinbase data is grouped into 4 categories:{' '}

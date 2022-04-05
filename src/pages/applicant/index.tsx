@@ -4,16 +4,16 @@ import router from 'next/router';
 
 import BgImage from '@scrtsybil/src/components/BgImage';
 import Button, { BUTTON_STYLES } from '@scrtsybil/src/components/Button';
-import { BORDER_GRADIENT_STYLE } from '@scrtsybil/src/constants';
+import ServiceSelector from '@scrtsybil/src/components/ServiceSelector';
 
 const ApplicantServicesPage = () => {
   const [selection, setSelection] = useState<
-    null | 'generate' | 'query' | 'revoke' | 'create'
+    null | 'generate' | 'query' | 'permit?type=revoke' | 'permit' | 'viewingKey'
   >(null);
   return (
-    <div className="px-14 py-20 ">
+    <div className="px-14 py-10">
       <div className="w-full text-center">
-        <div className=" flex flex-col items-center space-y-5  justify-center w-full">
+        <div className=" flex flex-col items-center space-y-6  justify-center w-full">
           <div className="z-50 opacity-100 px-0 sm:p-10">
             <h2 className="z-50 font-semibold text-2xl sm:text-3xl md:text-3xl lg:text-4xl p-0">
               Choose a Service
@@ -22,82 +22,32 @@ const ApplicantServicesPage = () => {
               User Type: Applicant
             </p>
           </div>
-          <div
-            className="flex z-50 justify-center w-80  sm:w-115  rounded-md p-1 "
-            style={{
-              background:
-                selection === 'generate'
-                  ? BORDER_GRADIENT_STYLE
-                  : 'transparent',
-            }}
-          >
-            <div
-              onClick={() => setSelection('generate')}
-              className={`bg-gray-900  cursor-pointer w-full  rounded-md`}
-            >
-              <div className="text-center">
-                <p className="text-base p-0 m-0 py-4">Generate a Score</p>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <div className="flex flex-col items-center space-y-5 mt-8 justify-center w-full">
-          <div
-            className="flex z-50 justify-center w-80  sm:w-115  rounded-md p-1 "
-            style={{
-              background:
-                selection === 'query' ? BORDER_GRADIENT_STYLE : 'transparent',
-            }}
-          >
-            <div
-              onClick={() => setSelection('query')}
-              className={`bg-gray-900 cursor-pointer rounded-md w-full`}
-            >
-              <div className="text-center">
-                <p className="text-base p-0 m-0 py-4">
-                  Query a previously generated score
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex flex-col items-center space-y-5 mt-8 justify-center w-full">
-          <div
-            className="flex z-50 justify-center w-80  sm:w-115  rounded-md p-1"
-            style={{
-              background:
-                selection === 'create' ? BORDER_GRADIENT_STYLE : 'transparent',
-            }}
-          >
-            <div
-              onClick={() => setSelection('create')}
-              className={`bg-gray-900 cursor-pointer w-full rounded-md`}
-            >
-              <div className="text-center">
-                <p className="text-base p-0 m-0 py-4">Create a permission</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-col items-center space-y-5 mt-8 justify-center w-full">
-          <div
-            className="flex z-50 justify-center w-80  sm:w-115  rounded-md p-1"
-            style={{
-              background:
-                selection === 'revoke' ? BORDER_GRADIENT_STYLE : 'transparent',
-            }}
-          >
-            <div
-              onClick={() => setSelection('revoke')}
-              className={`bg-gray-900 cursor-pointer w-full rounded-md`}
-            >
-              <div className="text-center">
-                <p className="text-base p-0 m-0 py-4">Revoke a permission</p>
-              </div>
-            </div>
-          </div>
+          <ServiceSelector
+            selected={selection === 'generate'}
+            onClick={() => setSelection('generate')}
+            text="Generate a Score"
+          />
+          <ServiceSelector
+            selected={selection === 'query'}
+            onClick={() => setSelection('query')}
+            text="Query my score"
+          />
+          <ServiceSelector
+            selected={selection === 'permit'}
+            onClick={() => setSelection('permit')}
+            text="Create a query permit"
+          />
+          <ServiceSelector
+            selected={selection === 'permit?type=revoke'}
+            onClick={() => setSelection('permit?type=revoke')}
+            text="Revoke a query permit"
+          />
+          <ServiceSelector
+            selected={selection === 'viewingKey'}
+            onClick={() => setSelection('viewingKey')}
+            text="Create a Viewing Key"
+          />
         </div>
       </div>
       <div className=" sm:px-10 flex justify-between">

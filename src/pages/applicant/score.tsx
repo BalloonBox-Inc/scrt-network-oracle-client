@@ -1,27 +1,32 @@
 import { useEffect, useState } from 'react';
 
 import { Input, Modal } from 'antd';
-import { ClipLoader } from 'react-spinners';
+import { useRouter } from 'next/router';
 
 import BgImage from '@scrtsybil/src/components/BgImage';
 import Button, { BUTTON_STYLES } from '@scrtsybil/src/components/Button';
+import { LoadingContainer } from '@scrtsybil/src/components/LoadingContainer';
 import ScoreSpeedometer from '@scrtsybil/src/components/score';
 import { storageHelper, useSecretContext } from '@scrtsybil/src/context';
-import {
-  handleGeneratePermissionQuery,
-  handleSetScore,
-} from '@scrtsybil/src/keplr/helpers';
+import { handleSetScore } from '@scrtsybil/src/keplr/helpers';
 
 const ApplicantScorePage = () => {
   const {
-    scoreResponsePlaid,
-    setChainActivity,
     chainActivity,
     setPermissionSig,
     permissionSig,
-    scoreResponseCoinbase,
-    setScoreResponseCoinbase,
+    scoreResponse,
+    loading,
+    handleSetChainActivity,
   } = useSecretContext();
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!scoreResponse && !loading) {
+      router.push('/applicant/generate');
+    }
+  }, [loading, scoreResponse, router]);
 
   const [showScore, setShowScore] = useState<boolean>(false);
   const [permitQueryModal, setPermitQueryModal] = useState<boolean>(false);
@@ -37,38 +42,37 @@ const ApplicantScorePage = () => {
   const isSuccess = status === 'success';
   const isLoading = status === 'loading';
 
-  const handleSaveToBlockchain = () => {
-    chainActivity?.scoreSubmitted
-      ? setModalWarn(true)
-      : handleSetScore({ setStatus, scoreResponse: scoreResponsePlaid });
-  };
-
-  const submitQueryAttempt = async () => {
-    setPermissionLoading(true);
-    if (permitName) {
-      const permissionCreate = await handleGeneratePermissionQuery({
-        permissionName: permitName,
-        setPermissionSig,
+  const handleSaveToBlockchain = async () => {
+    if (chainActivity?.scoreSubmitted && scoreResponse) {
+      setModalWarn(true);
+    } else {
+      const setScoreRes = await handleSetScore({
+        setStatus,
+        scoreResponse,
       });
-      if (permissionCreate?.signature) {
-        setChainActivity({
-          ...chainActivity,
-          queryPermit: chainActivity?.queryPermit
-            ? [...chainActivity.queryPermit, permitName]
-            : [permitName],
+
+      if (setScoreRes?.status === 'success') {
+        handleSetChainActivity({
+          scoreAmount: scoreResponse?.score,
+          scoreSubmitted: true,
+          dataProvider: scoreResponse?.endpoint.includes('plaid')
+            ? 'plaid'
+            : 'coinbase',
         });
       }
     }
   };
 
+  const submitQueryAttempt = async () => {
+    setPermissionLoading(true);
+  };
+
   useEffect(() => {
-    isSuccess &&
-      setChainActivity({
-        ...chainActivity,
-        scoreSubmitted: true,
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSuccess, setChainActivity]);
+    // Check from local storage is score was submitted
+    if (chainActivity?.scoreSubmitted) {
+      setStatus('success');
+    }
+  }, [chainActivity]);
 
   useEffect(() => {
     const scoreAnimated = storageHelper.get('scoreAnimationViewed');
@@ -89,7 +93,7 @@ const ApplicantScorePage = () => {
       onCancel={() => {
         setModalWarn(false);
       }}
-      style={{ top: '30%' }}
+      centered
       bodyStyle={{ background: '#242630' }}
     >
       <div className={`px-8 flex py-5 justify-center rounded-md z-50`}>
@@ -98,25 +102,42 @@ const ApplicantScorePage = () => {
             <h3 className="text-lg mr-2 uppercase font-semibold ">Warning</h3>
           </div>
 
-          <div>
-            You have already submitted your score of{' '}
-            {chainActivity?.scoreAmount}. Are you sure you want to submit a new
-            score of {scoreResponsePlaid?.score || scoreResponseCoinbase?.score}
-            ?
-          </div>
+          {chainActivity?.scoreAmount === scoreResponse?.score ? (
+            <div>
+              You have already submitted a score of {scoreResponse?.score},
+              submit anyway?
+            </div>
+          ) : (
+            <div>
+              You have already submitted your score of{' '}
+              {chainActivity?.scoreAmount}. Are you sure you want to submit a
+              new score of {scoreResponse?.score}?
+            </div>
+          )}
 
-          <div className="flex items-center mt-8">
+          <div className="flex items-center mt-12 space-x-5">
             <Button
               text="Submit to blockchain"
+              classes={{ button: 'text-xs' }}
               onClick={() => {
-                setScoreResponseCoinbase(undefined);
-                storageHelper.persist('scoreAnimationViewed', false);
-                submitQueryAttempt();
+                handleSetChainActivity(null);
+                handleSaveToBlockchain();
               }}
             />
             <Button
+              text="Create a query permit"
+              style={BUTTON_STYLES.OUTLINE}
+              classes={{ button: 'text-xs' }}
+              onClick={() => {
+                router.push('/applicant/permit');
+              }}
+            />
+          </div>
+          <div className=" w-max mt-6">
+            <Button
               text="Cancel"
               style={BUTTON_STYLES.LINK}
+              classes={{ button: 'text-xs text-left hover:text-blue' }}
               onClick={() => {
                 setModalWarn(false);
               }}
@@ -136,7 +157,7 @@ const ApplicantScorePage = () => {
         setPermissionLoading(false);
         setPermitQueryModal(false);
       }}
-      style={{ top: '30%' }}
+      centered
       bodyStyle={{ background: '#242630' }}
     >
       <div className={`px-8 flex py-5 justify-center rounded-md z-50`}>
@@ -155,11 +176,15 @@ const ApplicantScorePage = () => {
             </p>
             <p className="mb-3 font-semibold">
               Public Key:{' '}
-              <span className="font-thin">{permissionSig.pub_key.value}</span>
+              <span className="font-thin">
+                {permissionSig.signature.pub_key.value}
+              </span>
             </p>
             <p className="mb-3 font-semibold">
               Signature:{' '}
-              <span className="font-thin">{permissionSig.signature}</span>
+              <span className="font-thin">
+                {permissionSig.signature.signature}
+              </span>
             </p>
             <div className="flex">
               <Button
@@ -168,7 +193,7 @@ const ApplicantScorePage = () => {
                   setPermitName(undefined);
                   setPermissionLoading(false);
                   setPermitQueryModal(false);
-                  setPermissionSig(undefined);
+                  setPermissionSig(null);
                 }}
               />
             </div>
@@ -208,40 +233,48 @@ const ApplicantScorePage = () => {
           </div>
         </div>
       </div>
-      {scoreResponsePlaid?.score ? (
+      {scoreResponse?.score && (
         <div className="flex w-full justify-center">
           <ScoreSpeedometer
             showScore={showScore}
-            score={Math.round(scoreResponsePlaid?.score)}
-          />
-        </div>
-      ) : (
-        <div className="flex w-full justify-center">
-          <ScoreSpeedometer
-            showScore={showScore}
-            score={Math.round(scoreResponseCoinbase?.score)}
+            score={Math.round(scoreResponse?.score)}
           />
         </div>
       )}
-      {showScore && !isSuccess && (
-        <>
-          <div className="px-8 flex -mt-16 justify-center rounded-md z-50 duration-500">
-            <Button
-              onClick={() => setShowScoreDescription(true)}
-              style={BUTTON_STYLES.OUTLINE}
-              text="Explain my score"
-              classes={{ button: 'text-xs' }}
-            />
-          </div>
-          <div className="z-50 flex justify-center mt-8">
-            <Button
-              onClick={() => handleSaveToBlockchain()}
-              style={BUTTON_STYLES.DEFAULT}
-              text={'Save To Blockchain'}
-            />
-          </div>
-        </>
+
+      <div
+        className={`px-8 flex -mt-20 justify-center rounded-md z-50 duration-500 ${
+          showScore || !isSuccess ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        <Button
+          onClick={() => setShowScoreDescription(true)}
+          style={BUTTON_STYLES.LINK}
+          text="Explain my score"
+          classes={{ button: 'text-xs text-white hover:text-blue' }}
+        />
+      </div>
+      {isSuccess && (
+        <p className="text-center mt-2">
+          This score was saved to the blockchain.
+        </p>
       )}
+      <div
+        className={`z-50 flex  ${
+          showScore ? 'opacity-100' : 'opacity-0'
+        } justify-center mt-8 duration-500`}
+      >
+        <Button
+          onClick={() =>
+            !isSuccess
+              ? handleSaveToBlockchain()
+              : router.push('/applicant/permit')
+          }
+          style={BUTTON_STYLES.DEFAULT}
+          text={!isSuccess ? 'Save To Blockchain' : 'Create a query permit'}
+        />
+      </div>
+
       <Modal
         visible={showScoreDescription}
         footer={null}
@@ -257,7 +290,7 @@ const ApplicantScorePage = () => {
           <div className="p-8 rounded-lg z-50  max-w-xl w-full ">
             <h3 className="text-lg uppercase font-semibold mb-4">Summary</h3>
             <p className="sm:text-base leading-7">
-              {scoreResponsePlaid?.message || scoreResponseCoinbase?.message}
+              {scoreResponse?.message || scoreResponse?.message}
             </p>
           </div>
         </div>
@@ -267,22 +300,14 @@ const ApplicantScorePage = () => {
     </div>
   );
 
-  const loadingContainer = (
-    <div className="w-full flex-col  flex justify-center items-center z-50">
-      <ClipLoader
-        speedMultiplier={0.75}
-        size={120}
-        color={'rgba(85,42,170, 10)'}
-      />
-
-      <p className="mt-5 text-sm">Submitting score to the blockchain.</p>
-    </div>
-  );
-
   return (
     <>
       <BgImage />
-      {isLoading ? loadingContainer : mainScoreContainer}
+      {isLoading ? (
+        <LoadingContainer text="Submitting score to the blockchain." />
+      ) : (
+        mainScoreContainer
+      )}
     </>
   );
 };

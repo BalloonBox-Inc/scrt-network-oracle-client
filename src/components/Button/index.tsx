@@ -54,8 +54,10 @@ export default function Button({
         style !== BUTTON_STYLES.LINK,
       'text-white border-solid bg-black py-2 border-gradient-br-purple-blue cursor-pointer':
         style === BUTTON_STYLES.OUTLINE,
-      'text-white  bg-gradient-to-b from-purple to-blue hover:opacity-75  cursor-pointer  gradient-outline min-w-4':
+      'text-white  bg-gradient-to-b from-purple to-blue hover:opacity-75 cursor-pointer min-w-4 gradient-outline':
         style === BUTTON_STYLES.DEFAULT,
+      'text-white hover:opacity-75 cursor-pointer min-w-4 bg-black':
+        style === BUTTON_STYLES.BLACK,
       'disabled:opacity-70 cursor-default gradient-outline-grayscale':
         isDisabled || isLoading,
     },

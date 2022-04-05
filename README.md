@@ -55,7 +55,7 @@ COINBASE_ACCESS_TOKEN_URL=your_url
 You will need to create an account on [Plaid](https://dashboard.plaid.com/) OR [Coinbase](https://developers.coinbase.com/) in order to receive client ids and client secrets for your api. 
 
 
-Then, you can run locally in development mode with live reload:
+Then, you can run locally in development mode with live reload. Ensure you run this command after `cd` into the local folder where you cloned the repo.
 
 ```
 yarn dev

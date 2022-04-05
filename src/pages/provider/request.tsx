@@ -26,7 +26,7 @@ const ProviderRequestPage = () => {
         <p>Please enter th einformation provided by the applicant:</p>
 
         <form className="flex flex-col items-start mt-8  w-full">
-          <label className="text-left mb-1">Name of permission</label>
+          <label className="text-left mb-1">Name of query permit</label>
           {requestDataInput((e) =>
             setRequestData({
               ...requestData,
