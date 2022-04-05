@@ -244,7 +244,7 @@ const ApplicantScorePage = () => {
 
       <div
         className={`px-8 flex -mt-20 justify-center rounded-md z-50 duration-500 ${
-          showScore || !isSuccess ? 'opacity-100' : 'opacity-0'
+          showScore && !isSuccess ? 'opacity-100' : 'opacity-0'
         }`}
       >
         <Button

@@ -1,13 +1,7 @@
-import React, {
-  useState,
-  useContext,
-  createContext,
-  useEffect,
-  useCallback,
-} from 'react';
+import React, { useState, useContext, createContext, useEffect } from 'react';
 
 import { notification } from 'antd';
-import router from 'next/router';
+import { useRouter } from 'next/router';
 import { ItemPublicTokenExchangeResponse } from 'plaid';
 import { StdSignature } from 'secretjs/types/types';
 
@@ -123,18 +117,21 @@ const ContextProvider = ({ children }: any) => {
     });
   };
 
-  const returnHome = useCallback(() => {
-    (router.pathname.includes('applicant') ||
-      router.pathname.includes('provider')) &&
-      router.push('/');
-  }, []);
+  const router = useRouter();
 
   useEffect(() => {
+    const returnHome = () => {
+      if (typeof window !== 'undefined') {
+        (router?.pathname.includes('applicant') ||
+          router?.pathname.includes('provider')) &&
+          router.push('/');
+      }
+    };
     // use this to rerouter user to home page if router includes 'applicant' or 'provider'
     if (!loading) {
       !secretAddress && returnHome();
     }
-  }, [returnHome, secretAddress, loading]);
+  }, [secretAddress, loading, router]);
 
   useEffect(() => {
     secretAddress && setConnectRequest(false);
