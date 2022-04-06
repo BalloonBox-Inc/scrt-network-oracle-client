@@ -9,10 +9,12 @@
     "lint": "next lint",
     "build-types": "tsc --noEmit --pretty",
     "prepare": "husky install",
-    "test": "jest --watch"
+    "test-watch": "jest --watch",
+    "test": "jest",
+    "test:ci": "jest --coverage --silent --ci"
   },
   "lint-staged": {
-    "**/*.ts*": [
+    "*.(tsx|ts)": [
       "jest --bail --findRelatedTests"
     ]
   },
