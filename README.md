@@ -47,8 +47,8 @@ PLAID_SECRET_KEY_SANDBOX=your_sandbox_key
 
 COINBASE_CLIENT_ID=your_client_Id
 COINBASE_CLIENT_SECRET=your_client_secret
-COINBASE_BASE_AUTHORIZE_URL=your_url
-COINBASE_ACCESS_TOKEN_URL=your_url
+COINBASE_BASE_AUTHORIZE_URL="https://www.coinbase.com/oauth/authorize"
+COINBASE_ACCESS_TOKEN_URL="http://www.coinbase.com/oauth/token"
 
 ```
 
