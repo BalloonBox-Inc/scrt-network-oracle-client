@@ -2,7 +2,7 @@ export default function Learn() {
   const howItWorks = (
     <div className="pt-10 sm:pt-10 md:pt-20">
       <h1 className="text-2xl md:text-4xl font-extrabold leading-tight">
-        {" "}
+        {' '}
         How SCRTSibyl works
       </h1>
       <p className="text-xs md:text-sm text-lightgray mt-5">
@@ -77,15 +77,15 @@ export default function Learn() {
         src="./images/blue-circle.svg"
         alt="blue-circle"
         style={{
-          position: "absolute",
-          top: "-40%",
-          left: "-50%",
+          position: 'absolute',
+          top: '-40%',
+          left: '-50%',
           zIndex: -10,
         }}
       />
 
       <h1 className="text-2xl md:text-4xl font-extrabold leading-tight mt-20 lg:mt-0">
-        {" "}
+        {' '}
         How we calculate your score
       </h1>
       <p className="text-xs md:text-sm text-lightgray my-5">
@@ -111,7 +111,7 @@ export default function Learn() {
         <div className="grid grid-rows-3 md:grid-rows-none md:grid-cols-4 gap-2 mt-10">
           <div className="flex flex-col justify-evenly">
             <div>
-              {" "}
+              {' '}
               <div className="flex items-center">
                 <div className="w-3 h-3 bg-white rounded-full mr-3" />
                 <h4 className="text-base font-bold">Diversity (10%)</h4>
@@ -120,24 +120,24 @@ export default function Learn() {
                 It rewards the diversity of a portfolio, checking for all
                 account types: savings, retail investment, brokerage, loans,
                 retirement accounts. It also rewards based on the volume of
-                capital held in each account.{" "}
+                capital held in each account.{' '}
               </p>
             </div>
             <div>
-              {" "}
+              {' '}
               <div className="flex items-center">
                 <div className="w-3 h-3 bg-rose-300 rounded-full mr-3" />
                 <h4 className="text-base font-bold">Stability (10%)</h4>
               </div>
               <p className="text-lightgray text-xs mt-5">
                 It computes your total account balance now as well as the
-                minimum running balance for the past twelve months.{" "}
+                minimum running balance for the past twelve months.{' '}
               </p>
             </div>
           </div>
 
           <div className="row-span-1 md:col-span-2">
-            {" "}
+            {' '}
             <img
               src="./images/pink-piechart.svg"
               alt="pie-chart"
@@ -146,7 +146,7 @@ export default function Learn() {
           </div>
           <div className="flex flex-col justify-evenly">
             <div>
-              {" "}
+              {' '}
               <div className="flex items-center">
                 <div className="w-3 h-3 bg-rose-500 rounded-full mr-3" />
                 <h4 className="text-base font-bold">Credit (40%)</h4>
@@ -160,7 +160,7 @@ export default function Learn() {
               </p>
             </div>
             <div>
-              {" "}
+              {' '}
               <div className="flex items-center">
                 <div className="w-3 h-3 bg-rose-400 rounded-full mr-3" />
                 <h4 className="text-base font-bold">Velocity (40%)</h4>
@@ -186,8 +186,8 @@ export default function Learn() {
           <h3 className="text-lg md:text-xl ml-3">Model</h3>
         </div>
         <p className="text-lightgray mt-5">
-          Your Coinbase data is grouped into 4 categories:{" "}
-          <span className="font-bold">KYC, history, liquidity, activity.</span>{" "}
+          Your Coinbase data is grouped into 4 categories:{' '}
+          <span className="font-bold">KYC, history, liquidity, activity.</span>{' '}
           The percentages in the donut chart reflect how important each of the
           categories is in determining the SCRTSibyl score. The importance of
           categories is fixed for the Coinbase model.
@@ -196,7 +196,7 @@ export default function Learn() {
         <div className="grid grid-rows-3 md:grid-rows-none md:grid-cols-4 gap-2 mt-10">
           <div className="flex flex-col justify-evenly">
             <div>
-              {" "}
+              {' '}
               <div className="flex items-center">
                 <div className="w-3 h-3 bg-white rounded-full mr-3" />
                 <h4 className="text-base font-bold">KYC (10%)</h4>
@@ -207,7 +207,7 @@ export default function Learn() {
               </p>
             </div>
             <div>
-              {" "}
+              {' '}
               <div className="flex items-center">
                 <div className="w-3 h-3 bg-blue-200 rounded-full mr-3" />
                 <h4 className="text-base font-bold">History (10%)</h4>
@@ -220,7 +220,7 @@ export default function Learn() {
           </div>
 
           <div className="col-span-2">
-            {" "}
+            {' '}
             <img
               src="./images/blue-piechart.svg"
               alt="blue-pie-chart"
@@ -229,7 +229,7 @@ export default function Learn() {
           </div>
           <div className="flex flex-col justify-around">
             <div>
-              {" "}
+              {' '}
               <div className="flex items-center">
                 <div className="w-3 h-3 bg-blue-600 rounded-full mr-3" />
                 <h4 className="text-base font-bold">Liquidity (40%)</h4>
@@ -240,7 +240,7 @@ export default function Learn() {
               </p>
             </div>
             <div>
-              {" "}
+              {' '}
               <div className="flex items-center">
                 <div className="w-3 h-3 bg-blue-500 rounded-full mr-3" />
                 <h4 className="text-base font-bold">Activity (40%)</h4>

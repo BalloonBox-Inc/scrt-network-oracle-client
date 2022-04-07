@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-import { motion } from "framer-motion";
-import Link from "next/link";
-import { useRouter } from "next/router";
+import { motion } from 'framer-motion';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 
-import Button, { BUTTON_STYLES } from "@scrtsybil/src/components/Button";
-import Connect from "@scrtsybil/src/components/connect";
-import Layout from "@scrtsybil/src/components/Layout";
-import LogoLoader from "@scrtsybil/src/components/LogoLoader";
-import { useSecretContext } from "@scrtsybil/src/context";
+import Button, { BUTTON_STYLES } from '@scrtsybil/src/components/Button';
+import Connect from '@scrtsybil/src/components/connect';
+import Layout from '@scrtsybil/src/components/Layout';
+import LogoLoader from '@scrtsybil/src/components/LogoLoader';
+import { useSecretContext } from '@scrtsybil/src/context';
 
 interface SectionElement {
   title: string;
@@ -16,7 +16,7 @@ interface SectionElement {
   description: string;
   style?: object;
 }
-const keplr = "/images/keplr.svg";
+const keplr = '/images/keplr.svg';
 
 const Home = () => {
   const { loading, secretAddress, connectRequest, setConnectRequest } =
@@ -90,25 +90,25 @@ const Home = () => {
 
   const awaitingConnectionView = (
     <div
-      style={{ height: "70%", padding: "3rem 5rem" }}
+      style={{ height: '70%', padding: '3rem 5rem' }}
       className="flex justify-center items-center flex-col"
     >
       <div
         className="flex flex-col items-center"
         style={{
           background:
-            "linear-gradient(142.6deg, #232323 -1.55%, rgba(29, 29, 29, 0.64) 200.36%",
-          zIndex: "10",
-          padding: "7rem",
-          boxShadow: "0px 25px 25px rgba(0, 3, 32, 0.5)",
-          borderRadius: "8px",
+            'linear-gradient(142.6deg, #232323 -1.55%, rgba(29, 29, 29, 0.64) 200.36%',
+          zIndex: '10',
+          padding: '7rem',
+          boxShadow: '0px 25px 25px rgba(0, 3, 32, 0.5)',
+          borderRadius: '8px',
         }}
       >
         <div className="flex items-center w-full">
           <img
             alt="spinning_keplr"
             className="spin mb-3 mr-3"
-            width={"22px"}
+            width={'22px'}
             src={keplr}
           />
           <div className="text-lg w-full overflow-visible">
@@ -131,9 +131,9 @@ const Home = () => {
         src="./images/blue-circle.svg"
         alt="blue-circle"
         style={{
-          position: "absolute",
-          top: "-40%",
-          left: "-50%",
+          position: 'absolute',
+          top: '-40%',
+          left: '-50%',
           zIndex: -10,
         }}
       />
@@ -144,7 +144,7 @@ const Home = () => {
         variants={textVariants}
       >
         <h1 className="text-4xl lg:text-5xl font-extrabold leading-tight mt-20 lg:mt-0">
-          {" "}
+          {' '}
           A credit scoring oracle for web 3.0
         </h1>
         <p className="text-lightgray mt-5 text-lg">
@@ -154,12 +154,12 @@ const Home = () => {
         </p>
         <div className="flex mt-10 mx-auto lg:mx-0 flex-col items-center sm:flex-row">
           <div className="sm:mr-5 sm:mb-0 mb-5">
-            {" "}
+            {' '}
             {secretAddress ? (
               <Button
                 text="Get Started"
                 onClick={() => {
-                  router.push("/start");
+                  router.push('/start');
                 }}
               />
             ) : (
@@ -185,7 +185,7 @@ const Home = () => {
   const whySection = (
     <div className="flex flex-col items-center justify-center py-10">
       <h2 className="text-4xl font-extrabold mb-20">
-        Why{" "}
+        Why{' '}
         <span className="text-transparent bg-gradient-to-b from-purple to-deepblue bg-clip-text">
           SCRTsibyl?
         </span>
@@ -221,9 +221,9 @@ const Home = () => {
         <div
           className={`text-lightgray hover:text-white ${
             applicant &&
-            "bg-gradient-to-b from-purple to-deepblue py-2.5 rounded-full text-white"
+            'bg-gradient-to-b from-purple to-deepblue py-2.5 rounded-full text-white'
           }`}
-          style={{ width: "150px", textAlign: "center" }}
+          style={{ width: '150px', textAlign: 'center' }}
           onClick={() => setApplicant(true)}
         >
           Applicant
@@ -231,9 +231,9 @@ const Home = () => {
         <div
           className={`text-lightgray hover:text-white ${
             !applicant &&
-            "bg-gradient-to-b from-purple to-deepblue py-2.5 rounded-full text-white"
+            'bg-gradient-to-b from-purple to-deepblue py-2.5 rounded-full text-white'
           }`}
-          style={{ width: "150px", textAlign: "center" }}
+          style={{ width: '150px', textAlign: 'center' }}
           onClick={() => setApplicant(false)}
         >
           Service Provider
@@ -246,7 +246,7 @@ const Home = () => {
             title="Integrate with validators"
             img="./images/plaid+coinbase.svg"
             description="We acquire users' financial data by integrating with two validators : Plaid, Coinbase."
-            style={{ marginBottom: "3rem" }}
+            style={{ marginBottom: '3rem' }}
           />
           <img
             src="./images/arrow-1.svg"
@@ -257,7 +257,7 @@ const Home = () => {
             title="Calculate financial score"
             img="./images/credit-gauge.svg"
             description="We run an algorithm on the given data to compute a score representing the financial health of a user."
-            style={{ marginBottom: "3rem" }}
+            style={{ marginBottom: '3rem' }}
           />
           <img
             src="./images/arrow-2.svg"
@@ -268,7 +268,7 @@ const Home = () => {
             title="Save it to the blockchain"
             img="./images/scrtnetwork-logo-white.svg"
             description="We save your score to the Secret blockchain via a CosmWasm smart contract."
-            style={{ marginBottom: "3rem" }}
+            style={{ marginBottom: '3rem' }}
           />
           <img
             src="./images/arrow-3.svg"
@@ -279,7 +279,7 @@ const Home = () => {
             title="Share your score"
             img="./images/workicon-combo.svg"
             description="Make your score available to service providers by granting permission or providing a public link."
-            style={{ marginBottom: "3rem" }}
+            style={{ marginBottom: '3rem' }}
           />
         </div>
       ) : (
@@ -288,7 +288,7 @@ const Home = () => {
             title="Algorithm calculates financial score"
             img="./images/provider-step1.svg"
             description="Applicants will get a score that is calculated by an algorithm based on their financial data retrieved by two validators: Plaid, Coinbase."
-            style={{ marginBottom: "3rem" }}
+            style={{ marginBottom: '3rem' }}
           />
           <img
             src="./images/arrow-2.svg"
@@ -299,7 +299,7 @@ const Home = () => {
             title="Share financial score"
             img="./images/provider-step2.svg"
             description="Once the applicants get their scores, they can share their score by giving you permission or providing a public link."
-            style={{ marginBottom: "3rem" }}
+            style={{ marginBottom: '3rem' }}
           />
           <img
             src="./images/arrow-1.svg"
@@ -310,7 +310,7 @@ const Home = () => {
             title="View your applicants' scores"
             img="./images/provider-step3.svg"
             description="Check your applicants' scores by entering the Name of Permission, Public Address, and Signature, provided by the applicant."
-            style={{ marginBottom: "3rem" }}
+            style={{ marginBottom: '3rem' }}
           />
           {/* <img
             src="./images/arrow-2.svg"
@@ -344,7 +344,7 @@ const Home = () => {
               text="Get Started"
               style={BUTTON_STYLES.OUTLINE}
               onClick={() => {
-                router.push("/start");
+                router.push('/start');
               }}
             />
           ) : (

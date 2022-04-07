@@ -11,7 +11,8 @@
     "prepare": "husky install",
     "test-watch": "jest --watch",
     "test": "jest",
-    "test:ci": "jest --coverage --silent --ci"
+    "test:ci": "jest --coverage --silent --ci",
+    "test:fix": "next lint --fix"
   },
   "lint-staged": {
     "*.(tsx|ts)": [

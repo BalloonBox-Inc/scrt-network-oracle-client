@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/router";
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 
-import whiteLogo from "@scrtsybil/public/images/scrt-logo-horizaontal-white.svg";
-import Connect from "@scrtsybil/src/components/connect";
-import { useSecretContext } from "@scrtsybil/src/context";
+import whiteLogo from '@scrtsybil/public/images/scrt-logo-horizaontal-white.svg';
+import Connect from '@scrtsybil/src/components/connect';
+import { useSecretContext } from '@scrtsybil/src/context';
 
 export default function Header() {
   const { secretAddress } = useSecretContext();
@@ -14,24 +14,24 @@ export default function Header() {
 
   const router = useRouter();
   const routerIsMain =
-    router?.pathname === "/" || router?.pathname === "/learn";
+    router?.pathname === '/' || router?.pathname === '/learn';
 
   return (
     <header
-      style={{ height: "80px" }}
+      style={{ height: '80px' }}
       className={`sticky top-0 z-20 ${
-        routerIsMain ? "bg-black/50" : "bg-black border-gray-800 border-b-2"
+        routerIsMain ? 'bg-black/50' : 'bg-black border-gray-800 border-b-2'
       } w-full relative z-10 font-sans px-5 py-0 flex items-center justify-between text-white`}
     >
       <Link passHref={true} href="/">
         <a className="mt-1">
           <Image
             src={whiteLogo}
-            width={"140%"}
-            height={"100%"}
+            width={'140%'}
+            height={'100%'}
             alt="scrtsibyl-logo"
             className={`cursor-pointer ${
-              showWallet ? "disappear" : "reappear"
+              showWallet ? 'disappear' : 'reappear'
             }`}
           />
         </a>
@@ -41,17 +41,17 @@ export default function Header() {
         <Link passHref={true} href="/learn">
           <p
             className={`mr-5 text-xs sm:text-sm md:text-base text-center cursor-pointer hover:text-purple ${
-              showWallet ? "disappear" : "reappear"
+              showWallet ? 'disappear' : 'reappear'
             }`}
           >
             Learn
           </p>
         </Link>
         {secretAddress && (
-          <Link passHref={true} href={"/start"}>
+          <Link passHref={true} href={'/start'}>
             <p
               className={`mr-5 text-xs sm:text-sm md:text-base text-center cursor-pointer hover:text-purple ${
-                showWallet ? "disappear" : "reappear"
+                showWallet ? 'disappear' : 'reappear'
               }`}
             >
               Start
