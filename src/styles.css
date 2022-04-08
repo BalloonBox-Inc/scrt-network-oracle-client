@@ -3,8 +3,12 @@
 @tailwind utilities;
 
 
-body {
-font-family: "Poppins";
+@font-face {
+  font-family: 'Poppins';
+  src:url('/fonts/Poppins/Poppins-Light.ttf');
+  font-style: light;
+  font-weight: 200;
+  font-display: swap;
 }
 
 @font-face {
@@ -23,14 +27,6 @@ font-family: "Poppins";
   font-display: swap;
 }
 
-
-@font-face {
-  font-family: 'Poppins';
-  src:url('/fonts/Poppins/Poppins-light.ttf');
-  font-style: light;
-  font-weight: 300;
-  font-display: swap;
-}
 
 .spin {
   animation-name: spin;

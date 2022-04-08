@@ -105,7 +105,7 @@ const Connect = ({ showWallet, setShowWallet }: any) => {
         onClick={() => {
           secretAddress ? handleShowWallet() : handleConnectRequest();
         }}
-        className={`flex justify-center overflow-hidden items-center bg-gradient-to-b from-purple to-blue 
+        className={`flex justify-center overflow-hidden items-center bg-gradient-to-b from-purple to-deepblue 
         ${showWallet ? 'growLeft' : 'hover:opacity-75'} 
         ${!showWallet && shrinkAnimation ? 'shrinkRight' : undefined}`}
         style={{
@@ -117,8 +117,8 @@ const Connect = ({ showWallet, setShowWallet }: any) => {
         }}
       >
         <div
-          className={`flex items-center justify-center h-10 ${
-            !showWallet && 'ml-4'
+          className={`flex items-center justify-center ${
+            !showWallet && 'xs:ml-4 ml-2 px-3 sm:px-0'
           }`}
         >
           {showWallet && (

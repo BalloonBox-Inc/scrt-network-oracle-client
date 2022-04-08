@@ -11,7 +11,8 @@
     "prepare": "husky install",
     "test-watch": "jest --watch",
     "test": "jest",
-    "test:ci": "jest --coverage --silent --ci"
+    "test:ci": "jest --coverage --silent --ci",
+    "lint:fix": "next lint --fix"
   },
   "lint-staged": {
     "*.(tsx|ts)": [
@@ -26,6 +27,7 @@
     "antd": "^4.18.3",
     "axios": "^0.25.0",
     "classnames": "^2.3.1",
+    "framer-motion": "^6.2.8",
     "less": "^4.1.2",
     "less-loader": "^10.2.0",
     "next": "^12.1.0",
