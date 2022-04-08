@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 
-import { motion, transform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -28,8 +28,8 @@ export default function Header() {
   useEffect(() => {
     if (typeof window !== undefined) {
       window.addEventListener('scroll', handleScroll);
-      return () => window.removeEventListener('scroll', handleScroll);
     }
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
 
   return (
