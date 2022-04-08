@@ -10,7 +10,7 @@ import Layout from '@scrtsybil/src/components/Layout';
 import LogoLoader from '@scrtsybil/src/components/LogoLoader';
 import { useSecretContext } from '@scrtsybil/src/context';
 
-interface SectionElement {
+interface ISectionElement {
   title: string;
   img: string;
   description: string;
@@ -27,7 +27,7 @@ const Home = () => {
   };
   const [applicant, setApplicant] = useState(true);
 
-  const textVariants = {
+  const appearVariants = {
     hidden: {
       opacity: 0,
     },
@@ -39,9 +39,25 @@ const Home = () => {
       },
     },
   };
+
+  const toggleVariants = {
+    applicant: {
+      x: 0,
+      transition: {
+        delay: 0.05,
+      },
+    },
+    serviceProvider: {
+      x: 140,
+      transition: {
+        delay: 0.05,
+      },
+    },
+  };
+
   const router = useRouter();
 
-  const CardWithIcons = ({ title, img, description }: SectionElement) => {
+  const CardWithIcons = ({ title, img, description }: ISectionElement) => {
     return (
       <motion.div
         className="bg-black rounded-lg flex flex-col items-center px-5 py-10 mt-10 lg:mt-0 md:w-72 mr-0 md:mr-10"
@@ -54,7 +70,7 @@ const Home = () => {
     );
   };
 
-  const StepBoxLeft = ({ title, img, description, style }: SectionElement) => {
+  const StepBoxLeft = ({ title, img, description, style }: ISectionElement) => {
     return (
       <motion.div
         className="bg-black rounded-lg flex flex-col sm:flex-row py-10 px-10 mr-0 md:mr-40"
@@ -71,7 +87,12 @@ const Home = () => {
     );
   };
 
-  const StepBoxRight = ({ title, img, description, style }: SectionElement) => {
+  const StepBoxRight = ({
+    title,
+    img,
+    description,
+    style,
+  }: ISectionElement) => {
     return (
       <motion.div
         className="bg-black rounded-lg flex flex-col sm:flex-row py-10 px-10 ml-0 md:ml-40 items-center"
@@ -139,9 +160,9 @@ const Home = () => {
       />
       <motion.div
         className="w-full text-center px-5 sm:px-10 lg:text-left lg:w-1/2 flex flex-col"
-        initial={textVariants.hidden}
-        animate={textVariants.visible}
-        variants={textVariants}
+        initial={appearVariants.hidden}
+        animate={appearVariants.visible}
+        variants={appearVariants}
       >
         <h1 className="text-4xl lg:text-5xl font-extrabold leading-tight mt-20 lg:mt-0">
           {' '}
@@ -172,12 +193,25 @@ const Home = () => {
         </div>
       </motion.div>
       <motion.div
-        className="mx-auto max-w-lg lg:w-1/2 flex px-10 sm:px-0 pt-10 lg:pt-0"
-        initial={textVariants.hidden}
-        animate={textVariants.visible}
-        variants={textVariants}
+        className="mx-auto reappear max-w-lg lg:w-1/2 flex px-10 sm:px-0 pt-10 lg:pt-0"
+        animate={{
+          x: [0, 25, 0, 25, 0],
+          y: [25, 0, 25, 0],
+          transition: {
+            velocity: 500,
+            duration: 5,
+            repeat: Infinity,
+            repeatType: 'mirror',
+          },
+        }}
       >
-        <img src="./images/hero-svg.svg" alt="hero-img"></img>
+        <motion.img
+          initial={appearVariants.hidden}
+          animate={appearVariants.visible}
+          variants={appearVariants}
+          src="./images/hero-svg.svg"
+          alt="hero-img"
+        ></motion.img>
       </motion.div>
     </div>
   );
@@ -217,23 +251,24 @@ const Home = () => {
   const howItWorksSection = (
     <div className="flex flex-col items-center justify-center px-5 sm:px-10 md:px-0 py-10 relative">
       <h2 className="text-4xl font-extrabold mb-10">How it works</h2>
-      <div className="flex items-center bg-neutral-800 mb-10 py-1 px-2 rounded-full cursor-pointer">
+      <div className="flex items-center bg-neutral-800 mb-10 px-2 py-4 rounded-full cursor-pointer relative">
+        <motion.div
+          className={`bg-gradient-to-b from-purple to-deepblue py-5 rounded-full ${
+            applicant ? 'w-36' : 'w-40'
+          } -z-5 absolute`}
+          variants={toggleVariants}
+          animate={applicant ? 'applicant' : 'serviceProvider'}
+        ></motion.div>
         <div
-          className={`text-lightgray hover:text-white ${
-            applicant &&
-            'bg-gradient-to-b from-purple to-deepblue py-2.5 rounded-full text-white'
-          }`}
-          style={{ width: '150px', textAlign: 'center' }}
+          className={`text-lightgray hover:text-white z-10`}
+          style={{ width: '140px', textAlign: 'center' }}
           onClick={() => setApplicant(true)}
         >
           Applicant
         </div>
         <div
-          className={`text-lightgray hover:text-white ${
-            !applicant &&
-            'bg-gradient-to-b from-purple to-deepblue py-2.5 rounded-full text-white'
-          }`}
-          style={{ width: '150px', textAlign: 'center' }}
+          className={`text-lightgray hover:text-white z-10 cursor-pointer`}
+          style={{ width: '160px', textAlign: 'center' }}
           onClick={() => setApplicant(false)}
         >
           Service Provider
@@ -312,17 +347,6 @@ const Home = () => {
             description="Check your applicants' scores by entering the Name of Permission, Public Address, and Signature, provided by the applicant."
             style={{ marginBottom: '3rem' }}
           />
-          {/* <img
-            src="./images/arrow-2.svg"
-            alt="arrow-2"
-            className="absolute right-10 invisible md:visible"
-          />
-          <StepBoxLeft
-            title="Integrate with validators"
-            img="./images/scrtnetwork-logo-white.svg"
-            description="We acquire users financial data by integrating with two validators : Plaid, Coinbase"
-            style={{ marginBottom: "3rem" }}
-          /> */}
         </div>
       )}
     </div>
