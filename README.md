@@ -62,11 +62,15 @@ You will need to create an account on [Plaid](https://dashboard.plaid.com/) OR [
 
 Then, you can run locally in development mode with live reload. Ensure you run this command after `cd` into the local folder where you cloned the repo.
 
+
+
 ```
 yarn dev
 ```
 
 Open http://localhost:3000 with your favorite browser to see your project.
+
+note: you will want to get some testnet tokens in your wallet, which you can get [here](https://faucet.secrettestnet.io/). Make sure you select the pulsar-2 network from the keplr dropdown. 
 
 ### Deploy to production
 
