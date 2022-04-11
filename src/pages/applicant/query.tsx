@@ -9,6 +9,7 @@ import BgImage from '@scrtsybil/src/components/BgImage';
 import Button, { BUTTON_STYLES } from '@scrtsybil/src/components/Button';
 import { LoadingContainer } from '@scrtsybil/src/components/LoadingContainer';
 import ScoreSpeedometer from '@scrtsybil/src/components/score';
+import TweetBtn from '@scrtsybil/src/components/TweetBtn';
 import { useSecretContext } from '@scrtsybil/src/context';
 import { queryScoreWithPermit } from '@scrtsybil/src/keplr/helpers';
 import {
@@ -100,6 +101,7 @@ const QueryScorePage = () => {
               classes={{ button: 'text-xs text-white hover:text-blue' }}
             />
           </div>
+          <TweetBtn message="I just calculated my credit score on a blockchain-powered Dapp on the SCRT network! Check it out at secretsibyl.com" />
         </div>
       </div>
     </>
