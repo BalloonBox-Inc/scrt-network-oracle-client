@@ -1,8 +1,10 @@
 import { fireEvent, render } from '@testing-library/react';
 import { RouterContext } from 'next/dist/shared/lib/router-context';
 
-import { ContextProvider } from '@scrtsybil/src/context';
-import Generate from '@scrtsybil/src/pages/applicant/generate';
+import { CHAIN_ACTIVITY_INIT, ContextProvider } from '@scrtsybil/src/context';
+import Generate, {
+  GenerateScore,
+} from '@scrtsybil/src/pages/applicant/generate';
 import { createMockRouter } from '@scrtsybil/src/test-utils/createMockRouter';
 
 function mockFetch(data: any) {
@@ -30,6 +32,20 @@ describe('Generate Page', () => {
       name: 'Choose a Provider',
     });
     expect(heading).toBeValid;
+  });
+
+  it('shows modal if score is already submitted', () => {
+    const chainActivity = { ...CHAIN_ACTIVITY_INIT, scoreSubmitted: true };
+    const { getByTestId } = render(
+      <RouterContext.Provider value={createMockRouter({})}>
+        <ContextProvider>
+          <GenerateScore chainActivity={chainActivity} />
+        </ContextProvider>
+      </RouterContext.Provider>
+    );
+
+    const modal = getByTestId('existing-score');
+    expect(modal).toBeValid;
   });
 
   describe('When Plaid is Selected and button is clicked', () => {

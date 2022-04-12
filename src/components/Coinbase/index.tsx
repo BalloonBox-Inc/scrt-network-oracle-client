@@ -1,3 +1,4 @@
+/* eslint-disable use-encapsulation/prefer-custom-hooks */
 import { useCallback, useEffect } from 'react';
 
 import { notification } from 'antd';
@@ -7,25 +8,27 @@ import { useSecretContext } from '@scrtsybil/src/context';
 import { handleCoinbaseCode } from '@scrtsybil/src/services';
 
 const Coinbase = ({
-  setAwaitingScoreResponse,
   connectionError,
   router,
+  setToWaiting,
+  setNotWaiting,
 }: {
-  setAwaitingScoreResponse: (b: boolean) => void;
   connectionError: (s: string) => void;
   router: NextRouter;
+  setToWaiting: () => void;
+  setNotWaiting: () => void;
 }) => {
   const { setCoinbaseToken, setScoreResponse, scoreResponse, coinbaseToken } =
     useSecretContext();
 
   const getCoinbaseSdkUrl = useCallback(async () => {
-    setAwaitingScoreResponse(true);
+    setToWaiting();
     const res = await fetch('/api/coinbase');
     const resJson = await res.json();
     if (resJson.url) {
       window.location.href = resJson.url;
     }
-  }, [setAwaitingScoreResponse]);
+  }, [setToWaiting]);
 
   const fetchCoinbaseWithToken = useCallback(
     async ({ access_token, refresh_token }) => {
@@ -44,13 +47,13 @@ const Coinbase = ({
       } else {
         setScoreResponse(null);
         router.replace('/applicant/generate');
-        setAwaitingScoreResponse(false);
+        setNotWaiting();
         notification.error({
           message: 'Error connecting to Coinbase, try again later',
         });
       }
     },
-    [getCoinbaseSdkUrl, router, setAwaitingScoreResponse, setScoreResponse]
+    [getCoinbaseSdkUrl, router, setNotWaiting, setScoreResponse]
   );
 
   useEffect(() => {

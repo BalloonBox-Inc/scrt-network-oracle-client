@@ -1,3 +1,4 @@
+/* eslint-disable use-encapsulation/prefer-custom-hooks */
 import { useEffect } from 'react';
 
 import { notification } from 'antd';
@@ -20,8 +21,9 @@ interface Props {
   itemId?: number | null;
   children?: React.ReactNode;
   router: NextRouter;
-  setAwaitingScoreResponse: any;
   setStartPlaidLink: any;
+  setNotWaiting: () => void;
+  setToWaiting: () => void;
 }
 
 const LaunchLink = (props: Props) => {
@@ -29,7 +31,7 @@ const LaunchLink = (props: Props) => {
     useSecretContext();
 
   const handleError = async (onExit: boolean) => {
-    props.setAwaitingScoreResponse(false);
+    props.setNotWaiting();
     props.router.replace('/applicant/generate');
     props.setStartPlaidLink(false);
     notification.error({
@@ -48,7 +50,7 @@ const LaunchLink = (props: Props) => {
     } else {
       handleError(false);
     }
-    props.setAwaitingScoreResponse(false);
+    props.setNotWaiting();
   };
 
   const onExit = async (
