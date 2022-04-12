@@ -7,6 +7,7 @@ import BgImage from '@scrtsybil/src/components/BgImage';
 import Button, { BUTTON_STYLES } from '@scrtsybil/src/components/Button';
 import { LoadingContainer } from '@scrtsybil/src/components/LoadingContainer';
 import ScoreSpeedometer from '@scrtsybil/src/components/score';
+import TweetBtn from '@scrtsybil/src/components/TweetBtn';
 import { storageHelper, useSecretContext } from '@scrtsybil/src/context';
 import { handleSetScore } from '@scrtsybil/src/keplr/helpers';
 
@@ -221,7 +222,6 @@ const ApplicantScorePage = () => {
       </div>
     </Modal>
   );
-
   const mainScoreContainer = (
     <div className="px-3 sm:px-10 z-50 mt-20 mb-20 sm:mt-20 ">
       <div className="w-full text-center">
@@ -260,7 +260,7 @@ const ApplicantScorePage = () => {
         </p>
       )}
       <div
-        className={`z-50 flex  ${
+        className={`z-50 flex flex-col items-center ${
           showScore ? 'opacity-100' : 'opacity-0'
         } justify-center mt-8 duration-500`}
       >
@@ -273,6 +273,7 @@ const ApplicantScorePage = () => {
           style={BUTTON_STYLES.DEFAULT}
           text={!isSuccess ? 'Save To Blockchain' : 'Create a query permit'}
         />
+        <TweetBtn message="I just calculated my credit score on a blockchain-powered Dapp on the SCRT network! Check it out at secretsibyl.com" />
       </div>
 
       <Modal
