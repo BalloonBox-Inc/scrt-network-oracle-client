@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import { DownloadOutlined } from '@ant-design/icons';
-import { Modal } from 'antd';
+import { DownloadOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { Modal, Tooltip } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { isEmpty, replace } from 'ramda';
@@ -75,7 +75,7 @@ const PermissionPage = () => {
   const inputDataInput = (onChange?: (e?: any) => void) => (
     <input
       onChange={onChange}
-      className=" z-50 focus-visible:outline-blue-600 focus-visible:outline-none  font-mono text-blue-600 bg-input-bg w-full py-3 px-3 rounded-md mb-4"
+      className=" z-50 focus-visible:outline-blue-600 focus-visible:outline-none font-mono text-blue-600 bg-input-bg w-full py-3 px-3 rounded-md mb-4 uppercase"
       type={'text'}
     />
   );
@@ -96,12 +96,18 @@ const PermissionPage = () => {
             <h3 className="text-lg mr-2 uppercase font-semibold ">
               Query Permit{' '}
             </h3>
-            <div className="bg-gray-500 w-4 h-4 rounded-full p-2 flex justify-center items-center cursor-pointer text-black">
-              i
-            </div>
+            <Tooltip
+              title="You can only view this key once. Make sure to save it and keep it safe."
+              placement="bottom"
+            >
+              <InfoCircleOutlined className="cursor-pointer hover:text-gray-500" />
+            </Tooltip>
           </div>
           <p className="mb-3 font-semibold">
-            Permit Name: <span className="font-thin">{inputData}</span>
+            Permit Name:{' '}
+            <span className="font-thin">
+              {inputData || permissionSig?.name}
+            </span>
           </p>
           <p className="mb-3 font-semibold">
             Public Key:{' '}
@@ -127,7 +133,7 @@ const PermissionPage = () => {
               <Button
                 text="Query Score"
                 style={BUTTON_STYLES.LINK}
-                classes={{ button: 'hover:text-blue' }}
+                classes={{ button: 'hover:text-gray-400' }}
                 onClick={() => {
                   router.push('/applicant/query');
                 }}
@@ -136,7 +142,7 @@ const PermissionPage = () => {
           </div>
           <div
             role={'presentation'}
-            className="mt-10 text-xs flex items-center  text-blue cursor-pointer"
+            className="mt-10 text-xs flex items-center text-blue cursor-pointer"
             onClick={() => {
               const element = document.createElement('a');
               const file = new Blob(
@@ -158,10 +164,12 @@ const PermissionPage = () => {
               document.body.removeChild(element);
             }}
           >
-            <span className="mr-1 text-base">
-              <DownloadOutlined />
-            </span>
-            <p className="mt-2">download permit</p>
+            <div className="hover:text-gray-500 flex">
+              <span className="mr-1 text-base">
+                <DownloadOutlined />
+              </span>
+              <p className="mt-2">Download permit</p>
+            </div>
           </div>
         </div>
       </div>
@@ -172,8 +180,21 @@ const PermissionPage = () => {
     <div className="px-10 sm:px-14 z-50 mt-20 mb-20 sm:mt-10">
       <div className="w-full text-center">
         <div className="z-50 opacity-100 px-0 sm:p-10 flex flex-col">
-          <h2 className="z-50 font-semibold text-2xl sm:text-3xl md:text-3xl lg:text-4xl p-0">
+          <h2 className="z-50 font-semibold text-2xl sm:text-3xl md:text-3xl lg:text-4xl p-0 flex items-center justify-center">
             {isCreate ? 'Create a query permit' : 'Revoke a query permit'}
+            <Tooltip
+              title={`${
+                isCreate
+                  ? 'Gas fees are not charged when creating a query permit and these permits can be shared with others. Gas fees are only charged if you decide to revoke the permit at a later time.'
+                  : 'Gas fees are charged when revoking a query permit.'
+              }`}
+              placement="bottom"
+            >
+              <InfoCircleOutlined
+                className="cursor-pointer hover:text-gray-500"
+                style={{ marginLeft: '1rem', fontSize: '25px' }}
+              />
+            </Tooltip>
           </h2>
           <p className="z-50 font-thin text-sm sm:text-base p-0">
             Please enter the name of the query permit you would like to{' '}
@@ -183,8 +204,8 @@ const PermissionPage = () => {
       </div>
       <div className="w-full text-center z-50 sm:px-20 lg:px-40 flex flex-col ">
         <form className="flex flex-col items-start mt-8  w-full">
-          <label className="text-left mb-1">query permit name or phrase</label>
-          {inputDataInput((e) => setinputData(e.target.value))}
+          <label className="text-left mb-1">Query permit name or phrase</label>
+          {inputDataInput((e) => setinputData(e.target.value.toUpperCase()))}
         </form>
         <div className="flex items-center mt-8">
           <Button

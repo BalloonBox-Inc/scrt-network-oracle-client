@@ -63,7 +63,7 @@ export default function Header() {
       <div className="flex items-center min-h-full">
         <Link passHref={true} href="/learn">
           <p
-            className={`mr-5 text-xs sm:text-sm md:text-base text-center cursor-pointer hover:text-purple ${
+            className={`mr-5 text-xs sm:text-sm md:text-base text-center cursor-pointer hover:text-gray-400 ${
               showWallet ? 'disappear' : 'reappear'
             }`}
           >
@@ -73,7 +73,7 @@ export default function Header() {
         {secretAddress && (
           <Link passHref={true} href={'/start'}>
             <p
-              className={`mr-5 text-xs sm:text-sm md:text-base text-center cursor-pointer hover:text-purple ${
+              className={`mr-5 text-xs sm:text-sm md:text-base text-center cursor-pointer hover:text-gray-400 ${
                 showWallet ? 'disappear' : 'reappear'
               }`}
             >
