@@ -260,7 +260,7 @@ const ApplicantScorePage = () => {
         </p>
       )}
       <div
-        className={`z-50 flex ${
+        className={`z-50 flex flex-col items-center ${
           showScore ? 'opacity-100' : 'opacity-0'
         } justify-center mt-8 duration-500`}
       >
@@ -273,8 +273,9 @@ const ApplicantScorePage = () => {
           style={BUTTON_STYLES.DEFAULT}
           text={!isSuccess ? 'Save To Blockchain' : 'Create a query permit'}
         />
+        <TweetBtn message="I just calculated my credit score on a blockchain-powered Dapp on the SCRT network! Check it out at secretsibyl.com" />
       </div>
-      <TweetBtn message="I just calculated my credit score on a blockchain-powered Dapp on the SCRT network! Check it out at secretsibyl.com" />
+
       <Modal
         visible={showScoreDescription}
         footer={null}

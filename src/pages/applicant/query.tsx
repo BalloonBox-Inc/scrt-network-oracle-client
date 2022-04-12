@@ -194,7 +194,7 @@ const QueryScorePage = () => {
   );
 
   return (
-    <div className="px-14 py-10 ">
+    <div className="px-14 py-10">
       {status !== 'error' && (
         <div className="w-full text-center">
           <div className="z-50 opacity-100 px-0 sm:p-10">
