@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import BgImage from '@scrtsybil/src/components/BgImage';
 import Button, { BUTTON_STYLES } from '@scrtsybil/src/components/Button';
 import { LoadingContainer } from '@scrtsybil/src/components/LoadingContainer';
+import NavigationButtons from '@scrtsybil/src/components/NavigationButtons';
 import ScoreSpeedometer from '@scrtsybil/src/components/score';
 import TweetBtn from '@scrtsybil/src/components/TweetBtn';
 import { useSecretContext } from '@scrtsybil/src/context';
@@ -142,7 +143,7 @@ const QueryScorePage = () => {
         )}
       </form>
       <div className="flex items-center mt-8">
-        <Button
+        {/* <Button
           text={'Get my score'}
           classes={{ container: 'mr-3' }}
           isDisabled={
@@ -151,7 +152,7 @@ const QueryScorePage = () => {
             !permitData?.permitSignature
           }
           onClick={() => getScore()}
-        />
+        /> */}
 
         {permissionSig?.name && (
           <Button
@@ -194,36 +195,38 @@ const QueryScorePage = () => {
   );
 
   return (
-    <div className="px-14 py-10">
-      {status !== 'error' && (
-        <div className="w-full text-center">
-          <div className="z-50 opacity-100 px-0 sm:p-10">
-            <h2 className="z-50 font-semibold text-2xl sm:text-3xl md:text-3xl lg:text-4xl p-0">
-              Query Your Score
-            </h2>
+    <>
+      <div className="px-14 py-10 ">
+        {status !== 'error' && (
+          <div className="w-full text-center">
+            <div className="z-50 opacity-100 px-0 sm:p-10">
+              <h2 className="z-50 font-semibold text-2xl sm:text-3xl md:text-3xl lg:text-4xl p-0">
+                Query Your Score
+              </h2>
+            </div>
           </div>
-        </div>
-      )}
-      {status === 'loading' && (
-        <LoadingContainer text="Requesting score, this may take a minute." />
-      )}
-      {status === 'success' && mainContainer}
-      {status === 'error' && errorContainer}
-      {status === undefined && noScoreForm}
-      {scoreDescriptionModal}
+        )}
+        {status === 'loading' && (
+          <LoadingContainer text="Requesting score, this may take a minute." />
+        )}
+        {status === 'success' && mainContainer}
+        {status === 'error' && errorContainer}
+        {status === undefined && noScoreForm}
+        {scoreDescriptionModal}
+        <BgImage />
+      </div>
       {status !== 'error' && status !== 'loading' && (
-        <div className="pt-16 z-50 sm:px-20 flex justify-start">
-          <Button
-            onClick={() => {
-              router.push(`/applicant`);
-            }}
-            text="Back"
-            style={BUTTON_STYLES.OUTLINE}
-          />
-        </div>
+        <NavigationButtons
+          backHandler={() => router.push(`/applicant`)}
+          nextHandler={() => getScore()}
+          nextDisabled={
+            !permitData.permitName ||
+            !permitData?.publicAddress ||
+            !permitData?.permitSignature
+          }
+        />
       )}
-      <BgImage />
-    </div>
+    </>
   );
 };
 

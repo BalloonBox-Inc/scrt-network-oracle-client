@@ -9,7 +9,7 @@
     "lint": "next lint",
     "build-types": "tsc --noEmit --pretty",
     "prepare": "husky install",
-    "test-watch": "jest --watch",
+    "test:w": "jest --watch",
     "test": "jest",
     "test:ci": "jest --coverage --silent --ci",
     "lint:fix": "next lint --fix"
@@ -70,6 +70,7 @@
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
     "eslint-plugin-testing-library": "^5.2.1",
+    "eslint-plugin-use-encapsulation": "^1.0.0",
     "husky": "^7.0.4",
     "jest": "^27.5.1",
     "lint-staged": "^12.1.4",

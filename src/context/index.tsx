@@ -1,3 +1,4 @@
+/* eslint-disable use-encapsulation/prefer-custom-hooks */
 import React, { useState, useContext, createContext, useEffect } from 'react';
 
 import { notification } from 'antd';
@@ -9,7 +10,7 @@ import { NOTIFICATIONS } from '../constants';
 import { ICoinbaseTokenCreateResponse } from '../pages/api/coinbase';
 import { IScoreResponseCoinbase, IScoreResponsePlaid } from '../types/types';
 
-interface ISecretContext {
+export interface ISecretContext {
   secretAddress: string | null;
   setSecretAddress: React.Dispatch<React.SetStateAction<string | null>>;
   loading: boolean;
@@ -33,7 +34,7 @@ interface ISecretContext {
   setPermissionSig: React.Dispatch<
     React.SetStateAction<{ name: string; signature: StdSignature } | null>
   >;
-  handleSetChainActivity: any;
+  handleSetChainActivity: (a: IChainActivity | null) => void;
 }
 
 export enum CHAIN_ACTIVITIES {
@@ -51,7 +52,7 @@ export interface IChainActivity {
   [CHAIN_ACTIVITIES.viewingKey]?: string;
 }
 
-const CHAIN_ACTIVITY_INIT = {
+export const CHAIN_ACTIVITY_INIT = {
   scoreSubmitted: undefined,
   shareableLink: undefined,
   dataProvider: undefined,
@@ -59,11 +60,11 @@ const CHAIN_ACTIVITY_INIT = {
   viewingKey: undefined,
 };
 
-interface PlaidToken {
+export interface PlaidToken {
   publicToken: string;
 }
 
-const Context = createContext<ISecretContext | undefined>(undefined);
+export const Context = createContext<ISecretContext | undefined>(undefined);
 
 const useSecretContext = () => {
   const context = useContext(Context);
@@ -137,7 +138,7 @@ const ContextProvider = ({ children }: any) => {
     secretAddress && setConnectRequest(false);
   }, [secretAddress]);
 
-  const handleSetChainActivity = (val: any) => {
+  const handleSetChainActivity = (val: IChainActivity | null) => {
     if (val) {
       setChainActivity({
         ...chainActivity,

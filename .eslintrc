@@ -22,7 +22,7 @@
         "**/__tests__/**/*.[jt]s?(x)",
         "**/?(*.)+(spec|test).[jt]s?(x)"
       ],
-      "plugins": ["@typescript-eslint"],
+      "plugins": ["@typescript-eslint", "use-encapsulation"],
       "extends": [
         "airbnb-typescript",
         "next/core-web-vitals",
@@ -71,7 +71,11 @@
         "@typescript-eslint/naming-convention": "off",
         "no-shadow": "off",
         "@typescript-eslint/no-shadow": ["error"],
-        "import/no-extraneous-dependencies": "off"
+        "import/no-extraneous-dependencies": "off",
+        "use-encapsulation/prefer-custom-hooks": [
+          "warn",
+          { "allow": ["useMemo"] }
+        ]
       }
     }
   ]
