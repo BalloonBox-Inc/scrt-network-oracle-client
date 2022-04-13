@@ -41,6 +41,7 @@ Your browser will require the Keplr Chrome extension, downloadable [here.](https
 Create a .env.local file in your root folder: 
 
 ```
+NEXT_BASE_URL=http://localhost:3000
 PLAID_CLIENT_ID=your_client_id
 PLAID_URL_SANDBOX=sandbox.plaid.com
 PLAID_SECRET_KEY_SANDBOX=your_sandbox_key
