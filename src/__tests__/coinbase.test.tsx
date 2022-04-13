@@ -20,7 +20,7 @@ describe('Coinbase SDK', () => {
     window.fetch = mockFetch({ json: 'hello' });
     const setToWaiting = jest.fn();
     const setToNotWaiting = jest.fn();
-    const { debug } = render(
+    render(
       <RouterContext.Provider value={createMockRouter({})}>
         <ContextProvider>
           <Coinbase
@@ -32,8 +32,7 @@ describe('Coinbase SDK', () => {
         </ContextProvider>
       </RouterContext.Provider>
     );
-    debug();
-
     expect(setToWaiting).toHaveBeenCalled();
+    expect(setToNotWaiting).not.toBeCalled();
   });
 });
