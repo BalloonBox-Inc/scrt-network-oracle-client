@@ -63,7 +63,7 @@ export function useManageQuery({
 }: any) {
   useEffect(() => {
     router?.query?.code && setStartCoinbase(true);
-  }, [router?.query, setStartCoinbase]);
+  }, [router?.query?.code, setStartCoinbase]);
 
   useEffect(() => {
     router?.query?.status === 'loading' && setToWaiting();

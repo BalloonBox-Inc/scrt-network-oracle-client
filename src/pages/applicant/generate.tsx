@@ -113,7 +113,7 @@ export const GenerateScore = ({ chainActivity }: IGenerateScorePage) => {
           setStartCoinbase={setStartCoinbase}
           queryStatus={queryStatus}
           queryType={queryType}
-          pushToScore={router.push('/applicant/score')}
+          pushToScore={() => router.push('/applicant/score')}
           startOver={startOver}
         />
       )}
@@ -141,7 +141,7 @@ export const GenerateScore = ({ chainActivity }: IGenerateScorePage) => {
       {!awaitingScoreResponse && (
         <MainContainer
           handlePlaidConnect={handlePlaidConnect}
-          setStartCoinbase={setStartPlaidLink}
+          setStartCoinbase={setStartCoinbase}
         />
       )}
       {

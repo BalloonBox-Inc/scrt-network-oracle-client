@@ -41,7 +41,10 @@ const Coinbase = ({
       if (coinbaseScore.status === 'success') {
         setScoreResponse(coinbaseScore);
         router.replace('/applicant/generate?type=coinbase&status=success');
-      } else if (coinbaseScore.message === 'The access token expired') {
+      } else if (
+        coinbaseScore.message === 'The access token expired' ||
+        coinbaseScore.message === 'The access token is invalid'
+      ) {
         setScoreResponse(null);
         getCoinbaseSdkUrl();
       } else {
@@ -56,10 +59,22 @@ const Coinbase = ({
     [getCoinbaseSdkUrl, router, setNotWaiting, setScoreResponse]
   );
 
+  const accessTokenExpired = () => {
+    if (coinbaseToken?.expires_in) {
+      const creationTime = coinbaseToken?.created_at;
+      const expirationTime = creationTime + coinbaseToken.expires_in;
+      if (Math.floor(Date.now() / 1000) > expirationTime) {
+        return true;
+      }
+      return false;
+    }
+    return true;
+  };
+
   useEffect(() => {
     const handleCoinbaseConnect = async () => {
       // check if access token + refresh token exist in cache
-      if (coinbaseToken?.access_token) {
+      if (coinbaseToken?.access_token && !accessTokenExpired()) {
         router.replace('/applicant/generate?type=coinbase&status=loading');
         fetchCoinbaseWithToken({
           access_token: coinbaseToken.access_token,
@@ -75,7 +90,7 @@ const Coinbase = ({
         getCoinbaseSdkUrl();
       }
     };
-    handleCoinbaseConnect();
+    !router?.query?.code && handleCoinbaseConnect();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -83,12 +98,9 @@ const Coinbase = ({
     const getCoinbaseTokens = async (code: string) => {
       try {
         // Send the code we got from the SDK to retrieve access_token + refresh_token
+        router.replace('/applicant/generate');
         const resJson = await handleCoinbaseCode(code);
 
-        if (resJson.error) {
-          router.replace('/applicant/generate');
-          connectionError('coinbase');
-        }
         if (resJson.access_token) {
           setCoinbaseToken(resJson);
           router.replace('/applicant/generate?type=coinbase&status=loading');
@@ -96,6 +108,10 @@ const Coinbase = ({
             access_token: resJson.access_token,
             refresh_token: resJson.refresh_token,
           });
+          return;
+        }
+        if (resJson.error) {
+          connectionError('coinbase');
         }
       } catch (error) {
         router.replace('/applicant/generate');
