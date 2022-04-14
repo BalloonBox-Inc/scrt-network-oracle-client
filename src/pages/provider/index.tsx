@@ -155,7 +155,9 @@ const ProviderServicesPage = () => {
       centered
       bodyStyle={{ background: '#242630' }}
     >
-      <div className={`px-8 flex py-5 justify-center rounded-md z-50`}>
+      <div
+        className={`px-8 flex py-5 justify-center rounded-md z-50 font-sans`}
+      >
         <div className="p-8 px-2 rounded-lg z-50  max-w-xl w-full ">
           {formInputs}
           <div className="flex">

@@ -111,7 +111,7 @@ const Home = () => {
 
   const awaitingConnectionView = (
     <div
-      style={{ height: '70%', padding: '3rem 5rem' }}
+      style={{ height: '70%', padding: '3rem 4rem' }}
       className="flex justify-center items-center flex-col"
     >
       <div
@@ -125,10 +125,10 @@ const Home = () => {
           borderRadius: '8px',
         }}
       >
-        <div className="flex items-center w-full">
+        <div className="flex items-center w-full mb-10">
           <img
             alt="spinning_keplr"
-            className="spin mb-3 mr-3"
+            className="spin mb-1 mr-3"
             width={'22px'}
             src={keplr}
           />

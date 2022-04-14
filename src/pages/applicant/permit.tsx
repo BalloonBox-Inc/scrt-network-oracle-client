@@ -142,7 +142,7 @@ const PermissionPage = () => {
           </div>
           <div
             role={'presentation'}
-            className="mt-10 text-xs flex items-center text-blue cursor-pointer"
+            className="mt-10 flex items-center text-blue cursor-pointer"
             onClick={() => {
               const element = document.createElement('a');
               const file = new Blob(
@@ -164,7 +164,7 @@ const PermissionPage = () => {
               document.body.removeChild(element);
             }}
           >
-            <div className="hover:text-gray-500 flex">
+            <div className="hover:text-gray-500 flex items-center text-sm">
               <span className="mr-1 text-base">
                 <DownloadOutlined />
               </span>

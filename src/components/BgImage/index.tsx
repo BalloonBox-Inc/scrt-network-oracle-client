@@ -39,7 +39,7 @@ const BgImage = () => {
   }, []);
 
   return (
-    <div className="absolute z-0 left-0 top-0 opacity-30">
+    <div className="absolute -z-10 left-0 top-0 opacity-30">
       <Image
         alt="diagonal-waves"
         src={diagonalWaves}

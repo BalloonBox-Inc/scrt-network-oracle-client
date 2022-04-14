@@ -24,7 +24,7 @@ const ScoreResponseModal = ({
       }}
       visible={queryStatus === 'success'}
     >
-      <div className="h-60 w-full space-y-2 flex justify-center items-center flex-col">
+      <div className="h-60 w-full space-y-2 flex justify-center items-center flex-col font-sans">
         <h2 className="text-xl font-semibold">Ready to calculate Score</h2>
         <p>with </p>
         <div className="w-full justify-center flex">
@@ -43,18 +43,18 @@ const ScoreResponseModal = ({
           )}
         </div>
       </div>
-      <div className="flex flex-col w-full justify-center items-center">
-        <div className=" w-max">
+      <div className="flex flex-col w-full justify-center items-center font-sans">
+        <div className="w-max">
           <Button
             onClick={pushToScore}
             text="Continue to score calculation"
             style={BUTTON_STYLES.DEFAULT}
           />
         </div>
-        <div className=" w-max mt-3">
+        <div className="w-max mt-3">
           <Button
             onClick={startOver}
-            text="start over"
+            text="Start over"
             style={BUTTON_STYLES.LINK}
           />
         </div>
