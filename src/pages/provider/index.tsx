@@ -104,7 +104,7 @@ const ProviderServicesPage = () => {
         ? requestDataInput(permitData.permitName, (e) =>
             setPermitData({
               ...permitData,
-              permitName: e.target.value,
+              permitName: e.target.value.toUpperCase(),
             })
           )
         : requestDataInput(viewingKey.key, (e) =>
