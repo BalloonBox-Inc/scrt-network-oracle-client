@@ -109,8 +109,6 @@ export const GenerateScore = ({ chainActivity }: IGenerateScorePage) => {
     <div className="px-14 py-10">
       {queryStatus === 'success' && (
         <ScoreResponseModal
-          setNotWaiting={setNotWaiting}
-          setStartCoinbase={setStartCoinbase}
           queryStatus={queryStatus}
           queryType={queryType}
           pushToScore={() => router.push('/applicant/score')}
