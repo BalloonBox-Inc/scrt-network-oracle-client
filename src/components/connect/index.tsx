@@ -90,7 +90,7 @@ const Connect = ({ showWallet, setShowWallet }: any) => {
 
   const handleConnectRequest = () => {
     setConnectRequest(!connectRequest);
-    handleKeplrOpen(setSecretAddress);
+    handleKeplrOpen(setSecretAddress, setConnectRequest);
   };
 
   const handleShowWallet = () => {
