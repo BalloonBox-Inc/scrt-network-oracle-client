@@ -1,27 +1,24 @@
 import { Modal } from 'antd';
-import { useRouter } from 'next/router';
 
 import Button, { BUTTON_STYLES } from '../Button';
 
 const ScoreResponseModal = ({
-  setNotWaiting,
-  setStartCoinbase,
   queryStatus,
   queryType,
   pushToScore,
   startOver,
-}: any) => {
-  const router = useRouter();
+}: {
+  queryStatus: string;
+  queryType: string | string[] | undefined;
+  pushToScore: () => void;
+  startOver: () => void;
+}) => {
   return (
     <Modal
       footer={null}
       centered
       closable={true}
-      onCancel={() => {
-        router.replace('/applicant/generate');
-        setNotWaiting();
-        setStartCoinbase();
-      }}
+      onCancel={startOver}
       visible={queryStatus === 'success'}
     >
       <div className="h-60 w-full space-y-2 flex justify-center items-center flex-col">
