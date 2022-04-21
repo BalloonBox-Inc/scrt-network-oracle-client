@@ -20,7 +20,9 @@ declare global {
 }
 
 export const handleKeplrOpen = async (
-  setSecretAddress: React.Dispatch<React.SetStateAction<string | null>>
+  setSecretAddress: React.Dispatch<React.SetStateAction<string | null>>,
+  setConnectRequest: React.Dispatch<React.SetStateAction<boolean>>
+  // eslint-disable-next-line consistent-return
 ) => {
   if (EXPERIMENTAL) {
     try {
@@ -111,10 +113,12 @@ export const handleKeplrOpen = async (
       await cosmJS.getAccount(secretAddress);
 
       setSecretAddress(secretAddress);
-      // cosmJS && setSecretjs(cosmJS);
-    } catch {
-      // eslint-disable-next-line no-alert
-      alert('Failed to suggest the chain');
+    } catch (error) {
+      notification.error({
+        message:
+          'There was an error connecting to the network. Try again later.',
+      });
+      setConnectRequest(false);
     }
   }
 };
