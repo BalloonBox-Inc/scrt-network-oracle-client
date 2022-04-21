@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion';
-import Link from 'next/link';
 import router from 'next/router';
 
 import Button, { BUTTON_STYLES } from '../Button';
@@ -58,9 +57,12 @@ export default function HeroSection({
               <Connect />
             )}
           </div>
-          <Link href="/learn">
-            <Button style={BUTTON_STYLES.OUTLINE} text="Learn more" />
-          </Link>
+
+          <Button
+            style={BUTTON_STYLES.OUTLINE}
+            text="Learn more"
+            onClick={() => router.push('/learn')}
+          />
         </div>
       </div>
 

@@ -1,9 +1,5 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-
-import whiteLogo from '@scrtsybil/public/images/scrt-logo-horizaontal-white.svg';
-import scrtLogo from '@scrtsybil/public/images/scrtnetwork-logo-white.svg';
 
 export default function Footer() {
   const router = useRouter();
@@ -19,10 +15,10 @@ export default function Footer() {
         <div className={`${routerIsMain ? 'block' : 'hidden'}`}>
           <Link passHref={true} href="/">
             <a>
-              <Image
-                src={whiteLogo}
-                width={'100%'}
-                height={'40%'}
+              <img
+                src="/images/scrt-logo-horizaontal-white.svg"
+                width={100}
+                height={40}
                 alt="scrtsibyl-logo"
                 className="cursor-pointer"
               />
@@ -36,10 +32,10 @@ export default function Footer() {
       <div className="flex items-center flex-col sm:flex-row ">
         <p className="text-xs pt-3 mr-2">secured by</p>
         <a href="https://scrt.network/" target="_blank" rel="noreferrer">
-          <Image
-            src={scrtLogo}
-            width={'100%'}
-            height={'40%'}
+          <img
+            src={'images/scrtnetwork-logo-white.svg'}
+            width={100}
+            height={40}
             alt="scrt-network-logo"
             className="cursor-pointer"
           />
