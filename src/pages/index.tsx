@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 import { motion } from 'framer-motion';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 import Button, { BUTTON_STYLES } from '@scrtsybil/src/components/Button';
@@ -187,9 +186,12 @@ const Home = () => {
               <Connect />
             )}
           </div>
-          <Link href="/learn">
-            <Button style={BUTTON_STYLES.OUTLINE} text="Learn more" />
-          </Link>
+
+          <Button
+            style={BUTTON_STYLES.OUTLINE}
+            text="Learn more"
+            onClick={() => router.push('/learn')}
+          />
         </div>
       </motion.div>
       <motion.div
