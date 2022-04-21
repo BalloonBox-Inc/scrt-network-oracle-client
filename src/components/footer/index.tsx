@@ -1,8 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-import scrtLogo from '@scrtsybil/public/images/scrtnetwork-logo-white.svg';
-
 export default function Footer() {
   const router = useRouter();
   const routerIsMain =
