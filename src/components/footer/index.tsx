@@ -34,8 +34,8 @@ export default function Footer() {
         <a href="https://scrt.network/" target="_blank" rel="noreferrer">
           <img
             src={'images/scrtnetwork-logo-white.svg'}
-            width={100}
-            height={40}
+            width="100px"
+            height="40px"
             alt="scrt-network-logo"
             className="cursor-pointer"
           />

@@ -82,11 +82,11 @@ export default function HeroSection({
         <motion.img
           animate={appearVariants.visible}
           variants={appearVariants}
-          width="100%"
-          height={'auto'}
+          width="600px"
+          height="600px"
           src="./images/hero-svg.svg"
           alt="hero-img"
-        ></motion.img>
+        />
       </motion.div>
     </div>
   );

@@ -80,8 +80,9 @@ const Connect = ({ showWallet, setShowWallet }: any) => {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       if (!window.keplr) {
-        // eslint-disable-next-line no-alert
-        alert('Please install keplr extension');
+        notification.error({
+          message: 'Please install keplr extension',
+        });
       }
     }
   }, [setSecretAddress]);

@@ -2,8 +2,8 @@ import { BORDER_GRADIENT_STYLE } from '@scrtsybil/src/constants';
 
 const ServiceSelector = ({ selected, onClick, text, title }: any) => {
   const contentWithTitle = (
-    <div className="text-left ">
-      <h3 className="text-lg sm:text-xl">{title}</h3>
+    <div className="text-left">
+      <h3 className="text-lg sm:text-xl font-medium mb-3">{title}</h3>
       <p className="text-xs font-thin">{text}</p>
     </div>
   );
