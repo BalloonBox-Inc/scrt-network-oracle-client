@@ -19,12 +19,12 @@ export default function WhySection() {
         />
         <CardWithIcons
           title="Blockchain Centric"
-          img="./images/lock-icon.svg"
-          description="Outside of your browser's cache & the SCRT Blockchain, there's no 3rd party database storing any of your data, securing you as its rightful owner."
+          img="./images/blockchain-outline.svg"
+          description="Outside of your browser's cache &amp; the SCRT Blockchain, there's no 3rd party database storing any of your data, securing you as its rightful owner."
         />
         <CardWithIcons
           title="Open Source"
-          img="./images/lock-icon.svg"
+          img="./images/opensource.svg"
           description="We beleive in full transparency and giving back to the community, which is why SCRTSibyl is entirely open source."
         />
       </div>

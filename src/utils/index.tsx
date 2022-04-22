@@ -114,10 +114,14 @@ export const handleKeplrOpen = async (
 
       setSecretAddress(secretAddress);
     } catch (error) {
-      notification.error({
-        message:
-          'There was an error connecting to the network. Try again later.',
-      });
+      if (!window.keplr) {
+        notification.error({ message: 'Please install keplr extension' });
+      } else {
+        notification.error({
+          message:
+            'There was an error connecting to the network. Try again later.',
+        });
+      }
       setConnectRequest(false);
     }
   }
