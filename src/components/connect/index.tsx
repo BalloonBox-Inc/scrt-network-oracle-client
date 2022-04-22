@@ -77,16 +77,6 @@ const Connect = ({ showWallet, setShowWallet }: any) => {
     }
   }, []);
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      if (!window.keplr) {
-        notification.error({
-          message: 'Please install keplr extension',
-        });
-      }
-    }
-  }, [setSecretAddress]);
-
   const handleConnectRequest = () => {
     setConnectRequest(!connectRequest);
     handleKeplrOpen(setSecretAddress, setConnectRequest);
