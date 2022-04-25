@@ -111,7 +111,7 @@ const QueryScorePage = () => {
   const inputDataInput = (value: string, onChange?: (e?: any) => void) => (
     <input
       onChange={onChange}
-      className=" focus-visible:outline-blue-600 z-50 focus-visible:outline-none  font-mono text-blue-600 bg-input-bg w-full py-3 px-3 rounded-md mb-4"
+      className=" focus-visible:outline-blue-600 z-50 focus-visible:outline-none font-mono text-blue-600 bg-input-bg w-full py-3 px-3 rounded-md mb-4"
       type={'text'}
       value={value}
     />
@@ -124,7 +124,7 @@ const QueryScorePage = () => {
         {inputDataInput(permitData.permitName, (e) =>
           setPermitData({
             ...permitData,
-            permitName: e.target.value,
+            permitName: e.target.value.toUpperCase(),
           })
         )}
         <label className="text-left mb-1">Public Address</label>

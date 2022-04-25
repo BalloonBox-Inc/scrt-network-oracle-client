@@ -284,7 +284,7 @@ const ApplicantScorePage = () => {
         style={{ top: '20%' }}
       >
         <div
-          className={`px-8 flex py-5 justify-center rounded-md z-50 duration-500  ${
+          className={`px-8 flex py-5 justify-center rounded-md z-50 duration-500 font-sans  ${
             !showScore ? 'opacity-0' : 'opacity-100'
           }`}
         >

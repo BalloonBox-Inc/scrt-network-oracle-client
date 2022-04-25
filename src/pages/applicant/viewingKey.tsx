@@ -1,5 +1,10 @@
 import { useState } from 'react';
 
+import {
+  DownloadOutlined,
+  CopyOutlined,
+  InfoCircleOutlined,
+} from '@ant-design/icons';
 import { Modal, Tooltip } from 'antd';
 import router from 'next/router';
 import { replace } from 'ramda';
@@ -70,7 +75,9 @@ const ViewingKeyPage = () => {
       onCancel={() => resetData()}
       bodyStyle={{ background: '#242630' }}
     >
-      <div className={`px-8 flex py-5 justify-center rounded-md z-50`}>
+      <div
+        className={`px-8 flex py-5 justify-center rounded-md z-50 font-sans`}
+      >
         <div className="p-8 px-2 rounded-lg z-50  max-w-xl w-full ">
           <div className="flex items-center mb-6">
             <h3 className="text-lg mr-2  font-semibold ">Viewing Key</h3>
@@ -81,12 +88,10 @@ const ViewingKeyPage = () => {
                 'You will not be able to access this key again. Please store it carefully.'
               }
             >
-              <div className="bg-gray-500 w-4 h-4 rounded-full p-2 flex justify-center items-center cursor-pointer text-black">
-                i
-              </div>
+              <InfoCircleOutlined className="cursor-pointer hover:text-gray-500" />
             </Tooltip>
           </div>
-          <p className="mb-3 font-semibold text-blue text-lg">
+          <p className="mb-3 font-normal text-blue text-lg">
             {viewingKeyResponse?.generate_viewing_key?.key}
           </p>
           {viewingKeyResponse?.generate_viewing_key?.key && (
@@ -97,14 +102,46 @@ const ViewingKeyPage = () => {
                     viewingKeyResponse?.generate_viewing_key?.key
                   )
                 }
+                className="flex items-center hover:text-gray-500 text-xs"
               >
-                Copy
+                <CopyOutlined />
+                <p className="pl-1">Copy</p>
               </button>
             </Tooltip>
           )}
 
           <div className="flex mt-10">
             <Button text="I saved my Viewing Key" onClick={() => resetData()} />
+          </div>
+
+          <div
+            role={'presentation'}
+            className="mt-10 flex text-xs items-center text-blue cursor-pointer"
+            onClick={() => {
+              const element = document.createElement('a');
+              const file = new Blob(
+                [
+                  JSON.stringify({
+                    viewing_key: viewingKeyResponse?.generate_viewing_key?.key,
+                  }),
+                ],
+                {
+                  type: 'text/plain',
+                }
+              );
+              element.href = URL.createObjectURL(file);
+              element.download = 'viewing_key.txt';
+              document.body.appendChild(element); // Required for this to work in FireFox
+              element.click();
+              document.body.removeChild(element);
+            }}
+          >
+            <div className="hover:text-gray-500 flex items-center">
+              <span className="mr-1 text-base">
+                <DownloadOutlined />
+              </span>
+              <p className="mt-2">Download permit</p>
+            </div>
           </div>
         </div>
       </div>
@@ -115,9 +152,21 @@ const ViewingKeyPage = () => {
     <div className="px-10 sm:px-14 z-50 mt-20 mb-20 sm:mt-20 md:-mt-8">
       <div className="w-full text-center">
         <div className="z-50 opacity-100 px-0 sm:p-10 flex flex-col">
-          <h2 className="z-50 font-semibold text-2xl sm:text-3xl md:text-3xl lg:text-4xl p-0">
-            {'Create a Viewing Key'}
-          </h2>
+          <div>
+            <h2 className="z-50 font-semibold text-2xl sm:text-3xl md:text-3xl lg:text-4xl p-0 flex items-center justify-center">
+              {'Create a Viewing Key'}
+              <Tooltip
+                title="You should provide your service provider with this viewing key and your wallet address for them to view your score."
+                placement="bottom"
+              >
+                <InfoCircleOutlined
+                  className="cursor-pointer hover:text-gray-500"
+                  style={{ marginLeft: '1rem', fontSize: '25px' }}
+                />
+              </Tooltip>
+            </h2>
+          </div>
+
           <p className="z-50 font-thin text-sm sm:text-base p-0">
             Please enter secret phrase or word to generate the viewing key.
           </p>

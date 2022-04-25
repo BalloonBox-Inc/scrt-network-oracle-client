@@ -17,11 +17,11 @@ export default function Header() {
 
   const handleScroll = useCallback(() => {
     setTimeout(() => {
-      if (window.scrollY < 1) {
+      if (window.scrollY < 1 || !routerIsMain) {
         setShrinkHeader(false);
       } else setShrinkHeader(true);
     }, 200);
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     if (typeof window !== undefined) {
@@ -34,15 +34,15 @@ export default function Header() {
     <motion.header
       style={{
         height: shrinkHeader ? '60px' : '80px',
-        backgroundColor: shrinkHeader ? '#191819' : 'transparent',
         transition: '0.4s',
+
         zIndex: '100',
       }}
       className={`sticky top-0 ${
-        routerIsMain ? 'bg-black/0' : 'bg-black border-gray-800 border-b-2'
-      } ${
-        shrinkHeader ? 'px-10' : 'px-5'
-      }  relative z-10 w-full font-sans py-0 flex items-center justify-between text-white`}
+        shrinkHeader ? 'px-10 bg-black' : 'px-5'
+      } relative z-10 w-full font-sans py-0 flex items-center justify-between text-white ${
+        !routerIsMain && 'bg-black border-gray-800 border-b-2'
+      } `}
     >
       <Link passHref={true} href="/">
         <a className="mt-1">
