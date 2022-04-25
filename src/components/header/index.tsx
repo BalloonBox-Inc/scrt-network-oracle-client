@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 
 import { motion } from 'framer-motion';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-import whiteLogo from '@scrtsybil/public/images/scrt-logo-horizaontal-white.svg';
 import Connect from '@scrtsybil/src/components/connect';
 import { useSecretContext } from '@scrtsybil/src/context';
 
@@ -48,10 +46,10 @@ export default function Header() {
     >
       <Link passHref={true} href="/">
         <a className="mt-1">
-          <Image
-            src={whiteLogo}
-            width={'140%'}
-            height={'100%'}
+          <img
+            src={'/images/scrt-logo-horizaontal-white.svg'}
+            width={140}
+            height={100}
             alt="scrtsibyl-logo"
             className={`cursor-pointer ${
               showWallet ? 'disappear' : 'reappear'

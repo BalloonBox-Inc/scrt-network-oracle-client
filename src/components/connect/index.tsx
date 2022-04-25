@@ -6,9 +6,7 @@ import {
   DisconnectOutlined,
 } from '@ant-design/icons';
 import { Modal, message, notification } from 'antd';
-import Image from 'next/image';
 
-import logoImage from '@scrtsybil/public/images/keplr.svg';
 import { NOTIFICATIONS } from '@scrtsybil/src/constants';
 import { useSecretContext } from '@scrtsybil/src/context';
 import { handleKeplrOpen } from '@scrtsybil/src/utils';
@@ -79,18 +77,9 @@ const Connect = ({ showWallet, setShowWallet }: any) => {
     }
   }, []);
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      if (!window.keplr) {
-        // eslint-disable-next-line no-alert
-        alert('Please install keplr extension');
-      }
-    }
-  }, [setSecretAddress]);
-
   const handleConnectRequest = () => {
     setConnectRequest(!connectRequest);
-    handleKeplrOpen(setSecretAddress);
+    handleKeplrOpen(setSecretAddress, setConnectRequest);
   };
 
   const handleShowWallet = () => {
@@ -105,7 +94,7 @@ const Connect = ({ showWallet, setShowWallet }: any) => {
         onClick={() => {
           secretAddress ? handleShowWallet() : handleConnectRequest();
         }}
-        className={`flex justify-center overflow-hidden items-center bg-gradient-to-b from-purple to-deepblue 
+        className={`flex justify-center overflow-hidden relative items-center bg-gradient-to-b from-purple to-deepblue 
         ${showWallet ? 'growLeft' : 'hover:opacity-75'} 
         ${!showWallet && shrinkAnimation ? 'shrinkRight' : undefined}`}
         style={{
@@ -129,19 +118,23 @@ const Connect = ({ showWallet, setShowWallet }: any) => {
                 setShowWallet(false);
               }}
               role={'presentation'}
-              className="mr-2 -mt-1 z-50"
+              className={`mr-2 -mt-1 z-50`}
             >
               <CloseOutlined />
             </div>
           )}
 
-          <Image
-            layout="fixed"
-            width={'25'}
-            height={'25'}
-            alt="keplr_logo"
-            src={logoImage}
-          />
+          <div
+            style={{ width: '25px', height: '25px' }}
+            className="relative oveflow-hidden"
+          >
+            <img
+              src="/images/keplr.svg"
+              alt="keplr-logo"
+              className="absolute"
+            />
+          </div>
+
           {!secretAddress && <p className="pl-2 pr-4">Connect</p>}
         </div>
         {secretAddress && (
@@ -192,6 +185,7 @@ const Connect = ({ showWallet, setShowWallet }: any) => {
               flexDirection: 'column',
               justifyContent: 'center',
               textAlign: 'center',
+              padding: '2.5rem',
             }}
           >
             Are you sure you want to disconnect your wallet?
