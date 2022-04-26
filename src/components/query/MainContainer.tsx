@@ -3,7 +3,6 @@ import { IScoreQueryResponse } from '@scrtsybil/src/types/contract';
 
 import Button, { BUTTON_STYLES } from '../Button';
 import ScoreSpeedometer from '../score';
-import TweetBtn from '../TweetBtn';
 
 export default function MainContainer({
   queryResponse,
@@ -34,7 +33,6 @@ export default function MainContainer({
               classes={{ button: 'text-xs text-white hover:text-blue' }}
             />
           </div>
-          <TweetBtn message="I just calculated my credit score on a blockchain-powered Dapp on the SCRT network! Check it out at secretsibyl.com #web3" />
         </div>
       </div>
     </>

@@ -21,12 +21,13 @@ export default function NoScoreForm({
   );
   return (
     <div className="w-full text-center z-50 sm:px-10 lg:px-40 flex flex-col ">
+      <h2 className="text-3xl">Query Your Score</h2>
       <form className="flex flex-col items-start mt-8  w-full">
         <label className="text-left mb-1">Permit Name</label>
         {inputDataInput(permitData.permitName, (e) =>
           setPermitData({
             ...permitData,
-            permitName: e.target.value,
+            permitName: e.target.value.toUpperCase(),
           })
         )}
         <label className="text-left mb-1">Public Address</label>

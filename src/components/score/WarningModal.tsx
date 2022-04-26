@@ -1,9 +1,16 @@
-import { Modal, Button } from 'antd';
+import { Modal } from 'antd';
 import router from 'next/router';
 
-import { BUTTON_STYLES } from '../Button';
+import Button, { BUTTON_STYLES } from '../Button';
 
-export function WarningModal({ modalWarn }) {
+export default function WarningModal({
+  modalWarn,
+  setModalWarn,
+  chainActivity,
+  scoreResponse,
+  handleSetChainActivity,
+  handleSaveToBlockchain,
+}: any) {
   return (
     <Modal
       visible={modalWarn}
@@ -39,7 +46,7 @@ export function WarningModal({ modalWarn }) {
               classes={{ button: 'text-xs' }}
               onClick={() => {
                 handleSetChainActivity(null);
-                handleSaveToBlockchain();
+                handleSaveToBlockchain(true);
               }}
             />
             <Button
@@ -51,7 +58,7 @@ export function WarningModal({ modalWarn }) {
               }}
             />
           </div>
-          <div className=" w-max mt-6">
+          <div className="w-max mt-6">
             <Button
               text="Cancel"
               style={BUTTON_STYLES.LINK}

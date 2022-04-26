@@ -10,6 +10,7 @@ import { useSetStatus } from '@scrtsybil/src/components/query/hooks';
 import MainContainer from '@scrtsybil/src/components/query/MainContainer';
 import NoScoreForm from '@scrtsybil/src/components/query/NoScoreForm';
 import ScoreDescriptionModal from '@scrtsybil/src/components/query/ScoreDescriptionModal';
+import TweetBtn from '@scrtsybil/src/components/TweetBtn';
 import { useSecretContext } from '@scrtsybil/src/context';
 import { queryScoreWithPermit } from '@scrtsybil/src/keplr/helpers';
 import {
@@ -104,16 +105,21 @@ const QueryScorePage = () => {
         <BgImage />
       </div>
       {(statusUndefined || statusSuccess) && (
-        <NavigationButtons
-          backHandler={() => router.push(`/applicant`)}
-          nextHandler={() => getScore()}
-          showNextBtn={!statusSuccess}
-          nextDisabled={
-            !permitData.permitName ||
-            !permitData?.publicAddress ||
-            !permitData?.permitSignature
-          }
-        />
+        <div className="sm:-mx-24">
+          <NavigationButtons
+            backHandler={() => router.push(`/applicant`)}
+            nextHandler={() => getScore()}
+            showNextBtn={!statusSuccess}
+            nextDisabled={
+              !permitData.permitName ||
+              !permitData?.publicAddress ||
+              !permitData?.permitSignature
+            }
+          />
+        </div>
+      )}
+      {statusSuccess && (
+        <TweetBtn message="I just calculated my credit score on a blockchain-powered Dapp on the SCRT network! Check it out at secretsibyl.com #web3" />
       )}
     </>
   );

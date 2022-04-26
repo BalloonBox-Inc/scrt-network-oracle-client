@@ -27,7 +27,7 @@ export const REST_URL_FIGMENT = 'http://bootstrap.supernova.enigma.co:1317';
 export const CHAIN_ID_FIGMENT = 'secret';
 
 export const SECRET_CONTRACT_ADDR =
-  'secret1ktauvpm3lxpmx443cp3n9sfktj9um78p46n7q4';
+  'secret1y4gmlkhwc9dmj25zzdeezjtmlpgfwpewqehq5l';
 /*
 FOR PULSAR: 
 Binaries and executables: https://github.com/scrtlabs/SecretNetwork/releases/tag/v1.2.2 Use the testnet binary
