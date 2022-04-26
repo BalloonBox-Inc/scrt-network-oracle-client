@@ -18,6 +18,7 @@ export const NOTIFICATIONS = {
 export const CHAIN_ID = 'pulsar-2';
 export const CHAIN_ID_LOCAL = 'enigma-pub-testnet-3';
 export const REST_URL = 'http://testnet.securesecrets.org:1317/';
+// export const REST_URL = 'https://api.pulsar.griptapejs.com';
 export const REST_URL_LOCAL = 'http://localhost:1337/';
 export const RPC_PORT = 'https://rpc.pulsar.griptapejs.com/';
 export const RPC_PORT_LOCAL = 'http://localhost:26657/';

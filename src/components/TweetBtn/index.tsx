@@ -4,7 +4,7 @@ interface ITweetBtn {
 
 const TweetBtn = ({ message }: ITweetBtn) => {
   return (
-    <div className="z-20 flex flex-col justify-center items-center mt-10">
+    <div className="z-20 flex flex-col justify-center items-center mt-20">
       Share it on Twitter
       <div className="bg-white flex justify-center rounded-full py-3 px-2.5 mt-4 cursor-pointer hover:bg-gray-300">
         <a
