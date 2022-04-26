@@ -140,7 +140,7 @@ const ApplicantScorePage = () => {
             text={'Create a query permit'}
           />
         </div>
-        <TweetBtn message="I just calculated my credit score on a blockchain-powered Dapp on the SCRT network! Check it out at secretsibyl.com" />
+        <TweetBtn message="I just calculated my credit score on a blockchain-powered DApp on the SCRT network! Check it out at secretsibyl.com" />
       </div>
 
       <Modal

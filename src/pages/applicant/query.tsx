@@ -119,7 +119,7 @@ const QueryScorePage = () => {
         </div>
       )}
       {statusSuccess && (
-        <TweetBtn message="I just calculated my credit score on a blockchain-powered Dapp on the SCRT network! Check it out at secretsibyl.com #web3" />
+        <TweetBtn message="I just calculated my credit score on a blockchain-powered DApp on the SCRT network! Check it out at secretsibyl.com #web3" />
       )}
     </>
   );

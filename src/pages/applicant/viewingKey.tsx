@@ -1,16 +1,15 @@
 import { useState } from 'react';
 
-import {
-  DownloadOutlined,
-  CopyOutlined,
-  InfoCircleOutlined,
-} from '@ant-design/icons';
+import { DownloadOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { Modal, Tooltip } from 'antd';
 import router from 'next/router';
 import { replace } from 'ramda';
 
 import BgImage from '@scrtsybil/src/components/BgImage';
-import Button, { BUTTON_STYLES } from '@scrtsybil/src/components/Button';
+import Button, {
+  BUTTON_ACTION,
+  BUTTON_STYLES,
+} from '@scrtsybil/src/components/Button';
 import { LoadingContainer } from '@scrtsybil/src/components/LoadingContainer';
 import { CHAIN_ACTIVITIES, useSecretContext } from '@scrtsybil/src/context';
 import { handleSetViewingKey } from '@scrtsybil/src/keplr/helpers';
@@ -164,30 +163,33 @@ const ViewingKeyPage = () => {
           </p>
         </div>
       </div>
-      <div className="w-full text-center z-50 sm:px-20 lg:px-40 flex flex-col ">
-        <form className="flex flex-col items-start mt-8  w-full">
+      <div className="w-full text-center z-50 sm:px-20 lg:px-40 flex flex-col">
+        <form
+          className="flex flex-col items-start mt-8  w-full"
+          onSubmit={handleCreateViewingKey}
+        >
           <label className="text-left mb-1">Viewing key name or phrase</label>
           {inputDataInput((e) => setinputData(e.target.value))}
+          <div className="flex justify-between w-full">
+            <div className="flex items-center mt-8">
+              <Button
+                onClick={() => {
+                  router.push(`/applicant`);
+                }}
+                text="Back"
+                style={BUTTON_STYLES.OUTLINE}
+              />
+            </div>
+            <div className="flex items-center mt-8">
+              <Button
+                text={'Create'}
+                classes={{ container: 'mr-3' }}
+                isDisabled={!inputData}
+                type={BUTTON_ACTION.SUBMIT}
+              />
+            </div>
+          </div>
         </form>
-        <div className="flex justify-between w-full">
-          <div className="flex items-center mt-8">
-            <Button
-              onClick={() => {
-                router.push(`/applicant`);
-              }}
-              text="Back"
-              style={BUTTON_STYLES.OUTLINE}
-            />
-          </div>
-          <div className="flex items-center mt-8">
-            <Button
-              text={'Create'}
-              classes={{ container: 'mr-3' }}
-              isDisabled={!inputData}
-              onClick={() => handleCreateViewingKey()}
-            />
-          </div>
-        </div>
       </div>
     </div>
   );

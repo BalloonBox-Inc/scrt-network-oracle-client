@@ -1,6 +1,6 @@
 import { Modal } from 'antd';
 
-import Button from '@scrtsybil/src/components/Button';
+import Button, { BUTTON_ACTION } from '@scrtsybil/src/components/Button';
 import {
   queryScoreWithPermit,
   queryScoreWithViewingKey,
@@ -68,8 +68,15 @@ export default function QueryModal({
     />
   );
 
+  const handleSubmit = () => {
+    selection === 'permit' ? handleQueryPermit() : handleQueryViewingKey();
+  };
+
   const formInputs = (
-    <form className="flex flex-col items-start mt-8  w-full">
+    <form
+      className="flex flex-col items-start mt-8 w-full"
+      onSubmit={handleSubmit}
+    >
       <label className="text-left mb-1">
         {selection === 'permit' ? 'Name of Permit' : 'Viewing Key'}
       </label>
@@ -113,6 +120,19 @@ export default function QueryModal({
           )}
         </>
       )}
+      <div className="flex">
+        <Button
+          isDisabled={
+            selection === 'permit'
+              ? !permitData?.permitName ||
+                !permitData?.permitSignature ||
+                !permitData?.publicAddress
+              : !viewingKey.key || !viewingKey.address
+          }
+          text="Query Score"
+          type={BUTTON_ACTION.SUBMIT}
+        />
+      </div>
     </form>
   );
   return (
@@ -131,25 +151,8 @@ export default function QueryModal({
         data-testid="queryModal"
         className={`px-8 flex py-5 justify-center rounded-md z-50`}
       >
-        <div className="p-8 px-2 rounded-lg z-50  max-w-xl w-full ">
+        <div className="p-8 px-2 rounded-lg z-50  max-w-xl w-full">
           {formInputs}
-          <div className="flex">
-            <Button
-              isDisabled={
-                selection === 'permit'
-                  ? !permitData?.permitName &&
-                    !permitData?.permitSignature &&
-                    !permitData?.publicAddress
-                  : !viewingKey
-              }
-              text="Query Score"
-              onClick={() =>
-                selection === 'permit'
-                  ? handleQueryPermit()
-                  : handleQueryViewingKey()
-              }
-            />
-          </div>
         </div>
       </div>
     </Modal>
