@@ -23,7 +23,7 @@ const ViewingKeyPage = () => {
     IGenerateViewingKeyResponse | undefined
   >(undefined);
 
-  const { setChainActivity, chainActivity } = useSecretContext();
+  const { setChainActivity, chainActivity, secretAddress } = useSecretContext();
 
   const handleCreateViewingKey = async () => {
     if (inputData) {
@@ -85,30 +85,21 @@ const ViewingKeyPage = () => {
               trigger={'hover'}
               placement="right"
               title={
-                'You will not be able to access this key again. Please store it carefully.'
+                'In order for the service provider to view your score, you are required to provide both the user address and viewing key below. You will not be able to access this viewing key again. Please store it carefully.'
               }
             >
               <InfoCircleOutlined className="cursor-pointer hover:text-gray-500" />
             </Tooltip>
           </div>
-          <p className="mb-3 font-normal text-blue text-lg">
-            {viewingKeyResponse?.generate_viewing_key?.key}
+          <p className="mb-3 font-semibold">
+            Viewing Key:{' '}
+            <span className="font-thin">
+              {viewingKeyResponse?.generate_viewing_key?.key}
+            </span>
           </p>
-          {viewingKeyResponse?.generate_viewing_key?.key && (
-            <Tooltip trigger={'click'} placement="left" title={'Copied!'}>
-              <button
-                onClick={() =>
-                  navigator.clipboard.writeText(
-                    viewingKeyResponse?.generate_viewing_key?.key
-                  )
-                }
-                className="flex items-center hover:text-gray-500 text-xs"
-              >
-                <CopyOutlined />
-                <p className="pl-1">Copy</p>
-              </button>
-            </Tooltip>
-          )}
+          <p className="mb-3 font-semibold">
+            User Address: <span className="font-thin">{secretAddress}</span>
+          </p>
 
           <div className="flex mt-10">
             <Button text="I saved my Viewing Key" onClick={() => resetData()} />
@@ -123,6 +114,7 @@ const ViewingKeyPage = () => {
                 [
                   JSON.stringify({
                     viewing_key: viewingKeyResponse?.generate_viewing_key?.key,
+                    user_address: secretAddress,
                   }),
                 ],
                 {
@@ -140,7 +132,7 @@ const ViewingKeyPage = () => {
               <span className="mr-1 text-base">
                 <DownloadOutlined />
               </span>
-              <p className="mt-2">Download permit</p>
+              <p className="mt-2">Download key</p>
             </div>
           </div>
         </div>
