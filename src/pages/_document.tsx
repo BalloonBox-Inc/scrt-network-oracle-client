@@ -7,6 +7,12 @@ class MyDocument extends Document {
     return (
       <Html lang={AppConfig.locale}>
         <Head>
+          {process.env.ENV === 'sandbox' && (
+            <meta
+              httpEquiv="Content-Security-Policy"
+              content="upgrade-insecure-requests"
+            ></meta>
+          )}
           <link rel="shortcut icon" href="/favicon/favicon.svg" />
         </Head>
         <body>
