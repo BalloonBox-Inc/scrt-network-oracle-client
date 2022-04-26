@@ -1,4 +1,3 @@
-/* eslint-disable use-encapsulation/prefer-custom-hooks */
 import React, { useState, useContext, createContext, useEffect } from 'react';
 
 import { notification } from 'antd';
