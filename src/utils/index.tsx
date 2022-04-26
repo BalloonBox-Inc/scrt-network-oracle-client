@@ -39,10 +39,9 @@ export const handleKeplrOpen = async (
       //     3. rest = "https://chainofsecrets.secrettestnet.io" || if local: 'http://localhost:1337'
       //     4. chainName = Whatever you like
       // For more examples, go to: https://github.com/chainapsis/keplr-example/blob/master/src/main.js
-
       await window.keplr?.experimentalSuggestChain({
         chainId,
-        chainName: 'pulsar-2-test',
+        chainName: 'pulsar-2',
         rpc,
         rest,
         bip44: {

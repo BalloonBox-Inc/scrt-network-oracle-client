@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Input, Modal } from 'antd';
 import { useRouter } from 'next/router';
 
+import { useSetStatus } from '@scrtsybil/src/components/applicant/hooks';
 import BgImage from '@scrtsybil/src/components/BgImage';
 import Button, { BUTTON_STYLES } from '@scrtsybil/src/components/Button';
 import { LoadingContainer } from '@scrtsybil/src/components/LoadingContainer';
@@ -12,6 +13,11 @@ import { storageHelper, useSecretContext } from '@scrtsybil/src/context';
 import { handleSetScore } from '@scrtsybil/src/keplr/helpers';
 
 const ApplicantScorePage = () => {
+  const [
+    { statusLoading, statusSuccess },
+    { setLoadingStatus, setErrorStatus, setSuccessStatus },
+  ] = useSetStatus();
+
   const {
     chainActivity,
     setPermissionSig,
@@ -32,23 +38,19 @@ const ApplicantScorePage = () => {
   const [showScore, setShowScore] = useState<boolean>(false);
   const [permitQueryModal, setPermitQueryModal] = useState<boolean>(false);
   const [modalWarn, setModalWarn] = useState<boolean>(false);
-  const [status, setStatus] = useState<
-    string | 'loading' | 'error' | 'success' | undefined
-  >(undefined);
+
   const [permissionLoading, setPermissionLoading] = useState<boolean>(false);
   const [showScoreDescription, setShowScoreDescription] =
     useState<boolean>(false);
   const [permitName, setPermitName] = useState<string | undefined>(undefined);
-
-  const isSuccess = status === 'success';
-  const isLoading = status === 'loading';
 
   const handleSaveToBlockchain = async () => {
     if (chainActivity?.scoreSubmitted && scoreResponse) {
       setModalWarn(true);
     } else {
       const setScoreRes = await handleSetScore({
-        setStatus,
+        setLoadingStatus,
+        setErrorStatus,
         scoreResponse,
       });
 
@@ -71,9 +73,9 @@ const ApplicantScorePage = () => {
   useEffect(() => {
     // Check from local storage is score was submitted
     if (chainActivity?.scoreSubmitted) {
-      setStatus('success');
+      setSuccessStatus();
     }
-  }, [chainActivity]);
+  }, [chainActivity, setSuccessStatus]);
 
   useEffect(() => {
     const scoreAnimated = storageHelper.get('scoreAnimationViewed');
@@ -244,7 +246,7 @@ const ApplicantScorePage = () => {
 
       <div
         className={`px-8 flex -mt-20 justify-center rounded-md z-50 duration-500 ${
-          showScore && !isSuccess ? 'opacity-100' : 'opacity-0'
+          showScore && !statusSuccess ? 'opacity-100' : 'opacity-0'
         }`}
       >
         <Button
@@ -254,7 +256,7 @@ const ApplicantScorePage = () => {
           classes={{ button: 'text-xs text-white hover:text-blue' }}
         />
       </div>
-      {isSuccess && (
+      {statusSuccess && (
         <p className="text-center mt-2">
           This score was saved to the blockchain.
         </p>
@@ -266,12 +268,12 @@ const ApplicantScorePage = () => {
       >
         <Button
           onClick={() =>
-            !isSuccess
+            !statusSuccess
               ? handleSaveToBlockchain()
               : router.push('/applicant/permit')
           }
           style={BUTTON_STYLES.DEFAULT}
-          text={!isSuccess ? 'Save To Blockchain' : 'Create a query permit'}
+          text={!statusSuccess ? 'Save To Blockchain' : 'Create a query permit'}
         />
         <TweetBtn message="I just calculated my credit score on a blockchain-powered Dapp on the SCRT network! Check it out at secretsibyl.com" />
       </div>
@@ -304,7 +306,7 @@ const ApplicantScorePage = () => {
   return (
     <>
       <BgImage />
-      {isLoading ? (
+      {statusLoading ? (
         <LoadingContainer text="Submitting score to the blockchain." />
       ) : (
         mainScoreContainer

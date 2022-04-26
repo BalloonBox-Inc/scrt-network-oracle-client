@@ -1,6 +1,6 @@
 import { BORDER_GRADIENT_STYLE } from '@scrtsybil/src/constants';
 
-const ServiceSelector = ({ selected, onClick, text, title }: any) => {
+const ServiceSelector = ({ selected, onClick, text, title, testId }: any) => {
   const contentWithTitle = (
     <div className="text-left">
       <h3 className="text-lg sm:text-xl font-medium mb-3">{title}</h3>
@@ -15,6 +15,7 @@ const ServiceSelector = ({ selected, onClick, text, title }: any) => {
   );
   return (
     <div
+      data-testid={testId}
       className="flex z-50 justify-center w-80  sm:w-115  rounded-md p-1 "
       style={{
         background: selected ? BORDER_GRADIENT_STYLE : 'transparent',
