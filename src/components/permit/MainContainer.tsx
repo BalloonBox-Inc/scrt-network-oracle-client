@@ -1,8 +1,9 @@
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import Link from 'next/link';
+import router from 'next/router';
 
-import Button from '../Button';
+import Button, { BUTTON_STYLES } from '../Button';
 
 const MainContainer = ({
   isRevokePermit,
@@ -58,8 +59,26 @@ const MainContainer = ({
             className=" z-50 focus-visible:outline-blue-600 focus-visible:outline-none font-mono text-blue-600 bg-input-bg w-full py-3 px-3 rounded-md mb-4 uppercase"
             type={'text'}
           />
+          <Link
+            href={
+              isRevokePermit
+                ? '/applicant/permit?type=create'
+                : '/applicant/permit?type=revoke'
+            }
+          >
+            <a className="z-50 underline">
+              {isCreatePermit
+                ? 'Revoke a query permit'
+                : 'Create a query permit'}
+            </a>
+          </Link>
         </form>
-        <div className="flex items-center mt-8">
+        <div className="flex justify-between items-center mt-8">
+          <Button
+            text="Back"
+            style={BUTTON_STYLES.OUTLINE}
+            onClick={() => router.push('/applicant')}
+          />
           <Button
             data-testid="permit-button"
             text={isCreatePermit ? 'Create' : 'Revoke'}
@@ -69,19 +88,6 @@ const MainContainer = ({
               isRevokePermit ? handleRevokePermit() : handleCreatePermit()
             }
           />
-          <Link
-            href={
-              isRevokePermit
-                ? '/applicant/permit?type=create'
-                : '/applicant/permit?type=revoke'
-            }
-          >
-            <a className="z-50">
-              {isCreatePermit
-                ? 'Revoke a query permit'
-                : 'Create a query permit'}
-            </a>
-          </Link>
         </div>
       </div>
     </div>
