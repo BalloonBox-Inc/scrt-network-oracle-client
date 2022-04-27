@@ -70,7 +70,7 @@ const MainContainer = ({
               data-testid="permit-button"
               text={isCreatePermit ? 'Create' : 'Revoke'}
               classes={{ container: 'mr-3' }}
-              isDisabled={!inputData}
+              isDisabled={!inputData || !inputData.trim()}
               type={BUTTON_ACTION.SUBMIT}
             />
             <Link

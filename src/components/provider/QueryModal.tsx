@@ -68,7 +68,8 @@ export default function QueryModal({
     />
   );
 
-  const handleSubmit = () => {
+  const handleSubmit = (e: React.ChangeEvent<any>) => {
+    e.preventDefault();
     selection === 'permit' ? handleQueryPermit() : handleQueryViewingKey();
   };
 
@@ -126,8 +127,14 @@ export default function QueryModal({
             selection === 'permit'
               ? !permitData?.permitName ||
                 !permitData?.permitSignature ||
-                !permitData?.publicAddress
-              : !viewingKey.key || !viewingKey.address
+                !permitData?.publicAddress ||
+                !permitData?.permitName.trim() ||
+                !permitData?.permitSignature.trim() ||
+                !permitData?.publicAddress.trim()
+              : !viewingKey.key ||
+                !viewingKey.address ||
+                !viewingKey.key.trim() ||
+                !viewingKey.address.trim()
           }
           text="Query Score"
           type={BUTTON_ACTION.SUBMIT}
