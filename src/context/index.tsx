@@ -42,12 +42,14 @@ export enum CHAIN_ACTIVITIES {
   dataProvider = 'dataProvider',
   scoreAmount = 'scoreAmount',
   viewingKey = 'viewingKey',
+  scoreMessage = 'scoreMessage',
 }
 export interface IChainActivity {
   [CHAIN_ACTIVITIES.scoreSubmitted]?: boolean;
   [CHAIN_ACTIVITIES.shareableLink]?: boolean;
   [CHAIN_ACTIVITIES.dataProvider]?: 'coinbase' | 'plaid';
   [CHAIN_ACTIVITIES.scoreAmount]?: number;
+  [CHAIN_ACTIVITIES.scoreMessage]?: string;
   [CHAIN_ACTIVITIES.viewingKey]?: string;
 }
 
@@ -57,6 +59,7 @@ export const CHAIN_ACTIVITY_INIT = {
   dataProvider: undefined,
   scoreAmount: undefined,
   viewingKey: undefined,
+  scoreMessage: undefined,
 };
 
 export interface PlaidToken {

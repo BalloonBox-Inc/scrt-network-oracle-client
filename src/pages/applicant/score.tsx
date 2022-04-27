@@ -74,6 +74,7 @@ const ApplicantScorePage = () => {
         setRecentlySaved(true);
         handleSetChainActivity({
           scoreAmount: scoreResponse?.score,
+          scoreMessage: scoreResponse?.message,
           scoreSubmitted: true,
           dataProvider: scoreResponse?.endpoint.includes('plaid')
             ? 'plaid'
