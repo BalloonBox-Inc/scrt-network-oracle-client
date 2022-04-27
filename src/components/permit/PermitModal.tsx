@@ -1,5 +1,5 @@
-import { DownloadOutlined } from '@ant-design/icons';
-import { Modal } from 'antd';
+import { DownloadOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { Modal, Tooltip } from 'antd';
 import router from 'next/router';
 import { StdSignature } from 'secretjs/types/types';
 
@@ -34,12 +34,18 @@ const PermitModal = ({
             <h3 className="text-lg mr-2 uppercase font-semibold ">
               Query Permit{' '}
             </h3>
-            <div className="bg-gray-500 w-4 h-4 rounded-full p-2 flex justify-center items-center cursor-pointer text-black">
-              i
-            </div>
+            <Tooltip
+              title="You can only view this key once. Make sure to save it and keep it safe."
+              placement="bottom"
+            >
+              <InfoCircleOutlined className="cursor-pointer hover:text-gray-500" />
+            </Tooltip>
           </div>
           <p className="mb-3 font-semibold">
-            Permit Name: <span className="font-thin">{inputData}</span>
+            Permit Name:{' '}
+            <span className="font-thin">
+              {inputData || permissionSig?.name}
+            </span>
           </p>
           <p className="mb-3 font-semibold">
             Public Key:{' '}
@@ -65,7 +71,7 @@ const PermitModal = ({
               <Button
                 text="Query Score"
                 style={BUTTON_STYLES.LINK}
-                classes={{ button: 'hover:text-blue' }}
+                classes={{ button: 'hover:text-gray-400' }}
                 onClick={() => {
                   router.push('/applicant/query');
                 }}
@@ -80,7 +86,7 @@ const PermitModal = ({
               const file = new Blob(
                 [
                   JSON.stringify({
-                    permit_name: inputData,
+                    permit_name: inputData || permissionSig?.name,
                     public_key: permissionSig?.signature?.pub_key.value,
                     signature: permissionSig?.signature?.signature,
                   }),
@@ -96,10 +102,12 @@ const PermitModal = ({
               document.body.removeChild(element);
             }}
           >
-            <span className="mr-1 text-base">
-              <DownloadOutlined />
-            </span>
-            <p className="mt-2">download permit</p>
+            <div className="hover:text-gray-500 flex">
+              <span className="mr-1 text-base">
+                <DownloadOutlined />
+              </span>
+              <p className="mt-2">Download permit</p>
+            </div>
           </div>
         </div>
       </div>

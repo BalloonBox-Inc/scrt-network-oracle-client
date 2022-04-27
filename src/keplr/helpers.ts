@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { notification } from 'antd';
+import { replace } from 'ramda';
 import { SigningCosmWasmClient } from 'secretjs';
 import { StdSignature } from 'secretjs/types/types';
 
@@ -21,14 +22,16 @@ import {
 } from '@scrtsybil/src/types/types';
 
 export const handleSetScore = async ({
-  setStatus,
+  setErrorStatus,
+  setLoadingStatus,
   scoreResponse,
 }: {
-  setStatus: (s: 'loading' | 'error' | 'success' | undefined) => void;
+  setErrorStatus: () => void;
+  setLoadingStatus: () => void;
   scoreResponse: IScoreResponsePlaid | IScoreResponseCoinbase | null;
 }) => {
   if (scoreResponse) {
-    setStatus('loading');
+    setLoadingStatus();
     try {
       // @ts-ignore
       const keplrOfflineSigner = window.getOfflineSigner(CHAIN_ID);
@@ -64,7 +67,7 @@ export const handleSetScore = async ({
       }
       return null;
     } catch (error) {
-      setStatus('error');
+      setErrorStatus();
       return notification.error({
         message: 'Score was not recorded.',
       });
@@ -306,7 +309,6 @@ export const queryScoreWithViewingKey = async (
       viewingKeyMsg
     );
 
-    console.log({ response });
     if (response.score) {
       notification.success({ message: 'Success!' });
       return { status: 'success', response };
@@ -352,7 +354,7 @@ export const queryScoreWithPermit = async ({
         query: { balance: {} },
         permit: {
           params: {
-            permit_name: requestData.permitName,
+            permit_name: replace(/ /g, '_', requestData.permitName.trim()),
             allowed_tokens: [SECRET_CONTRACT_ADDR],
             chain_id: CHAIN_ID,
             permissions: ['balance'],

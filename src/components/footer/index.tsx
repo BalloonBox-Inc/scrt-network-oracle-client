@@ -33,7 +33,11 @@ export default function Footer() {
         <p className="text-xs pt-3 mr-2">secured by</p>
         <a href="https://scrt.network/" target="_blank" rel="noreferrer">
           <img
+<<<<<<< HEAD
             src="/images/scrtnetwork-logo-white.svg"
+=======
+            src={'/images/scrtnetwork-logo-white.svg'}
+>>>>>>> develop
             width="100px"
             height="40px"
             alt="scrt-network-logo"
