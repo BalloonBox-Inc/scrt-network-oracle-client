@@ -75,8 +75,7 @@
         "use-encapsulation/prefer-custom-hooks": [
           "warn",
           { "allow": ["useMemo"] }
-        ],
-        "consistent-return": "off"
+        ]
       }
     }
   ]
