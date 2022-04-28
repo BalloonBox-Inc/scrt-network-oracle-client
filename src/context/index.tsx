@@ -114,6 +114,7 @@ const ContextProvider = ({ children }: any) => {
     setCoinbaseToken(null);
     setPlaidPublicToken(null);
     setPlaidPublicExchangeResponse(null);
+    setChainActivity(CHAIN_ACTIVITY_INIT);
     localStorage.clear();
     notification.success({
       message: NOTIFICATIONS.WALLET_DISCONNECT_SUCCESS,
