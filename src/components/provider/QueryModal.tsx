@@ -73,6 +73,26 @@ export default function QueryModal({
     selection === 'permit' ? handleQueryPermit() : handleQueryViewingKey();
   };
 
+  const checkPermit = () => {
+    return (
+      !permitData?.permitName ||
+      !permitData?.permitSignature ||
+      !permitData?.publicAddress ||
+      !permitData?.permitName.trim() ||
+      !permitData?.permitSignature.trim() ||
+      !permitData?.publicAddress.trim()
+    );
+  };
+
+  const checkViewingKey = () => {
+    return (
+      !viewingKey.key ||
+      !viewingKey.address ||
+      !viewingKey.key.trim() ||
+      !viewingKey.address.trim()
+    );
+  };
+
   const formInputs = (
     <form
       className="flex flex-col items-start mt-8 w-full"
@@ -124,17 +144,7 @@ export default function QueryModal({
       <div className="flex">
         <Button
           isDisabled={
-            selection === 'permit'
-              ? !permitData?.permitName ||
-                !permitData?.permitSignature ||
-                !permitData?.publicAddress ||
-                !permitData?.permitName.trim() ||
-                !permitData?.permitSignature.trim() ||
-                !permitData?.publicAddress.trim()
-              : !viewingKey.key ||
-                !viewingKey.address ||
-                !viewingKey.key.trim() ||
-                !viewingKey.address.trim()
+            selection === 'permit' ? checkPermit() : checkViewingKey()
           }
           text="Query Score"
           type={BUTTON_ACTION.SUBMIT}
