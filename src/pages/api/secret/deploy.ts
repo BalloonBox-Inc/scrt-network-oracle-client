@@ -36,7 +36,7 @@ export default async function handleDeploy(
     // Upload client
     const txEncryptionSeed = EnigmaUtils.GenerateNewSeed();
     const client = new SigningCosmWasmClient(
-      REST_URL,
+      REST_URL as string,
       address,
       (signBytes) => signingPen.sign(signBytes),
       txEncryptionSeed,
