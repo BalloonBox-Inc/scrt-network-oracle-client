@@ -134,7 +134,7 @@ const ApplicantScorePage = () => {
             text={'Save To Blockchain'}
           />
         )}
-        
+
         {chainActivity?.scoreAmount && (
           <div className="mt-1 text-xs">
             <Button
