@@ -40,7 +40,7 @@ export const handleSetScore = async ({
       const addr = accounts[0].address;
 
       const cosmJS = new SigningCosmWasmClient(
-        REST_URL,
+        REST_URL as string,
         addr,
         keplrOfflineSigner as any,
         // @ts-ignore
@@ -85,7 +85,7 @@ export const handleSetViewingKey = async ({ entropy }: { entropy: string }) => {
     const addr = accounts[0].address;
 
     const cosmJS = new SigningCosmWasmClient(
-      REST_URL,
+      REST_URL as string,
       addr,
       keplrOfflineSigner as any,
       // @ts-ignore
@@ -197,7 +197,7 @@ export const handlePermissionRevoke = async ({
     const addr = accounts[0].address;
 
     const cosmJS = new SigningCosmWasmClient(
-      REST_URL,
+      REST_URL as string,
       addr,
       keplrOfflineSigner as any,
       // @ts-ignore
@@ -298,7 +298,7 @@ export const queryScoreWithViewingKey = async (
     const addr = accounts[0].address;
 
     const cosmJS = new SigningCosmWasmClient(
-      REST_URL,
+      REST_URL as string,
       addr,
       keplrOfflineSigner as any,
       // @ts-ignore
@@ -345,7 +345,7 @@ export const queryScoreWithPermit = async ({
     const addr = accounts[0].address;
 
     const cosmJS = new SigningCosmWasmClient(
-      REST_URL,
+      REST_URL as string,
       addr,
       keplrOfflineSigner as any,
       // @ts-ignore
