@@ -212,7 +212,11 @@ export const handlePermissionRevoke = async ({
 
     if (str.includes('success')) {
       notification.success({
-        message: `Successfully revoked ${permissionName}!`,
+        message: `Successfully revoked ${replace(
+          /_/g,
+          ' ',
+          permissionName.trim()
+        )}!`,
       });
       return { status: 'success' };
     }

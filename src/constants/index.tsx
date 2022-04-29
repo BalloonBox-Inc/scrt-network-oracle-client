@@ -17,8 +17,8 @@ export const NOTIFICATIONS = {
 
 export const CHAIN_ID = 'pulsar-2';
 export const CHAIN_ID_LOCAL = 'enigma-pub-testnet-3';
-export const REST_URL = 'http://testnet.securesecrets.org:1317/';
-// export const REST_URL = 'https://api.pulsar.griptapejs.com';
+// export const REST_URL = 'http://testnet.securesecrets.org:1317/';
+export const REST_URL = 'https://api.pulsar.griptapejs.com';
 export const REST_URL_LOCAL = 'http://localhost:1337/';
 export const RPC_PORT = 'https://rpc.pulsar.griptapejs.com/';
 export const RPC_PORT_LOCAL = 'http://localhost:26657/';
@@ -27,7 +27,7 @@ export const REST_URL_FIGMENT = 'http://bootstrap.supernova.enigma.co:1317';
 export const CHAIN_ID_FIGMENT = 'secret';
 
 export const SECRET_CONTRACT_ADDR =
-  'secret1y4gmlkhwc9dmj25zzdeezjtmlpgfwpewqehq5l';
+  'secret1mj2l3pkz0ls8jkc2pkv2unudldufyzhnmzfx9p';
 /*
 FOR PULSAR: 
 Binaries and executables: https://github.com/scrtlabs/SecretNetwork/releases/tag/v1.2.2 Use the testnet binary

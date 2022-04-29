@@ -42,7 +42,7 @@ const QueryScorePage = () => {
 
   const getScore = async () => {
     setLoadingStatus();
-    if (!chainActivity?.scoreAmount) {
+    if (!chainActivity?.scoreAmount || !chainActivity?.scoreMessage) {
       const queryWithPermit: {
         response?: IPermitQueryResponse;
         status: 'error' | 'success' | string;
