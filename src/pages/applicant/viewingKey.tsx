@@ -1,17 +1,14 @@
 import { useState } from 'react';
 
-import {
-  DownloadOutlined,
-  CopyOutlined,
-  InfoCircleOutlined,
-} from '@ant-design/icons';
+import { DownloadOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { Modal, Tooltip } from 'antd';
 import router from 'next/router';
 import { replace } from 'ramda';
 
 import BgImage from '@scrtsybil/src/components/BgImage';
-import Button, { BUTTON_STYLES } from '@scrtsybil/src/components/Button';
+import Button from '@scrtsybil/src/components/Button';
 import { LoadingContainer } from '@scrtsybil/src/components/LoadingContainer';
+import NavigationButtons from '@scrtsybil/src/components/NavigationButtons';
 import { CHAIN_ACTIVITIES, useSecretContext } from '@scrtsybil/src/context';
 import { handleSetViewingKey } from '@scrtsybil/src/keplr/helpers';
 import { IGenerateViewingKeyResponse } from '@scrtsybil/src/types/contract';
@@ -169,25 +166,14 @@ const ViewingKeyPage = () => {
           <label className="text-left mb-1">Viewing key name or phrase</label>
           {inputDataInput((e) => setinputData(e.target.value))}
         </form>
-        <div className="flex justify-between w-full">
-          <div className="flex items-center mt-8">
-            <Button
-              onClick={() => {
-                router.push(`/applicant`);
-              }}
-              text="Back"
-              style={BUTTON_STYLES.OUTLINE}
-            />
-          </div>
-          <div className="flex items-center mt-8">
-            <Button
-              text={'Create'}
-              classes={{ container: 'mr-3' }}
-              isDisabled={!inputData}
-              onClick={() => handleCreateViewingKey()}
-            />
-          </div>
-        </div>
+        <NavigationButtons
+          backHandler={() => {
+            router.push(`/applicant`);
+          }}
+          nextHandler={() => handleCreateViewingKey()}
+          nextText="Create"
+          nextDisabled={!inputData}
+        />
       </div>
     </div>
   );

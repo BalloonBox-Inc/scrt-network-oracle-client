@@ -3,7 +3,7 @@ import { Tooltip } from 'antd';
 import Link from 'next/link';
 import router from 'next/router';
 
-import Button, { BUTTON_STYLES } from '../Button';
+import NavigationButtons from '../NavigationButtons';
 
 const MainContainer = ({
   isRevokePermit,
@@ -74,19 +74,14 @@ const MainContainer = ({
           </Link>
         </form>
         <div className="flex justify-between items-center mt-8">
-          <Button
-            text="Back"
-            style={BUTTON_STYLES.OUTLINE}
-            onClick={() => router.push('/applicant')}
-          />
-          <Button
-            data-testid="permit-button"
-            text={isCreatePermit ? 'Create' : 'Revoke'}
-            classes={{ container: 'mr-3' }}
-            isDisabled={!inputData}
-            onClick={() =>
+          <NavigationButtons
+            backHandler={() => router.push('/applicant')}
+            nextHandler={() =>
               isRevokePermit ? handleRevokePermit() : handleCreatePermit()
             }
+            backText="Back"
+            nextText={isCreatePermit ? 'Create' : 'Revoke'}
+            nextDisabled={!inputData}
           />
         </div>
       </div>
