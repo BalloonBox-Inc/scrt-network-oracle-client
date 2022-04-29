@@ -1,15 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 
-import {
-  WarningOutlined,
-  MenuOutlined,
-  CloseOutlined,
-} from '@ant-design/icons';
+import { MenuOutlined, CloseOutlined } from '@ant-design/icons';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 import Connect from '@scrtsybil/src/components/connect';
+import TestBanner from '@scrtsybil/src/components/TestBanner';
 import { useSecretContext } from '@scrtsybil/src/context';
 
 export default function Header() {
@@ -18,6 +15,7 @@ export default function Header() {
   const [shrinkHeader, setShrinkHeader] = useState<boolean>(false);
   const [windowSize, setWindowSize] = useState<number | null>(null);
   const [openMenu, setOpenMenu] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
   const router = useRouter();
   const routerIsMain =
     router?.pathname === '/' || router?.pathname === '/learn';
@@ -47,6 +45,10 @@ export default function Header() {
     }
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  useEffect(() => {
+    if (windowSize && windowSize < 500) setIsMobile(true);
+  }, [windowSize]);
 
   return (
     <>
@@ -78,7 +80,7 @@ export default function Header() {
         </Link>
 
         <div className="flex items-center min-h-full">
-          {windowSize && windowSize < 500 ? (
+          {isMobile ? (
             <div
               style={{ fontSize: '1.5rem', marginRight: '1rem' }}
               onClick={() => setOpenMenu(!openMenu)}
@@ -134,7 +136,7 @@ export default function Header() {
         </div>
       </motion.header>
 
-      {windowSize && windowSize < 500 && openMenu && (
+      {isMobile && openMenu && (
         <>
           <div
             className={`absolute top-20 flex flex-col w-full items-center z-20`}
@@ -172,26 +174,7 @@ export default function Header() {
           </div>
         </>
       )}
-      <div className="sticky w-full bg-purple/60 z-10 flex sm:flex-row flex-col justify-center items-center py-4">
-        <WarningOutlined
-          style={{ fontSize: '1.1rem', marginRight: '0.4rem' }}
-        />{' '}
-        <p className="text-center sm:text-sm text-xs">
-          This is a testnet environment. The funds are not real. &nbsp;
-        </p>
-        <a
-          href={`${
-            process.env.NODE_ENV === 'development'
-              ? 'https://www.secretsibyl.com/'
-              : 'https://www.test.secretsibyl.com'
-          }`}
-          className="underline sm:text-sm text-xs"
-        >
-          {process.env.NODE_ENV === 'development'
-            ? 'Switch to mainnet'
-            : 'Switch to testnet'}
-        </a>
-      </div>
+      <TestBanner />
     </>
   );
 }
