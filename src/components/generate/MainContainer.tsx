@@ -1,6 +1,6 @@
 import router from 'next/router';
 
-import { BORDER_GRADIENT_STYLE } from '@scrtsybil/src/constants';
+import { BORDER_GRADIENT_STYLE, IS_MAINNET } from '@scrtsybil/src/constants';
 
 import NavigationButtons from '../NavigationButtons';
 import { useHandleSelection } from './hooks';
@@ -57,6 +57,15 @@ const MainContainer = ({
           />
         </div>
       </div>
+      {plaidSelected && !IS_MAINNET && (
+        <a
+          target={'_blank'}
+          href={'https://plaid.com/docs/sandbox/test-credentials/'}
+          rel="noreferrer"
+        >
+          Click here for Plaid Sandbox Credentials
+        </a>
+      )}
     </div>
   );
 
