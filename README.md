@@ -5,6 +5,9 @@
 
 ⚡️ This is the client side for SCRTSibyl, made with the developer experience in mind: Next.js, TypeScript, ESLint, Prettier, Husky, Lint-Staged, VSCode, PostCSS, Tailwind CSS.
 
+### Tutorial (NEW)
+- Get started on SCRTSibyl with [this](https://medium.com/@michael_brink/tutorial-on-using-scrtsibyl-a202b3014c8) tutorial (~9 min)
+
 ### Features
 
 Developer experience first:
