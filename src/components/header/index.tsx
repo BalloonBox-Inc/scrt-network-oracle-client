@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 
-import { MenuOutlined, CloseOutlined } from '@ant-design/icons';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -13,9 +12,6 @@ export default function Header() {
   const { secretAddress } = useSecretContext();
   const [showWallet, setShowWallet] = useState<boolean>(false);
   const [shrinkHeader, setShrinkHeader] = useState<boolean>(false);
-  const [windowSize, setWindowSize] = useState<number | null>(null);
-  const [openMenu, setOpenMenu] = useState<boolean>(false);
-  const [isMobile, setIsMobile] = useState<boolean>(false);
   const router = useRouter();
   const routerIsMain =
     router?.pathname === '/' || router?.pathname === '/learn';
@@ -34,21 +30,6 @@ export default function Header() {
     }
     return () => window.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowSize(window.innerWidth);
-    };
-
-    if (typeof window !== undefined) {
-      window.addEventListener('resize', handleResize);
-    }
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  useEffect(() => {
-    if (windowSize && windowSize < 500) setIsMobile(true);
-  }, [windowSize]);
 
   return (
     <>
@@ -80,69 +61,11 @@ export default function Header() {
         </Link>
 
         <div className="flex items-center min-h-full">
-          {isMobile ? (
+          <div className={`flex items-center`}>
             <div
-              style={{ fontSize: '1.5rem', marginRight: '1rem' }}
-              onClick={() => setOpenMenu(!openMenu)}
-              className={`${
-                showWallet ? 'disappear' : 'appear'
-              } cursor-pointer hover:text-gray-400`}
-            >
-              {openMenu ? <CloseOutlined /> : <MenuOutlined />}
-            </div>
-          ) : (
-            <div className={`flex items-center`}>
-              <div
-                className={`bg-purple/40 text-xs sm:text-sm mr-4 px-3 py-2 rounded-lg ${
-                  showWallet ? 'disappear' : 'reappear'
-                }`}
-              >
-                {' '}
-                <a
-                  href={`${
-                    process.env.NODE_ENV === 'development'
-                      ? 'https://www.secretsibyl.com/'
-                      : 'https://www.test.secretsibyl.com'
-                  }`}
-                >
-                  {process.env.NODE_ENV === 'development'
-                    ? 'Switch to mainnet'
-                    : 'Switch to testnet'}
-                </a>
-              </div>
-              <Link passHref={true} href="/learn">
-                <p
-                  className={`mr-5 text-xs sm:text-sm md:text-base text-center cursor-pointer hover:text-gray-400 ${
-                    showWallet ? 'disappear' : 'reappear'
-                  }`}
-                >
-                  Learn
-                </p>
-              </Link>
-              {secretAddress && (
-                <Link passHref={true} href={'/start'}>
-                  <p
-                    className={`mr-5 text-xs sm:text-sm md:text-base text-center cursor-pointer hover:text-gray-400 ${
-                      showWallet ? 'disappear' : 'reappear'
-                    }`}
-                  >
-                    Start
-                  </p>
-                </Link>
-              )}
-            </div>
-          )}
-          <Connect showWallet={showWallet} setShowWallet={setShowWallet} />
-        </div>
-      </motion.header>
-
-      {isMobile && openMenu && (
-        <>
-          <div
-            className={`absolute top-20 flex flex-col w-full items-center z-20`}
-          >
-            <div
-              className={`w-full text-center py-5 bg-black hover:bg-neutral-800 cursor-pointer`}
+              className={`bg-purple/40 text-xs sm:text-sm mr-4 px-3 py-2 rounded-lg ${
+                showWallet ? 'disappear' : 'reappear'
+              }`}
             >
               {' '}
               <a
@@ -157,23 +80,30 @@ export default function Header() {
                   : 'Switch to testnet'}
               </a>
             </div>
-
-            <div
-              className={`w-full text-center py-5 bg-black hover:bg-neutral-800 cursor-pointer`}
-            >
-              Learn
-            </div>
-
-            {secretAddress && (
-              <div
-                className={`w-full text-center py-5 bg-black hover:bg-neutral-800 cursor-pointer`}
+            <Link passHref={true} href="/learn">
+              <p
+                className={`mr-5 text-xs sm:text-sm md:text-base text-center cursor-pointer hover:text-gray-400 ${
+                  showWallet ? 'disappear' : 'reappear'
+                }`}
               >
-                Start
-              </div>
+                Learn
+              </p>
+            </Link>
+            {secretAddress && (
+              <Link passHref={true} href={'/start'}>
+                <p
+                  className={`mr-5 text-xs sm:text-sm md:text-base text-center cursor-pointer hover:text-gray-400 ${
+                    showWallet ? 'disappear' : 'reappear'
+                  }`}
+                >
+                  Start
+                </p>
+              </Link>
             )}
+            <Connect showWallet={showWallet} setShowWallet={setShowWallet} />
           </div>
-        </>
-      )}
+        </div>
+      </motion.header>
       <TestBanner />
     </>
   );
