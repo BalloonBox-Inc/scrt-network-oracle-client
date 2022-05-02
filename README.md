@@ -50,10 +50,9 @@ COINBASE_CLIENT_ID=your_client_Id
 COINBASE_CLIENT_SECRET=your_client_secret
 COINBASE_BASE_AUTHORIZE_URL=https://www.coinbase.com/oauth/authorize
 COINBASE_ACCESS_TOKEN_URL=http://www.coinbase.com/oauth/token
-COINBASE_BASE_AUTHORIZE_URL=your_url
-COINBASE_ACCESS_TOKEN_URL=your_url
 BACKEND_BASE_URL=https://dev-scrt-sybil-backend.herokuapp.com
 COINMARKET_KEY=your_coinmarketcapapikey
+NEXT_PUBLIC_MAINNET_API_URL=https://secret-4--lcd--full.datahub.figment.io/apikey/6f3333914b9755607855cdc5efb0b341/
 
 
 ```
