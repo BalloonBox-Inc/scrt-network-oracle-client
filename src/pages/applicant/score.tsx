@@ -134,6 +134,7 @@ const ApplicantScorePage = () => {
             text={'Save To Blockchain'}
           />
         )}
+
         {chainActivity?.scoreAmount && (
           <div className="mt-1 text-xs">
             <Button
@@ -145,7 +146,7 @@ const ApplicantScorePage = () => {
             />
           </div>
         )}
-        <TweetBtn message="I just calculated my credit score on a blockchain-powered Dapp on the SCRT network! Check it out at secretsibyl.com" />
+        <TweetBtn message="I just calculated my credit score on a blockchain-powered DApp on the SCRT network! Check it out at secretsibyl.com" />
       </div>
 
       <Modal
