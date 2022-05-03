@@ -33,7 +33,7 @@ const PermissionPage = () => {
     if (inputData) {
       setLoadingStatus();
       const permitRevokeRes = await handlePermissionRevoke({
-        permissionName: inputData,
+        permissionName: replace(/ /g, '_', inputData.trim()),
       });
       if (permitRevokeRes) {
         clearStatus();

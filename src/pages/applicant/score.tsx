@@ -134,14 +134,19 @@ const ApplicantScorePage = () => {
             text={'Save To Blockchain'}
           />
         )}
-        <div className="mt-1 text-xs">
-          <Button
-            onClick={() => router.push('/applicant/permit?type=create')}
-            style={!recentlySaved ? BUTTON_STYLES.LINK : BUTTON_STYLES.DEFAULT}
-            text={'Create a query permit'}
-          />
-        </div>
-        <TweetBtn message="I just calculated my credit score on a blockchain-powered Dapp on the SCRT network! Check it out at secretsibyl.com" />
+
+        {chainActivity?.scoreAmount && (
+          <div className="mt-1 text-xs">
+            <Button
+              onClick={() => router.push('/applicant/permit?type=create')}
+              style={
+                !recentlySaved ? BUTTON_STYLES.LINK : BUTTON_STYLES.DEFAULT
+              }
+              text={'Create a query permit'}
+            />
+          </div>
+        )}
+        <TweetBtn message="I just calculated my credit score on a blockchain-powered DApp on the SCRT network! Check it out at secretsibyl.com" />
       </div>
 
       <Modal

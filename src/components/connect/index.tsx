@@ -61,8 +61,8 @@ const Connect = ({ showWallet, setShowWallet }: any) => {
     if (typeof window !== 'undefined') {
       handleWindowResize();
       window.addEventListener('resize', handleWindowResize);
-      () => window.removeEventListener('resize', handleWindowResize);
     }
+    return () => window.removeEventListener('resize', handleWindowResize);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

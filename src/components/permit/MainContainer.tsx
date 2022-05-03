@@ -1,5 +1,3 @@
-import { ReactEventHandler } from 'react';
-
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import Link from 'next/link';

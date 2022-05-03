@@ -161,9 +161,9 @@ const ViewingKeyPage = () => {
           </p>
         </div>
       </div>
-      <div className="w-full text-center z-50 sm:px-20 lg:px-40 flex flex-col ">
+      <div className="w-full text-center z-50 sm:px-20 lg:px-40 flex flex-col">
         <form
-          className="flex flex-col items-start mt-8  w-full"
+          className="flex flex-col items-start mt-8 w-full"
           onSubmit={handleCreateViewingKey}
         >
           <label className="text-left mb-1">Viewing key name or phrase</label>
