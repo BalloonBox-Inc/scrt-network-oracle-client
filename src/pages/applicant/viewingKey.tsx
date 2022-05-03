@@ -162,18 +162,22 @@ const ViewingKeyPage = () => {
         </div>
       </div>
       <div className="w-full text-center z-50 sm:px-20 lg:px-40 flex flex-col ">
-        <form className="flex flex-col items-start mt-8  w-full">
+        <form
+          className="flex flex-col items-start mt-8  w-full"
+          onSubmit={handleCreateViewingKey}
+        >
           <label className="text-left mb-1">Viewing key name or phrase</label>
           {inputDataInput((e) => setinputData(e.target.value))}
+          <NavigationButtons
+            backHandler={() => {
+              router.push(`/applicant`);
+            }}
+            nextHandler={() => handleCreateViewingKey()}
+            nextText="Create"
+            nextDisabled={!inputData || !inputData.trim()}
+            fullWidth
+          />
         </form>
-        <NavigationButtons
-          backHandler={() => {
-            router.push(`/applicant`);
-          }}
-          nextHandler={() => handleCreateViewingKey()}
-          nextText="Create"
-          nextDisabled={!inputData}
-        />
       </div>
     </div>
   );

@@ -1,9 +1,11 @@
+import { ReactEventHandler } from 'react';
+
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import Link from 'next/link';
 import router from 'next/router';
 
-import NavigationButtons from '../NavigationButtons';
+import NavigationButtons from '@scrtsybil/src/components/NavigationButtons';
 
 const MainContainer = ({
   isRevokePermit,
@@ -20,6 +22,10 @@ const MainContainer = ({
   handleRevokePermit: () => void;
   handleCreatePermit: () => void;
 }) => {
+  const handleSubmit = (e: React.ChangeEvent<any>) => {
+    e.preventDefault();
+    isRevokePermit ? handleRevokePermit() : handleCreatePermit();
+  };
   return (
     <div className="px-10 sm:px-20 lg:px-40 z-50 mt-20 mb-20 sm:mt-10">
       <div className="w-full text-center">
@@ -50,8 +56,11 @@ const MainContainer = ({
           </p>
         </div>
       </div>
-      <div className="w-full text-center z-50  flex flex-col ">
-        <form className="flex flex-col items-start mt-8  w-full">
+      <div className="w-full text-center z-50  flex flex-col">
+        <form
+          className="flex flex-col items-start mt-8 w-full"
+          onSubmit={handleSubmit}
+        >
           <label className="text-left mb-1">Query permit name or phrase</label>
           <input
             data-testid="permit-input"
@@ -72,8 +81,6 @@ const MainContainer = ({
                 : 'Create a query permit'}
             </a>
           </Link>
-        </form>
-        <div className="flex justify-between items-center mt-8">
           <NavigationButtons
             backHandler={() => router.push('/applicant')}
             nextHandler={() =>
@@ -81,9 +88,10 @@ const MainContainer = ({
             }
             backText="Back"
             nextText={isCreatePermit ? 'Create' : 'Revoke'}
-            nextDisabled={!inputData}
+            nextDisabled={!inputData || !inputData.trim()}
+            fullWidth
           />
-        </div>
+        </form>
       </div>
     </div>
   );
