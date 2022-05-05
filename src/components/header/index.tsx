@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 
 import Connect from '@scrtsybil/src/components/connect';
 import TestBanner from '@scrtsybil/src/components/TestBanner';
+import { IS_MAINNET } from '@scrtsybil/src/constants';
 import { useSecretContext } from '@scrtsybil/src/context';
 
 export default function Header() {
@@ -62,24 +63,6 @@ export default function Header() {
 
         <div className="flex items-center min-h-full">
           <div className={`flex items-center`}>
-            <div
-              className={`bg-purple/40 text-xs sm:text-sm mr-4 px-3 py-2 rounded-lg ${
-                showWallet ? 'disappear' : 'reappear'
-              }`}
-            >
-              {' '}
-              <a
-                href={`${
-                  process.env.NODE_ENV === 'development'
-                    ? 'https://www.secretsibyl.com/'
-                    : 'https://www.test.secretsibyl.com'
-                }`}
-              >
-                {process.env.NODE_ENV === 'development'
-                  ? 'Switch to mainnet'
-                  : 'Switch to testnet'}
-              </a>
-            </div>
             <Link passHref={true} href="/learn">
               <p
                 className={`mr-5 text-xs sm:text-sm md:text-base text-center cursor-pointer hover:text-gray-400 ${
@@ -104,7 +87,7 @@ export default function Header() {
           </div>
         </div>
       </motion.header>
-      <TestBanner />
+      {!IS_MAINNET && <TestBanner />}
     </>
   );
 }
