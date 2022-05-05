@@ -57,15 +57,6 @@ const MainContainer = ({
           />
         </div>
       </div>
-      {plaidSelected && !IS_MAINNET && (
-        <a
-          target={'_blank'}
-          href={'https://plaid.com/docs/sandbox/test-credentials/'}
-          rel="noreferrer"
-        >
-          Click here for Plaid Sandbox Credentials
-        </a>
-      )}
     </div>
   );
 
@@ -85,6 +76,18 @@ const MainContainer = ({
           {providerSelectors}
         </div>
       </div>
+      {plaidSelected && !IS_MAINNET && (
+        <div className="text-center mt-4">
+          <a
+            target={'_blank'}
+            href={'https://plaid.com/docs/sandbox/test-credentials/'}
+            rel="noreferrer"
+            className=""
+          >
+            Click here for Plaid Sandbox Credentials
+          </a>
+        </div>
+      )}
 
       <NavigationButtons
         backHandler={() => router.push(`/applicant`)}
