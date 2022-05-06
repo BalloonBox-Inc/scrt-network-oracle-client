@@ -1,7 +1,6 @@
 import { Window as KeplrWindow } from '@keplr-wallet/types';
 import { notification } from 'antd';
 import { SigningCosmWasmClient } from 'secretjs';
-import { StdSignature } from 'secretjs/types/types';
 
 import {
   CHAIN_ID,
@@ -9,169 +8,154 @@ import {
   REST_URL,
   RPC_PORT,
   SECRET_CONTRACT_ADDR,
+  USE_TESTNET_ON_PROD,
 } from '@scrtsybil/src/constants';
 
-const EXPERIMENTAL: boolean = true;
-const chainId = CHAIN_ID;
-const rpc = RPC_PORT;
-const rest = REST_URL;
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface Window extends KeplrWindow {}
 }
 
-export const handleKeplrOpen = async (
-  setSecretjs: React.Dispatch<
-    React.SetStateAction<SigningCosmWasmClient | null>
-  >,
-  setSecretAddress: React.Dispatch<React.SetStateAction<string | null>>
+const handleKeplrOpenMainNet = async (
+  setSecretAddress: React.Dispatch<React.SetStateAction<string | null>>,
+  setConnectRequest: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
-  if (EXPERIMENTAL) {
-    try {
-      // for testing, use a custom chain with Keplr.
-      // On mainnet we don't need this (`experimentalSuggestChain`).
-      // This works well with `enigmampc/secret-network-sw-dev`:
-      //     - https://hub.docker.com/r/enigmampc/secret-network-sw-dev
-      //     - Run a local chain: `docker run -it --rm -p 26657:26657 -p 26656:26656 -p 1337:1337 -v $(shell pwd):/root/code --name secretdev enigmampc/secret-network-sw-dev`
-      //     - `alias secretcli='docker exec -it secretdev secretcli'`
-      //     - Store a contract: `docker exec -it secretdev secretcli tx compute store /root/code/contract.wasm.gz --from a --gas 10000000 -b block -y`
-      // On holodeck, set:
-      //     1. CHAIN_ID = "holodeck-2"
-      //     2. rpc = "ttp://chainofsecrets.secrettestnet.io:26657" || if local: 'http://localhost:26657'
-      //     3. rest = "https://chainofsecrets.secrettestnet.io" || if local: 'http://localhost:1337'
-      //     4. chainName = Whatever you like
-      // For more examples, go to: https://github.com/chainapsis/keplr-example/blob/master/src/main.js
+  try {
+    // ADDING THIS as we see it in in https://github.com/scrtlabs/SecretJS-Templates/blob/master/6_wallets/keplr/src/main.js
+    await window.keplr?.enable('secret-2');
+    // @ts-ignore
+    const keplrOfflineSigner = window.getOfflineSigner(CHAIN_ID);
+    const accounts = await keplrOfflineSigner.getAccounts();
 
-      await window.keplr?.experimentalSuggestChain({
-        chainId,
-        chainName: 'pulsar-2-test',
-        rpc,
-        rest,
-        bip44: {
-          coinType: 529,
-        },
+    // @ts-ignore
+    const secretAddress = accounts[0].address;
+    const cosmJS = new SigningCosmWasmClient(
+      REST_URL as string,
+      secretAddress,
+      keplrOfflineSigner as any,
+      // @ts-ignore
+      window.getEnigmaUtils(CHAIN_ID)
+    );
+
+    await cosmJS.getAccount(secretAddress);
+
+    setSecretAddress(secretAddress);
+  } catch (error) {
+    if (!window.keplr) {
+      notification.error({ message: 'Please install keplr extension' });
+    } else {
+      notification.error({
+        message:
+          'There was an error connecting to the network. Try again later.',
+      });
+    }
+    setConnectRequest(false);
+  }
+};
+
+export const handleKeplrOpenTestNet = async (
+  setSecretAddress: React.Dispatch<React.SetStateAction<string | null>>,
+  setConnectRequest: React.Dispatch<React.SetStateAction<boolean>>
+  // eslint-disable-next-line consistent-return
+) => {
+  try {
+    // for testing, use a custom chain with Keplr.
+    // On mainnet we don't need this (`experimentalSuggestChain`).
+    // This works well with `enigmampc/secret-network-sw-dev`:
+    //     - https://hub.docker.com/r/enigmampc/secret-network-sw-dev
+    //     - Run a local chain: `docker run -it --rm -p 26657:26657 -p 26656:26656 -p 1337:1337 -v $(shell pwd):/root/code --name secretdev enigmampc/secret-network-sw-dev`
+    //     - `alias secretcli='docker exec -it secretdev secretcli'`
+    //     - Store a contract: `docker exec -it secretdev secretcli tx compute store /root/code/contract.wasm.gz --from a --gas 10000000 -b block -y`
+    // On holodeck, set:
+    //     1. CHAIN_ID = "holodeck-2"
+    //     2. rpc = "ttp://chainofsecrets.secrettestnet.io:26657" || if local: 'http://localhost:26657'
+    //     3. rest = "https://chainofsecrets.secrettestnet.io" || if local: 'http://localhost:1337'
+    //     4. chainName = Whatever you like
+    // For more examples, go to: https://github.com/chainapsis/keplr-example/blob/master/src/main.js
+    await window.keplr?.experimentalSuggestChain({
+      chainId: CHAIN_ID,
+      chainName: 'pulsar-2',
+      rpc: RPC_PORT,
+      rest: REST_URL as string,
+      bip44: {
         coinType: 529,
-        stakeCurrency: {
+      },
+      coinType: 529,
+      stakeCurrency: {
+        coinDenom: 'SCRT',
+        coinMinimalDenom: 'uscrt',
+        coinDecimals: 6,
+      },
+      bech32Config: {
+        bech32PrefixAccAddr: 'secret',
+        bech32PrefixAccPub: 'secretpub',
+        bech32PrefixValAddr: 'secretvaloper',
+        bech32PrefixValPub: 'secretvaloperpub',
+        bech32PrefixConsAddr: 'secretvalcons',
+        bech32PrefixConsPub: 'secretvalconspub',
+      },
+      currencies: [
+        {
           coinDenom: 'SCRT',
           coinMinimalDenom: 'uscrt',
           coinDecimals: 6,
         },
-        bech32Config: {
-          bech32PrefixAccAddr: 'secret',
-          bech32PrefixAccPub: 'secretpub',
-          bech32PrefixValAddr: 'secretvaloper',
-          bech32PrefixValPub: 'secretvaloperpub',
-          bech32PrefixConsAddr: 'secretvalcons',
-          bech32PrefixConsPub: 'secretvalconspub',
-        },
-        currencies: [
-          {
-            coinDenom: 'SCRT',
-            coinMinimalDenom: 'uscrt',
-            coinDecimals: 6,
-          },
-        ],
-        feeCurrencies: [
-          {
-            coinDenom: 'SCRT',
-            coinMinimalDenom: 'uscrt',
-            coinDecimals: 6,
-          },
-        ],
-        gasPriceStep: {
-          low: 0.1,
-          average: 0.25,
-          high: 0.4,
-        },
-        features: ['secretwasm'],
-      });
-
-      // ADDING THIS as we see it in in https://github.com/scrtlabs/SecretJS-Templates/blob/master/6_wallets/keplr/src/main.js
-      await window.keplr?.enable(chainId);
-      // @ts-ignore
-      const keplrOfflineSigner = window.getOfflineSigner(chainId);
-      const accounts = await keplrOfflineSigner.getAccounts();
-
-      // @ts-ignore
-      const secretAddress = accounts[0].address;
-      const cosmJS = new SigningCosmWasmClient(
-        rest,
-        secretAddress,
-        keplrOfflineSigner as any,
-        // @ts-ignore
-        window.getEnigmaUtils(chainId),
+      ],
+      feeCurrencies: [
         {
-          init: {
-            amount: [{ amount: '300000', denom: 'uscrt' }],
-            gas: '300000',
-          },
-          exec: {
-            amount: [{ amount: '300000', denom: 'uscrt' }],
-            gas: '300000',
-          },
-        }
-      );
+          coinDenom: 'SCRT',
+          coinMinimalDenom: 'uscrt',
+          coinDecimals: 6,
+        },
+      ],
+      gasPriceStep: {
+        low: 0.1,
+        average: 0.25,
+        high: 0.4,
+      },
+      features: ['secretwasm'],
+    });
 
-      const account = await cosmJS.getAccount(secretAddress);
-
-      setSecretAddress(secretAddress);
-      cosmJS && setSecretjs(cosmJS);
-    } catch {
-      // eslint-disable-next-line no-alert
-      alert('Failed to suggest the chain');
-    }
-  }
-};
-
-const generatePermission = async ({
-  contractAddress,
-  permissionName,
-}: {
-  contractAddress: String;
-  permissionName: String;
-}) => {
-  const allowedTokens = [contractAddress];
-  const permissions = ['balance'];
-  // @ts-ignore
-  const keplrOfflineSigner = window.getOfflineSigner(CHAIN_ID);
-  const accounts = await keplrOfflineSigner.getAccounts();
-  // @ts-ignore
-  const addr = accounts[0].address;
-  if (typeof window !== 'undefined') {
+    // ADDING THIS as we see it in in https://github.com/scrtlabs/SecretJS-Templates/blob/master/6_wallets/keplr/src/main.js
+    await window.keplr?.enable(CHAIN_ID);
     // @ts-ignore
-    const { signature }: { signature: StdSignature } =
-      // eslint-disable-next-line no-unsafe-optional-chaining
-      await window.keplr?.signAmino(
-        CHAIN_ID,
-        addr,
-        {
-          chain_id: CHAIN_ID,
-          account_number: '0', // Must be 0
-          sequence: '0', // Must be 0
-          fee: {
-            amount: [{ denom: 'uscrt', amount: '0' }], // Must be 0 uscrt
-            gas: '1', // Must be 1
-          },
-          msgs: [
-            {
-              type: 'query_permit', // Must be "query_permit"
-              value: {
-                permit_name: permissionName,
-                allowed_tokens: allowedTokens,
-                permissions,
-              },
-            },
-          ],
-          memo: '', // Must be empty
+    const keplrOfflineSigner = window.getOfflineSigner(CHAIN_ID);
+    const accounts = await keplrOfflineSigner.getAccounts();
+
+    // @ts-ignore
+    const secretAddress = accounts[0].address;
+    const cosmJS = new SigningCosmWasmClient(
+      REST_URL as string,
+      secretAddress,
+      keplrOfflineSigner as any,
+      // @ts-ignore
+      window.getEnigmaUtils(CHAIN_ID),
+      {
+        init: {
+          amount: [{ amount: '300000', denom: 'uscrt' }],
+          gas: '300000',
         },
-        {
-          preferNoSetFee: true, // Fee must be 0, so hide it from the user
-          preferNoSetMemo: true, // Memo must be empty, so hide it from the user
-        }
-      );
-    return signature;
+        exec: {
+          amount: [{ amount: '300000', denom: 'uscrt' }],
+          gas: '300000',
+        },
+      }
+    );
+
+    await cosmJS.getAccount(secretAddress);
+
+    setSecretAddress(secretAddress);
+  } catch (error) {
+    if (!window.keplr) {
+      notification.error({ message: 'Please install keplr extension' });
+    } else {
+      notification.error({
+        message:
+          'There was an error connecting to the network. Try again later.',
+      });
+    }
+    setConnectRequest(false);
   }
-  return null;
 };
 
 export const queryAsServProvider = async ({
@@ -191,7 +175,7 @@ export const queryAsServProvider = async ({
     const addr = accounts[0].address;
 
     const cosmJS = new SigningCosmWasmClient(
-      REST_URL,
+      REST_URL as string,
       addr,
       keplrOfflineSigner as any,
       // @ts-ignore
@@ -230,9 +214,19 @@ export const queryAsServProvider = async ({
       });
     }
   } catch (error) {
-    console.log({ error });
     notification.error({
       message: 'There was an error',
     });
   }
 };
+
+export function handleKeplrOpen(
+  setSecretAddress: React.Dispatch<React.SetStateAction<string | null>>,
+  setConnectRequest: React.Dispatch<React.SetStateAction<boolean>>
+) {
+  if (process.env.NODE_ENV === 'production') {
+    USE_TESTNET_ON_PROD
+      ? handleKeplrOpenTestNet(setSecretAddress, setConnectRequest)
+      : handleKeplrOpenMainNet(setSecretAddress, setConnectRequest);
+  } else handleKeplrOpenTestNet(setSecretAddress, setConnectRequest);
+}

@@ -1,16 +1,17 @@
 import { AppProps } from 'next/app';
 
-import Connect from '@scrtsybil/src/components/connect';
+import Layout from '@scrtsybil/src/components/Layout';
 import { ContextProvider } from '@scrtsybil/src/context';
 
-import '@scrtsybil/src/styles.css';
 import 'antd/dist/antd.dark.min.css';
+import '@scrtsybil/src/styles.css';
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
   return (
     <ContextProvider>
-      {!process.env.IN_PROGRESS && <Connect />}
-      <Component {...pageProps} />
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
     </ContextProvider>
   );
 };

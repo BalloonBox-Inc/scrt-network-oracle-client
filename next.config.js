@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
-  reactStrictMode: true,
+  reactStrictMode: false,
   env: {
     PLAID_CLIENT_ID: process.env.PLAID_CLIENT_ID,
     PLAID_URL_SANDBOX: process.env.PLAID_URL_SANDBOX,
@@ -10,5 +10,7 @@ module.exports = {
     COINBASE_BASE_AUTHORIZE_URL: process.env.COINBASE_BASE_AUTHORIZE_URL,
     COINBASE_ACCESS_TOKEN_URL: process.env.COINBASE_ACCESS_TOKEN_URL,
     IN_PROGRESS: process.env.IN_PROGRESS,
+    NEXT_BASE_URL: process.env.NEXT_BASE_URL,
+    NEXT_PUBLIC_MAINNET_API_URL: process.env.NEXT_PUBLIC_MAINNET_API_URL,
   },
 };

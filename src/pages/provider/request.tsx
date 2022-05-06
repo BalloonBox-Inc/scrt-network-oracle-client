@@ -15,10 +15,11 @@ const ProviderRequestPage = () => {
   const requestDataInput = (onChange?: (e?: any) => void) => (
     <input
       onChange={onChange}
-      className=" focus-visible:outline-blue-600 focus-visible:outline-none  font-mono text-blue-600 bg-input-bg w-full py-3 px-3 rounded-md mb-4"
+      className=" focus-visible:outline-blue-600 focus-visible:outline-none font-mono text-blue-600 bg-input-bg w-full py-3 px-3 rounded-md mb-4"
       type={'text'}
     />
   );
+
   return (
     <div className="px-20 py-60 ">
       <div className="w-full text-center">
@@ -26,11 +27,11 @@ const ProviderRequestPage = () => {
         <p>Please enter th einformation provided by the applicant:</p>
 
         <form className="flex flex-col items-start mt-8  w-full">
-          <label className="text-left mb-1">Name of permission</label>
+          <label className="text-left mb-1">Name of query permit</label>
           {requestDataInput((e) =>
             setRequestData({
               ...requestData,
-              permitName: e.target.value,
+              permitName: e.target.value.toUpperCase(),
             })
           )}
           <label className="text-left mb-1">Public Address</label>

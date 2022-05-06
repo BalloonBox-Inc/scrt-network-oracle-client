@@ -1,156 +1,33 @@
-import { useEffect } from 'react';
+import React from 'react';
 
-import { Layout, Typography, Button } from 'antd';
-import { useRouter } from 'next/router';
+import dynamic from 'next/dynamic';
 
-import BlueWave from '@scrtsybil/src/components/blueWave';
-import LogoLoader from '@scrtsybil/src/components/LogoLoader';
-import LogoWithWaves from '@scrtsybil/src/components/LogoWithWaves';
-import { CHAIN_ID } from '@scrtsybil/src/constants';
+import HeroSection from '@scrtsybil/src/components/home/HeroSection';
 import { useSecretContext } from '@scrtsybil/src/context';
 
-const { Content } = Layout;
-const { Title } = Typography;
+const AwaitingConnectionView = dynamic(
+  () => import('@scrtsybil/src/components/home/AwaitingConnectionView')
+);
 
-const diagonalWaves = './images/diagonalWaves.svg';
-const keplr = '/images/keplr.svg';
+const CtaSection = dynamic(() => import('../components/home/CtaSection'));
+const HowItWorksSection = dynamic(
+  () => import('../components/home/HowItWorksSection')
+);
+const WhySection = dynamic(() => import('../components/home/WhySection'));
 
 const Home = () => {
-  const navigate = useRouter();
-  const {
-    secretjs,
-    loading,
-    connectWallet,
-    connectRequest,
-    setConnectRequest,
-  } = useSecretContext();
+  const { secretAddress, connectRequest } = useSecretContext();
 
-  useEffect(() => {
-    secretjs && navigate.push('/auth');
-  }, [secretjs, navigate]);
-
-  const handleConnectRequest = () => {
-    setConnectRequest(!connectRequest);
-    if (!secretjs) {
-      connectWallet();
-    }
-  };
-
-  const handleDisconnectRequest = () => {
-    setConnectRequest(false);
-  };
-
-  const connectButton = (
-    <div className="flex justify-center z-50">
-      <Button
-        onClick={() => handleConnectRequest()}
-        size="large"
-        style={{ padding: '0 2.3rem' }}
-        type={connectRequest ? 'link' : 'primary'}
-      >
-        <div className="flex">
-          <img
-            alt="keplr_logo"
-            style={{ width: '1.4rem', marginRight: '.5rem' }}
-            src={keplr}
-          />
-          Connect with Keplr
-        </div>
-      </Button>
-    </div>
+  const landingPageView = (
+    <>
+      <HeroSection secretAddress={secretAddress} />
+      <WhySection />
+      <HowItWorksSection />
+      <CtaSection secretAddress={secretAddress} />
+    </>
   );
 
-  const clickToConnectView = (
-    <div className="mt-9 md:mt-4">
-      <LogoWithWaves />
-      <div className="flex  justify-center items-center flex-col">
-        <>
-          <Title>Your Secret Wallet</Title>
-          <p className="text-center" style={{ fontSize: '1.2rem' }}>
-            Generate, store, and share your credit score on the Secret Network.
-          </p>
-        </>
-      </div>
-    </div>
-  );
-
-  const awaitingConnectionView = (
-    <div
-      style={{ height: '70%', padding: '3rem 5rem' }}
-      className="flex justify-center items-center flex-col"
-    >
-      <div
-        style={{
-          position: 'absolute',
-          display: 'flex',
-          justifyContent: 'center',
-          width: '100%',
-          top: '0',
-        }}
-      >
-        <img alt="background_waves" src={diagonalWaves} />
-      </div>
-      <div
-        className="flex flex-col items-center"
-        style={{
-          background:
-            'linear-gradient(142.6deg, #232323 -1.55%, rgba(29, 29, 29, 0.64) 200.36%',
-          zIndex: '10',
-          padding: '7rem',
-          boxShadow: '0px 25px 25px rgba(0, 3, 32, 0.5)',
-          borderRadius: '8px',
-        }}
-      >
-        <div className="flex items-center w-full">
-          <img
-            alt="spinning_keplr"
-            className="spin mb-3 mr-3"
-            width={'22px'}
-            src={keplr}
-          />
-          <div className="text-lg w-full overflow-visible">
-            Awaiting connection...
-          </div>
-        </div>
-
-        <Button
-          onClick={() => handleDisconnectRequest()}
-          size="large"
-          style={{ padding: '0 2.3rem' }}
-          type={connectRequest ? 'link' : 'primary'}
-        >
-          Back
-        </Button>
-      </div>
-    </div>
-  );
-
-  if (loading) {
-    return (
-      <Layout>
-        <LogoLoader />
-      </Layout>
-    );
-  }
-
-  return (
-    <Layout>
-      <Content style={{ zIndex: '0' }} className="h-screen px-3">
-        <div className="">
-          {connectRequest ? awaitingConnectionView : clickToConnectView}
-          {!process.env.IN_PROGRESS && !connectRequest && connectButton}
-
-          {process.env.IN_PROGRESS && (
-            <div className="text-center text-blue-300 text-2xl">
-              {' '}
-              Coming Soon{' '}
-            </div>
-          )}
-        </div>
-      </Content>
-      {/* <BlueWave /> */}
-    </Layout>
-  );
+  return <>{connectRequest ? <AwaitingConnectionView /> : landingPageView}</>;
 };
 
 export default Home;

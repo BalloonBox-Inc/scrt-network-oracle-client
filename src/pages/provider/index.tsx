@@ -1,46 +1,119 @@
-import { useState } from 'react';
+import dynamic from 'next/dynamic';
+import { pipe, replace, slice } from 'ramda';
 
-import { Card, Typography, Tooltip, Button } from 'antd';
-import Link from 'next/link';
-import router from 'next/router';
+import { LoadingContainer } from '@scrtsybil/src/components/LoadingContainer';
+import NavigationButtons from '@scrtsybil/src/components/NavigationButtons';
+import { useProviderReducer } from '@scrtsybil/src/components/provider/hooks';
+import MainContainer from '@scrtsybil/src/components/provider/MainContainer';
+import ScoreSpeedometer from '@scrtsybil/src/components/score';
+
+const QueryModal = dynamic(
+  () => import('@scrtsybil/src/components/provider/QueryModal')
+);
 
 const ProviderServicesPage = () => {
-  const [selection, setSelection] = useState<null | string>(null);
+  const [
+    {
+      selection,
+      showModal,
+      status,
+      permitData,
+      viewingKey,
+      queryViewingKeyResponse,
+      queryPermitResponse,
+    },
+    {
+      setSelectionViewingKey,
+      setSelectionPermit,
+      setSelectionClear,
+      setShowModal,
+      setHideModal,
+      setStatusLoading,
+      setStatusSuccess,
+      setStatusClear,
+      setResetViewingKey,
+      setViewingKey,
+      setPermitData,
+      setClearPermitData,
+      setQueryPermitResponse,
+      setQueryViewingKeyResponse,
+    },
+  ] = useProviderReducer();
+
+  const convertScoreDescriptionForProvider = (description: string) => {
+    const initialTransform = pipe(
+      replace(/Your/g, "This user's"),
+      replace(/your/g, 'their'),
+      replace(/you/g, 'them')
+    )(description);
+    const tryAgainIndex = initialTransform.indexOf('Try again');
+    if (tryAgainIndex < 0) {
+      return initialTransform;
+    }
+
+    return slice(0, tryAgainIndex, initialTransform);
+  };
+
   return (
-    <div className="px-20 py-60 ">
-      <div className="w-full text-center">
-        <Typography.Title level={2}>Select Services</Typography.Title>
-        <p>User Type: Service Provider</p>
-        <div className="flex flex-col items-center space-y-5 mt-8 justify-center w-full">
-          <div
-            onClick={() => setSelection('request')}
-            className={`bg-gray-900 cursor-pointer border-2 rounded-md ${
-              selection === 'request'
-                ? ' border-blue-500'
-                : 'border-transparent'
-            }`}
-            style={{ width: 380 }}
-          >
-            <div className="text-center">
-              <p className="text-lg p-0 m-0 py-4">
-                Request the score of another user.
-              </p>
-            </div>
+    <>
+      {!status && (
+        <MainContainer
+          selection={selection}
+          setSelectionPermit={setSelectionPermit}
+          setShowModal={setShowModal}
+          setSelectionViewingKey={setSelectionViewingKey}
+        />
+      )}
+      {status === 'loading' && <LoadingContainer text={'Querying score'} />}
+      {status === 'success' && (
+        <>
+          <div className="relative pb-10">
+            <ScoreSpeedometer
+              showScore
+              score={
+                selection === 'permit'
+                  ? Math.round(queryPermitResponse?.Ok?.score as number)
+                  : Math.round(queryViewingKeyResponse?.score as number)
+              }
+            />
           </div>
-        </div>
-      </div>
-      <div className="mt-3 flex justify-end">
-        <Button
-          type="primary"
-          disabled={!selection}
-          onClick={() => {
-            router.push(`/provider/${selection}`);
-          }}
-        >
-          Next
-        </Button>
-      </div>
-    </div>
+          <div className="bg-navy p-3 mx-20 -mt-20 mb-10">
+            <p>
+              {selection === 'permit'
+                ? convertScoreDescriptionForProvider(
+                    queryPermitResponse?.Ok?.description as string
+                  )
+                : convertScoreDescriptionForProvider(
+                    queryViewingKeyResponse?.description as string
+                  )}
+            </p>
+          </div>
+          <NavigationButtons
+            backHandler={() => {
+              setStatusClear();
+              setSelectionClear();
+            }}
+            showNextBtn={false}
+          />
+        </>
+      )}
+      <QueryModal
+        showModal={showModal}
+        setStatusClear={setStatusClear}
+        setStatusLoading={setStatusLoading}
+        setHideModal={setHideModal}
+        permitData={permitData}
+        setQueryPermitResponse={setQueryPermitResponse}
+        setStatusSuccess={setStatusSuccess}
+        setQueryViewingKeyResponse={setQueryViewingKeyResponse}
+        selection={selection}
+        setPermitData={setPermitData}
+        setViewingKey={setViewingKey}
+        setClearPermitData={setClearPermitData}
+        setResetViewingKey={setResetViewingKey}
+        viewingKey={viewingKey}
+      />
+    </>
   );
 };
 

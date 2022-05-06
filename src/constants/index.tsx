@@ -6,35 +6,35 @@ export const NOTIFICATIONS = {
   PLAID_CONNECTION_ERROR:
     'There was an error connecting to your Plaid account. Please try again.',
   PLAID_CONNECTION_SUCCESS: 'Successfully connected to account via Plaid.',
+  PLAID_CLOSED:
+    'The Plaid window was closed! Unable to connect to your account.',
 };
 
-// const CHAIN_ID = 'holodeck-2'; //THIS NO LONGER WORKS!
-// const CHAIN_ID = 'cosmoshub-4';
-// const rest = 'https://chainofsecrets.secrettestnet.io'; // Does this work?
-// const rpc = 'http://chainofsecrets.secrettestnet.io:26657'; // does this owrk?
+export const USE_TESTNET_ON_PROD = true;
 
-export const CHAIN_ID = 'pulsar-2';
 export const CHAIN_ID_LOCAL = 'enigma-pub-testnet-3';
-export const REST_URL = 'http://testnet.securesecrets.org:1317/';
 export const REST_URL_LOCAL = 'http://localhost:1337/';
-export const RPC_PORT = 'https://rpc.pulsar.griptapejs.com/';
 export const RPC_PORT_LOCAL = 'http://localhost:26657/';
 
-export const REST_URL_FIGMENT = 'http://bootstrap.supernova.enigma.co:1317';
-export const CHAIN_ID_FIGMENT = 'secret';
+export const IS_MAINNET =
+  process.env.NODE_ENV === 'production' && !USE_TESTNET_ON_PROD;
 
+export const CHAIN_ID = IS_MAINNET ? 'secret-4' : 'pulsar-2';
+
+export const REST_URL = IS_MAINNET
+  ? process.env.NEXT_PUBLIC_MAINNET_API_URL
+  : 'https://api.pulsar.griptapejs.com';
+
+export const RPC_PORT = 'https://rpc.pulsar.griptapejs.com/';
 export const SECRET_CONTRACT_ADDR =
-  'secret10umfyhsecem4yz4y0gz5vs5nvlkn3za22nxr6j';
+  'secret1mj2l3pkz0ls8jkc2pkv2unudldufyzhnmzfx9p';
+
 /*
 FOR PULSAR: 
 Binaries and executables: https://github.com/scrtlabs/SecretNetwork/releases/tag/v1.2.2 Use the testnet binary
-
 Explorer: https://secretnodes.com/secret/chains/pulsar-2
-
 Faucet: https://faucet.secrettestnet.io/
-
 chain-id: pulsar-2
-
 */
 
 export const CUSTOM_FEES = {
@@ -51,3 +51,9 @@ export const CUSTOM_FEES = {
     gas: '4438626',
   },
 };
+
+export const BORDER_GRADIENT_STYLE =
+  'linear-gradient(180deg, rgba(85,42,170,1) 0%, rgba(7,144,192,1) 100%)';
+
+export const BORDER_GREYSCALE =
+  'linear-gradient(180deg, rgba(161,161,161,1) 0%, rgba(47,47,47,1) 100%, rgba(7,144,192,1) 100%)';

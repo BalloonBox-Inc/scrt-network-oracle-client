@@ -5,29 +5,66 @@ import {
   CopyOutlined,
   DisconnectOutlined,
 } from '@ant-design/icons';
-import { Modal, message } from 'antd';
-import Image from 'next/image';
+import { Modal, message, notification } from 'antd';
 
-import logoImage from '@scrtsybil/public/images/keplr.svg';
+import { NOTIFICATIONS } from '@scrtsybil/src/constants';
 import { useSecretContext } from '@scrtsybil/src/context';
+import { handleKeplrOpen } from '@scrtsybil/src/utils';
 
-const Connect = () => {
+const MIN_WIDTH_TO_SHOW_ADDRESS = 440;
+
+const Connect = ({ showWallet, setShowWallet }: any) => {
   const handleKeyStoreChange = () => {
     // eslint-disable-next-line no-restricted-globals
     location.reload();
   };
-  const [showWallet, setShowWallet] = useState<boolean>(false);
+  // const [showWallet, setShowWallet] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [shrinkAnimation, setShrinkAnimation] = useState<boolean>(false); // added so that it doesn't shrink on load
 
+  const [windowWidth, setWindowWidth] = useState<number | undefined>(undefined);
+
   const {
-    secretjs,
-    setSecretjs,
     secretAddress,
     setSecretAddress,
-    disconnectWallet,
-    connectWallet,
+    connectRequest,
+    setConnectRequest,
+    setCoinbaseToken,
+    setPlaidPublicToken,
+    setScoreResponse,
   } = useSecretContext();
+
+  const disconnectWallet = () => {
+    setSecretAddress(null);
+    setConnectRequest(false);
+    setCoinbaseToken(null);
+    setPlaidPublicToken(null);
+    setScoreResponse(null);
+    localStorage.clear();
+    notification.success({
+      message: NOTIFICATIONS.WALLET_DISCONNECT_SUCCESS,
+    });
+  };
+
+  useEffect(() => {
+    const handleWindowResize = () => {
+      setWindowWidth(window.innerWidth);
+      if (
+        windowWidth &&
+        windowWidth > MIN_WIDTH_TO_SHOW_ADDRESS &&
+        showWallet
+      ) {
+        setShowWallet(false);
+      }
+    };
+
+    if (typeof window !== 'undefined') {
+      handleWindowResize();
+      window.addEventListener('resize', handleWindowResize);
+    }
+    return () => window.removeEventListener('resize', handleWindowResize);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -40,78 +77,79 @@ const Connect = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      if (!window.keplr) {
-        // eslint-disable-next-line no-alert
-        alert('Please install keplr extension');
-      }
+  const handleConnectRequest = () => {
+    setConnectRequest(!connectRequest);
+    handleKeplrOpen(setSecretAddress, setConnectRequest);
+  };
+
+  const handleShowWallet = () => {
+    if (windowWidth && windowWidth > MIN_WIDTH_TO_SHOW_ADDRESS) {
+      setShowWallet(true);
     }
-  }, [setSecretAddress, setSecretjs]);
+  };
 
   return (
-    <div role={'presentation'} className="relative  h-full">
+    <div role={'presentation'} className="h-full">
       <div
-        className={`flex absolute justify-center items-center  
-        ${showWallet ? 'growLeft' : undefined} 
-        ${!showWallet && shrinkAnimation ? 'shrinkRight' : undefined}
-        ${secretjs ? 'opacity-100' : 'opacity-100'} `}
+        onClick={() => {
+          secretAddress ? handleShowWallet() : handleConnectRequest();
+        }}
+        className={`flex justify-center overflow-hidden relative items-center bg-gradient-to-b from-purple to-deepblue 
+        ${showWallet ? 'growLeft' : 'hover:opacity-75'} 
+        ${!showWallet && shrinkAnimation ? 'shrinkRight' : undefined}`}
         style={{
           width: secretAddress ? '2.8rem' : 'fit-content',
           height: '2.8rem',
-          borderRadius: '10px',
-          border: '1px solid #5A57D9',
-          backgroundColor: secretjs ? '#5A57D9' : 'transparent',
-          right: '1rem',
-          top: '1rem',
+          borderRadius: '50px',
           zIndex: '5',
           cursor: 'pointer',
         }}
       >
-        {showWallet && (
-          <div
-            onClick={(e) => {
-              e.stopPropagation();
-              setShrinkAnimation(true);
-              setShowWallet(false);
-            }}
-            role={'presentation'}
-            className="-left-5 absolute top-2"
-          >
-            <CloseOutlined />
-          </div>
-        )}
         <div
-          onClick={() => {
-            secretAddress ? setShowWallet(true) : connectWallet();
-          }}
-          className="flex items-center  justify-center  h-10"
-          style={{
-            marginLeft: showWallet ? '5px' : '17px',
-          }}
+          className={`flex items-center justify-center ${
+            !showWallet && 'xs:ml-4 ml-2 px-3 sm:px-0'
+          }`}
         >
-          <Image
-            layout="fixed"
-            width={'30'}
-            height={'30'}
-            alt="keplr_logo"
-            src={logoImage}
-          />
-        </div>
+          {showWallet && (
+            <div
+              onClick={(e) => {
+                e.stopPropagation();
+                setShrinkAnimation(true);
+                setShowWallet(false);
+              }}
+              role={'presentation'}
+              className={`mr-2 -mt-1 z-50`}
+            >
+              <CloseOutlined />
+            </div>
+          )}
 
-        {!secretjs && <p className="mt-3 ml-2 mr-3">Connect</p>}
+          <div
+            style={{ width: '25px', height: '25px' }}
+            className="relative oveflow-hidden"
+          >
+            <img
+              src="/images/keplr.svg"
+              alt="keplr-logo"
+              className="absolute"
+            />
+          </div>
+
+          {!secretAddress && <p className="pl-2 pr-4">Connect</p>}
+        </div>
         {secretAddress && (
-          <div className={`mx-2 flex items-center  overflow-x-hidden`}>
+          <div className={`mx-2 flex text-xs items-center overflow-x-hidden`}>
             {secretAddress}
             <div
               onClick={() => {
                 navigator.clipboard.writeText(secretAddress);
                 message.success({
                   content: 'Copied to clipboard',
-                  className: 'absolute left-0 items-center',
+                  className: 'absolute right-0 items-center',
                   style: {
                     borderRadius: '20px',
                   },
+                  duration: '.3',
                 });
               }}
               className="text-lg mx-2 mb-2 transition-colors hover:text-green-400"
@@ -135,6 +173,7 @@ const Connect = () => {
               setShowWallet(false);
               setTimeout(() => disconnectWallet(), 500);
               setShowModal(false);
+              setConnectRequest(false);
             }}
             visible={showModal}
             okText={<>Disconnect</>}
@@ -146,6 +185,7 @@ const Connect = () => {
               flexDirection: 'column',
               justifyContent: 'center',
               textAlign: 'center',
+              padding: '2.5rem',
             }}
           >
             Are you sure you want to disconnect your wallet?

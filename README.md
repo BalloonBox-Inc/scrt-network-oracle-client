@@ -44,27 +44,36 @@ Your browser will require the Keplr Chrome extension, downloadable [here.](https
 Create a .env.local file in your root folder: 
 
 ```
+NEXT_BASE_URL=http://localhost:3000
 PLAID_CLIENT_ID=your_client_id
-PLAID_URL_SANDBOX="sandbox.plaid.com"
+PLAID_URL_SANDBOX=sandbox.plaid.com
 PLAID_SECRET_KEY_SANDBOX=your_sandbox_key
 
 COINBASE_CLIENT_ID=your_client_Id
 COINBASE_CLIENT_SECRET=your_client_secret
-COINBASE_BASE_AUTHORIZE_URL=your_url
-COINBASE_ACCESS_TOKEN_URL=your_url
+COINBASE_BASE_AUTHORIZE_URL=https://www.coinbase.com/oauth/authorize
+COINBASE_ACCESS_TOKEN_URL=http://www.coinbase.com/oauth/token
+BACKEND_BASE_URL=https://dev-scrt-sybil-backend.herokuapp.com
+COINMARKET_KEY=your_coinmarketcapapikey
+NEXT_PUBLIC_MAINNET_API_URL=https://secret-4--lcd--full.datahub.figment.io/apikey/6f3333914b9755607855cdc5efb0b341/
+
 
 ```
 
 You will need to create an account on [Plaid](https://dashboard.plaid.com/) OR [Coinbase](https://developers.coinbase.com/) in order to receive client ids and client secrets for your api. 
 
 
-Then, you can run locally in development mode with live reload:
+Then, you can run locally in development mode with live reload. Ensure you run this command after `cd` into the local folder where you cloned the repo.
+
+
 
 ```
 yarn dev
 ```
 
 Open http://localhost:3000 with your favorite browser to see your project.
+
+note: you will want to get some testnet tokens in your wallet, which you can get [here](https://faucet.secrettestnet.io/). Make sure you select the pulsar-2 network from the keplr dropdown. 
 
 ### Deploy to production
 
