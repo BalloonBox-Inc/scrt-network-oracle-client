@@ -33,7 +33,7 @@ export default function Header() {
   }, [handleScroll]);
 
   return (
-    <>
+    <div className="flex-col flex">
       <motion.header
         style={{
           height: shrinkHeader ? '60px' : '80px',
@@ -88,6 +88,6 @@ export default function Header() {
         </div>
       </motion.header>
       {!IS_MAINNET && <TestBanner />}
-    </>
+    </div>
   );
 }
