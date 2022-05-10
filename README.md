@@ -55,7 +55,7 @@ COINBASE_BASE_AUTHORIZE_URL=https://www.coinbase.com/oauth/authorize
 COINBASE_ACCESS_TOKEN_URL=http://www.coinbase.com/oauth/token
 BACKEND_BASE_URL=https://dev-scrt-sybil-backend.herokuapp.com
 COINMARKET_KEY=your_coinmarketcapapikey
-NEXT_PUBLIC_MAINNET_API_URL=https://secret-4--lcd--full.datahub.figment.io/apikey/6f3333914b9755607855cdc5efb0b341/
+NEXT_PUBLIC_MAINNET_API_URL= get your api url here: https://datahub.figment.io/apps
 
 
 ```
