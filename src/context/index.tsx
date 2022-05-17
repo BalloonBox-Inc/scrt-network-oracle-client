@@ -16,9 +16,9 @@ import { ICoinbaseTokenCreateResponse } from '../pages/api/coinbase';
 import { IScoreResponseCoinbase, IScoreResponsePlaid } from '../types/types';
 
 export type SecretAddress = string | null;
-export type SetSecretAddress = (address: SecretAddress) => void;
+export type Set_Secret_Address = (address: SecretAddress) => void;
 export type Void_Func = () => void;
-export type Set_State_Boolean = (connectRequest: boolean) => void;
+export type Set_Connect_Request = (connectRequest: boolean) => void;
 export type Set_Coinbase_Token = (coinbaseToken: Coinbase_Token) => void;
 export type Coinbase_Token = ICoinbaseTokenCreateResponse | null;
 export type Set_Score_Response = (
@@ -38,11 +38,11 @@ export type Plaid_Public_Exchange_Response =
   null | ItemPublicTokenExchangeResponse;
 export interface ISecretContext {
   secretAddress: SecretAddress;
-  setSecretAddress: SetSecretAddress;
+  setSecretAddress: Set_Secret_Address;
   loading: boolean;
   disconnectWallet: Void_Func;
   connectRequest: boolean;
-  setConnectRequest: Set_State_Boolean;
+  setConnectRequest: Set_Connect_Request;
   setCoinbaseToken: Set_Coinbase_Token;
   coinbaseToken: Coinbase_Token;
   setPlaidPublicToken: Set_Plaid_Token;

@@ -11,14 +11,16 @@ import {
   USE_TESTNET_ON_PROD,
 } from '@scrtsybil/src/constants';
 
+import { Set_Secret_Address, Set_Connect_Request } from '../context';
+
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface Window extends KeplrWindow {}
 }
 
 const handleKeplrOpenMainNet = async (
-  setSecretAddress: React.Dispatch<React.SetStateAction<string | null>>,
-  setConnectRequest: React.Dispatch<React.SetStateAction<boolean>>
+  setSecretAddress: Set_Secret_Address,
+  setConnectRequest: Set_Connect_Request
 ) => {
   try {
     // ADDING THIS as we see it in in https://github.com/scrtlabs/SecretJS-Templates/blob/master/6_wallets/keplr/src/main.js
@@ -54,8 +56,8 @@ const handleKeplrOpenMainNet = async (
 };
 
 export const handleKeplrOpenTestNet = async (
-  setSecretAddress: React.Dispatch<React.SetStateAction<string | null>>,
-  setConnectRequest: React.Dispatch<React.SetStateAction<boolean>>
+  setSecretAddress: Set_Secret_Address,
+  setConnectRequest: Set_Connect_Request
   // eslint-disable-next-line consistent-return
 ) => {
   try {
@@ -221,8 +223,8 @@ export const queryAsServProvider = async ({
 };
 
 export function handleKeplrOpen(
-  setSecretAddress: React.Dispatch<React.SetStateAction<string | null>>,
-  setConnectRequest: React.Dispatch<React.SetStateAction<boolean>>
+  setSecretAddress: Set_Secret_Address,
+  setConnectRequest: Set_Connect_Request
 ) {
   if (process.env.NODE_ENV === 'production') {
     USE_TESTNET_ON_PROD
