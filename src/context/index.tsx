@@ -22,7 +22,7 @@ export type Set_State_Boolean = (connectRequest: boolean) => void;
 export type Set_Coinbase_Token = (coinbaseToken: Coinbase_Token) => void;
 export type Coinbase_Token = ICoinbaseTokenCreateResponse | null;
 export type Set_Score_Response = (
-  scoreResponse: IScoreResponseCoinbase | IScoreResponsePlaid
+  scoreResponse: IScoreResponseCoinbase | IScoreResponsePlaid | null
 ) => void;
 export type Score_Response =
   | IScoreResponseCoinbase
@@ -176,15 +176,14 @@ const ContextProvider = ({ children }: any) => {
 
   const handlers = useMemo(() => {
     return {
-      setSecretAddress: (address: string | null) =>
+      setSecretAddress: (address: SecretAddress) =>
         dispatch({ type: 'SET_SECRET_ADDRESS', payload: address }),
       setLoading: (loading: boolean) =>
         dispatch({ type: 'SET_LOADING', payload: loading }),
       setConnectRequest: (connectRequest: boolean) =>
         dispatch({ type: 'SET_CONNECT_REQUEST', payload: connectRequest }),
-      setScoreResponse: (
-        scoreResponse: IScoreResponseCoinbase | IScoreResponsePlaid
-      ) => dispatch({ type: 'SET_SCORE_RESPONSE', payload: scoreResponse }),
+      setScoreResponse: (scoreResponse: Score_Response) =>
+        dispatch({ type: 'SET_SCORE_RESPONSE', payload: scoreResponse }),
       setCoinbaseToken: (coinbaseToken: Coinbase_Token) =>
         dispatch({ type: 'SET_COINBASE_TOKEN', payload: coinbaseToken }),
       setPlaidPublicToken: (plaidPublicToken: Plaid_Token) =>
