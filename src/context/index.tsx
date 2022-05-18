@@ -1,4 +1,10 @@
-import React, { useState, useContext, createContext, useEffect } from 'react';
+import React, {
+  useContext,
+  createContext,
+  useEffect,
+  useMemo,
+  useReducer,
+} from 'react';
 
 import { notification } from 'antd';
 import { useRouter } from 'next/router';
@@ -9,31 +15,45 @@ import { NOTIFICATIONS } from '../constants';
 import { ICoinbaseTokenCreateResponse } from '../pages/api/coinbase';
 import { IScoreResponseCoinbase, IScoreResponsePlaid } from '../types/types';
 
+export type SecretAddress = string | null;
+export type Set_Secret_Address = (address: SecretAddress) => void;
+export type Void_Func = () => void;
+export type Set_Connect_Request = (connectRequest: boolean) => void;
+export type Set_Coinbase_Token = (coinbaseToken: Coinbase_Token) => void;
+export type Coinbase_Token = ICoinbaseTokenCreateResponse | null;
+export type Set_Score_Response = (
+  scoreResponse: IScoreResponseCoinbase | IScoreResponsePlaid | null
+) => void;
+export type Score_Response =
+  | IScoreResponseCoinbase
+  | IScoreResponsePlaid
+  | null;
+export type Set_Plaid_Token = (plaidPublicToken: Plaid_Token) => void;
+export type Set_Chain_Activity = (chainActivity: IChainActivity) => void;
+export type Permission_Sig = { name: string; signature: StdSignature } | null;
+export type Set_Permission_Sig = (permissionSig: Permission_Sig) => void;
+export type Plaid_Token = PlaidToken | null;
+export type Handle_Set_Chain_Activity = (a: IChainActivity | null) => void;
+export type Plaid_Public_Exchange_Response =
+  null | ItemPublicTokenExchangeResponse;
 export interface ISecretContext {
-  secretAddress: string | null;
-  setSecretAddress: React.Dispatch<React.SetStateAction<string | null>>;
+  secretAddress: SecretAddress;
+  setSecretAddress: Set_Secret_Address;
   loading: boolean;
-  disconnectWallet: () => void;
+  disconnectWallet: Void_Func;
   connectRequest: boolean;
-  setConnectRequest: React.Dispatch<React.SetStateAction<boolean>>;
-  setCoinbaseToken: React.Dispatch<
-    React.SetStateAction<ICoinbaseTokenCreateResponse | null>
-  >;
-  coinbaseToken: ICoinbaseTokenCreateResponse | null;
-  setPlaidPublicToken: React.Dispatch<React.SetStateAction<null | PlaidToken>>;
-  plaidPublicToken: PlaidToken | null;
-
-  setScoreResponse: React.Dispatch<
-    React.SetStateAction<IScoreResponseCoinbase | IScoreResponsePlaid | null>
-  >;
-  scoreResponse: IScoreResponseCoinbase | IScoreResponsePlaid | null;
+  setConnectRequest: Set_Connect_Request;
+  setCoinbaseToken: Set_Coinbase_Token;
+  coinbaseToken: Coinbase_Token;
+  setPlaidPublicToken: Set_Plaid_Token;
+  plaidPublicToken: Plaid_Token;
+  setScoreResponse: Set_Score_Response;
+  scoreResponse: Score_Response;
   chainActivity: IChainActivity;
-  setChainActivity: React.Dispatch<React.SetStateAction<IChainActivity>>;
-  permissionSig: { name: string; signature: StdSignature } | null;
-  setPermissionSig: React.Dispatch<
-    React.SetStateAction<{ name: string; signature: StdSignature } | null>
-  >;
-  handleSetChainActivity: (a: IChainActivity | null) => void;
+  setChainActivity: Set_Chain_Activity;
+  permissionSig: Permission_Sig;
+  setPermissionSig: Set_Permission_Sig;
+  handleSetChainActivity: Handle_Set_Chain_Activity;
 }
 
 export enum CHAIN_ACTIVITIES {
@@ -87,26 +107,124 @@ export const storageHelper = {
   },
 };
 
+const initialState = {
+  secretAddress: null,
+  loading: true,
+  connectRequest: false,
+  scoreResponse: null,
+  coinbaseToken: null,
+  plaidPublicToken: null,
+  chainActivity: CHAIN_ACTIVITY_INIT,
+  plaidPublicExchangeResponse: null,
+  permissionSig: null,
+};
+
+function contextReducer(state: any, action: any) {
+  switch (action.type) {
+    case 'SET_SECRET_ADDRESS':
+      return {
+        ...state,
+        secretAddress: action.payload,
+      };
+    case 'SET_LOADING':
+      return {
+        ...state,
+        loading: true,
+      };
+    case 'SET_CONNECT_REQUEST':
+      return {
+        ...state,
+        connectRequest: action.payload,
+      };
+    case 'SET_SCORE_RESPONSE':
+      return {
+        ...state,
+        scoreResponse: action.payload,
+      };
+    case 'SET_COINBASE_TOKEN':
+      return {
+        ...state,
+        coinbaseToken: action.payload,
+      };
+    case 'SET_PLAID_PUBLIC_TOKEN':
+      return {
+        ...state,
+        plaidPublicToken: action.payload,
+      };
+    case 'SET_CHAIN_ACTIVITY':
+      return {
+        ...state,
+        chainActivity: action.payload,
+      };
+    case 'SET_PLAID_PUBLIC_EXCHANGE_RESPONSE':
+      return {
+        ...state,
+        plaidPublicExchangeResponse: action.payload,
+      };
+    case 'SET_PERMISSION_SIG':
+      return {
+        ...state,
+        permissionSig: action.payload,
+      };
+    default:
+      return state;
+  }
+}
+
 const ContextProvider = ({ children }: any) => {
-  const [secretAddress, setSecretAddress] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [connectRequest, setConnectRequest] = useState<boolean>(false);
-  const [scoreResponse, setScoreResponse] = useState<
-    IScoreResponseCoinbase | IScoreResponsePlaid | null
-  >(null);
-  const [coinbaseToken, setCoinbaseToken] =
-    useState<ICoinbaseTokenCreateResponse | null>(null);
-  const [plaidPublicToken, setPlaidPublicToken] = useState<null | PlaidToken>(
-    null
-  );
-  const [chainActivity, setChainActivity] =
-    useState<IChainActivity>(CHAIN_ACTIVITY_INIT);
-  const [plaidPublicExchangeResponse, setPlaidPublicExchangeResponse] =
-    useState<null | ItemPublicTokenExchangeResponse>(null);
-  const [permissionSig, setPermissionSig] = useState<{
-    name: string;
-    signature: StdSignature;
-  } | null>(null);
+  const [state, dispatch] = useReducer(contextReducer, initialState);
+
+  const handlers = useMemo(() => {
+    return {
+      setSecretAddress: (address: SecretAddress) =>
+        dispatch({ type: 'SET_SECRET_ADDRESS', payload: address }),
+      setLoading: (loading: boolean) =>
+        dispatch({ type: 'SET_LOADING', payload: loading }),
+      setConnectRequest: (connectRequest: boolean) =>
+        dispatch({ type: 'SET_CONNECT_REQUEST', payload: connectRequest }),
+      setScoreResponse: (scoreResponse: Score_Response) =>
+        dispatch({ type: 'SET_SCORE_RESPONSE', payload: scoreResponse }),
+      setCoinbaseToken: (coinbaseToken: Coinbase_Token) =>
+        dispatch({ type: 'SET_COINBASE_TOKEN', payload: coinbaseToken }),
+      setPlaidPublicToken: (plaidPublicToken: Plaid_Token) =>
+        dispatch({ type: 'SET_PLAID_PUBLIC_TOKEN', payload: plaidPublicToken }),
+      setChainActivity: (chainActivity: IChainActivity) =>
+        dispatch({ type: 'SET_CHAIN_ACTIVITY', payload: chainActivity }),
+      setPermissionSig: (permissionSig: Permission_Sig) =>
+        dispatch({ type: 'SET_PERMISSION_SIG', payload: permissionSig }),
+      setPlaidPublicExchangeResponse: (
+        publicExchangeResponse: Plaid_Public_Exchange_Response
+      ) =>
+        dispatch({
+          type: 'SET_PLAID_PUBLIC_EXCHANGE_RESPONSE',
+          payload: publicExchangeResponse,
+        }),
+    };
+  }, []);
+
+  const {
+    setSecretAddress,
+    setLoading,
+    setConnectRequest,
+    setScoreResponse,
+    setCoinbaseToken,
+    setPlaidPublicToken,
+    setChainActivity,
+    setPermissionSig,
+    setPlaidPublicExchangeResponse,
+  } = handlers;
+
+  const {
+    secretAddress,
+    loading,
+    connectRequest,
+    scoreResponse,
+    coinbaseToken,
+    plaidPublicToken,
+    chainActivity,
+    permissionSig,
+    plaidPublicExchangeResponse,
+  } = state;
 
   const disconnectWallet = () => {
     setSecretAddress(null);

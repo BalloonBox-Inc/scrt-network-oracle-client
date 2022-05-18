@@ -4,6 +4,7 @@ import router from 'next/router';
 import { StdSignature } from 'secretjs/types/types';
 
 import Button, { BUTTON_STYLES } from '@scrtsybil/src/components/Button';
+import { Set_Permission_Sig } from '@scrtsybil/src/context';
 
 const PermitModal = ({
   permissionSig,
@@ -12,9 +13,7 @@ const PermitModal = ({
   clearInputData,
 }: {
   permissionSig: { name: string; signature: StdSignature } | null;
-  setPermissionSig: React.Dispatch<
-    React.SetStateAction<{ name: string; signature: StdSignature } | null>
-  >;
+  setPermissionSig: Set_Permission_Sig;
   inputData: string | undefined;
   clearInputData: () => void;
 }) => {
