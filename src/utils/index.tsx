@@ -5,10 +5,10 @@ import { SigningCosmWasmClient } from 'secretjs';
 import {
   CHAIN_ID,
   CUSTOM_FEES,
+  IS_MAINNET,
   REST_URL,
   RPC_PORT,
   SECRET_CONTRACT_ADDR,
-  USE_TESTNET_ON_PROD,
 } from '@scrtsybil/src/constants';
 
 import { Set_Secret_Address, Set_Connect_Request } from '../context';
@@ -24,7 +24,7 @@ const handleKeplrOpenMainNet = async (
 ) => {
   try {
     // ADDING THIS as we see it in in https://github.com/scrtlabs/SecretJS-Templates/blob/master/6_wallets/keplr/src/main.js
-    await window.keplr?.enable('secret-2');
+    await window.keplr?.enable('secret-4');
     // @ts-ignore
     const keplrOfflineSigner = window.getOfflineSigner(CHAIN_ID);
     const accounts = await keplrOfflineSigner.getAccounts();
@@ -226,9 +226,7 @@ export function handleKeplrOpen(
   setSecretAddress: Set_Secret_Address,
   setConnectRequest: Set_Connect_Request
 ) {
-  if (process.env.NODE_ENV === 'production') {
-    USE_TESTNET_ON_PROD
-      ? handleKeplrOpenTestNet(setSecretAddress, setConnectRequest)
-      : handleKeplrOpenMainNet(setSecretAddress, setConnectRequest);
-  } else handleKeplrOpenTestNet(setSecretAddress, setConnectRequest);
+  IS_MAINNET
+    ? handleKeplrOpenMainNet(setSecretAddress, setConnectRequest)
+    : handleKeplrOpenTestNet(setSecretAddress, setConnectRequest);
 }

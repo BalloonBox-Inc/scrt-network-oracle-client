@@ -129,7 +129,7 @@ function contextReducer(state: any, action: any) {
     case 'SET_LOADING':
       return {
         ...state,
-        loading: true,
+        loading: action.payload,
       };
     case 'SET_CONNECT_REQUEST':
       return {
