@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -14,6 +14,17 @@ export default function Header() {
   const [showWallet, setShowWallet] = useState<boolean>(false);
   const [shrinkHeader, setShrinkHeader] = useState<boolean>(false);
   const router = useRouter();
+
+  const isOnTestnet = useMemo(() => {
+    if (typeof window !== 'undefined') {
+      return (
+        window.location.href.includes('test') ||
+        window.location.href.includes('localhost')
+      );
+    }
+    return false;
+  }, []);
+
   const routerIsMain =
     router?.pathname === '/' || router?.pathname === '/learn';
 
@@ -63,6 +74,22 @@ export default function Header() {
 
         <div className="flex items-center min-h-full">
           <div className={`flex items-center`}>
+            <Link
+              passHref={true}
+              href={
+                isOnTestnet
+                  ? 'https://www.secretsibyl.com/'
+                  : 'https://test.secretsibyl.com/'
+              }
+            >
+              <p
+                className={`mr-5 text-xs font-semibold text-lightblue sm:text-sm md:text-base text-center cursor-pointer hover:text-blue-500 ${
+                  showWallet ? 'disappear' : 'reappear'
+                }`}
+              >
+                {isOnTestnet ? 'Use Mainnet' : 'Use Testnet'}
+              </p>
+            </Link>
             <Link passHref={true} href="/learn">
               <p
                 className={`mr-5 text-xs sm:text-sm md:text-base text-center cursor-pointer hover:text-gray-400 ${

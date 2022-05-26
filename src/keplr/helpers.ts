@@ -21,6 +21,12 @@ import {
   IScoreResponseCoinbase,
 } from '@scrtsybil/src/types/types';
 
+import { Set_Permission_Sig } from '../context';
+
+let insufficientFunds = false;
+const insufficientFundsMsg =
+  'Try increasing the gas fee amount on the Keplr wallet when making the transaction.';
+
 export const handleSetScore = async ({
   setErrorStatus,
   setLoadingStatus,
@@ -44,8 +50,8 @@ export const handleSetScore = async ({
         addr,
         keplrOfflineSigner as any,
         // @ts-ignore
-        window.getEnigmaUtils(CHAIN_ID),
-        CUSTOM_FEES
+        window.getEnigmaUtils(CHAIN_ID)
+        // CUSTOM_FEES
       );
 
       const handleMsg = {
@@ -68,8 +74,21 @@ export const handleSetScore = async ({
       return null;
     } catch (error) {
       setErrorStatus();
+
+      if ((error as any).message.includes('insufficient fees')) {
+        insufficientFunds = true;
+      }
+
+      if ((error as any).message.includes('timed out')) {
+        return notification.error({
+          message: `Score was not recorded. Timed out waiting for transaction to be included in a block. Please try again.`,
+        });
+      }
+
       return notification.error({
-        message: 'Score was not recorded.',
+        message: `Score was not recorded. ${
+          insufficientFunds ? insufficientFundsMsg : ''
+        }`,
       });
     }
   }
@@ -114,9 +133,15 @@ export const handleSetViewingKey = async ({ entropy }: { entropy: string }) => {
     }
     return { response: responseParsed, status: 'error' };
   } catch (error) {
+    if ((error as any).message.includes('insufficient fees')) {
+      insufficientFunds = true;
+    }
     notification.error({
-      message: 'Viewing key was not generated. Please try again.',
+      message: `Viewing key was not generated. ${
+        insufficientFunds ? insufficientFundsMsg : ''
+      }`,
     });
+
     return { error, status: 'error' };
   }
 };
@@ -126,9 +151,7 @@ export const handleGeneratePermissionQuery = async ({
   setPermissionSig,
 }: {
   permissionName: string;
-  setPermissionSig: React.Dispatch<
-    React.SetStateAction<{ name: string; signature: StdSignature } | undefined>
-  >;
+  setPermissionSig: Set_Permission_Sig;
 }) => {
   try {
     const allowedTokens = [SECRET_CONTRACT_ADDR];
@@ -221,9 +244,15 @@ export const handlePermissionRevoke = async ({
       return { status: 'success' };
     }
   } catch (error) {
+    if ((error as any).message.includes('insufficient fees')) {
+      insufficientFunds = true;
+    }
     notification.error({
-      message: 'There was an error revoking the permit query',
+      message: `There was an error revoking the permit query. ${
+        insufficientFunds ? insufficientFundsMsg : ''
+      }`,
     });
+
     return { status: error };
   }
   return null;
@@ -349,8 +378,7 @@ export const queryScoreWithPermit = async ({
       addr,
       keplrOfflineSigner as any,
       // @ts-ignore
-      window.getEnigmaUtils(CHAIN_ID),
-      CUSTOM_FEES
+      window.getEnigmaUtils(CHAIN_ID)
     );
 
     const getScoreWithPermission = {
@@ -379,11 +407,18 @@ export const queryScoreWithPermit = async ({
       getScoreWithPermission
     );
 
-    if (response.Ok) {
+    if (response.Ok?.score) {
       notification.success({
         message: `Score queried: ${response.Ok.score}`,
       });
       return { status: 'success', response };
+    }
+
+    if (response.Ok?.status === 'Score not found.') {
+      notification.error({
+        message: 'Your score was not found on the smart contract.',
+      });
+      return { status: 'error', error: response.Ok?.status };
     }
 
     notification.error({
