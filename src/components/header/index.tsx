@@ -15,6 +15,10 @@ export default function Header() {
   const [shrinkHeader, setShrinkHeader] = useState<boolean>(false);
   const router = useRouter();
 
+  console.log({ IS_MAINNET });
+
+  console.log('process.env.node_env is: ', process.env.NODE_ENV);
+
   const isOnTestnet = useMemo(() => {
     if (typeof window !== 'undefined') {
       return (
