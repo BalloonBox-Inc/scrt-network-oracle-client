@@ -12,5 +12,6 @@ module.exports = {
     IN_PROGRESS: process.env.IN_PROGRESS,
     NEXT_BASE_URL: process.env.NEXT_BASE_URL,
     NEXT_PUBLIC_MAINNET_API_URL: process.env.NEXT_PUBLIC_MAINNET_API_URL,
+    ENV: process.env.ENV,
   },
 };

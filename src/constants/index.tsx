@@ -17,7 +17,7 @@ export const REST_URL_LOCAL = 'http://localhost:1337/';
 export const RPC_PORT_LOCAL = 'http://localhost:26657/';
 
 export const IS_MAINNET =
-  process.env.NODE_ENV === 'production' && !USE_TESTNET_ON_PROD;
+  process.env.ENV === 'production' && !USE_TESTNET_ON_PROD;
 
 export const CHAIN_ID = IS_MAINNET ? 'secret-4' : 'pulsar-2';
 
