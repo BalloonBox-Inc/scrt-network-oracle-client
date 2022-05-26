@@ -76,15 +76,16 @@ const MainContainer = ({
           {providerSelectors}
         </div>
       </div>
-      {plaidSelected && !IS_MAINNET && (
-        <div className="text-center mt-4">
+      {plaidSelected && (
+        <div className="text-center mt-4 px-20 text-xs text-blue-400">
           <a
             target={'_blank'}
             href={'https://plaid.com/docs/sandbox/test-credentials/'}
             rel="noreferrer"
             className=""
           >
-            Click here for Plaid Sandbox Credentials
+            Plaid is currently in Sandbox mode. Click here for Plaid Sandbox
+            Credentials.
           </a>
         </div>
       )}
