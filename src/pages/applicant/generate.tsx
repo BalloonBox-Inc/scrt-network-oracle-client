@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { notification } from 'antd';
 import { useRouter } from 'next/router';
 
@@ -33,6 +35,7 @@ export const GenerateScore = ({ chainActivity }: IGenerateScorePage) => {
     plaidPublicToken,
     setScoreResponse,
     handleSetChainActivity,
+    scoreResponse,
   } = useSecretContext();
 
   const [awaitingScoreResponse, { setToWaiting, setNotWaiting }] =
@@ -52,6 +55,12 @@ export const GenerateScore = ({ chainActivity }: IGenerateScorePage) => {
   const router = useRouter();
   const queryType = router?.query?.type;
   const queryStatus = router?.query?.status;
+
+  const isPlaidOAuthFlow = !!router?.query?.oauth_state_id;
+
+  useEffect(() => {
+    isPlaidOAuthFlow && setStartPlaidLink();
+  }, [isPlaidOAuthFlow, setStartPlaidLink]);
 
   useManageQuery({ router, setStartCoinbase, setToWaiting });
 
@@ -78,8 +87,7 @@ export const GenerateScore = ({ chainActivity }: IGenerateScorePage) => {
   };
 
   const handlePlaidConnect = async () => {
-    if (plaidPublicToken) {
-      setStartPlaidLink();
+    if (plaidPublicToken && scoreResponse?.endpoint.includes('plaid')) {
       router.replace('/applicant/generate?type=plaid&status=success');
     } else {
       router.replace('/applicant/generate?type=plaid&status=loading');
@@ -122,6 +130,7 @@ export const GenerateScore = ({ chainActivity }: IGenerateScorePage) => {
           router={router}
           token={plaidPublicToken.publicToken}
           setStartPlaidLink={setStartPlaidLink}
+          withOAuth={isPlaidOAuthFlow}
         />
       )}
       {startCoinbase && (

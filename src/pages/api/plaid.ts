@@ -39,6 +39,7 @@ const config = {
     client_user_id: 'unique_user_id',
   },
   products: ['auth'],
+  redirect_uri: `${process.env.NEXT_BASE_URL}/applicant/generate`,
 };
 
 async function get_plaid_data(

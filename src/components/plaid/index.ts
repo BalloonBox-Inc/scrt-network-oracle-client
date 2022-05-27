@@ -15,7 +15,7 @@ import { exchangePlaidToken } from '@scrtsybil/src/services';
 
 interface Props {
   isOauth?: boolean;
-  token: string;
+  token: string; // this is the public token (aka link token)
   userId?: number;
   itemId?: number | null;
   children?: React.ReactNode;
@@ -23,6 +23,7 @@ interface Props {
   setStartPlaidLink: any;
   setNotWaiting: () => void;
   setToWaiting: () => void;
+  withOAuth?: boolean;
 }
 
 const LaunchLink = (props: Props) => {
@@ -66,8 +67,10 @@ const LaunchLink = (props: Props) => {
     onSuccess,
     token: props.token,
     onExit,
+    receivedRedirectUri: props.withOAuth ? window?.location?.href : undefined,
   };
 
+  // This gets triggered when there is no score response in state (associated to plaid)
   const { open } = usePlaidLink(config);
 
   useEffect(() => {
