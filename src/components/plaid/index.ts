@@ -23,7 +23,7 @@ interface Props {
   setStartPlaidLink: any;
   setNotWaiting: () => void;
   setToWaiting: () => void;
-  withOAuth?: boolean;
+  plaidOAuthFlowQuery?: string | string[];
 }
 
 const LaunchLink = (props: Props) => {
@@ -67,7 +67,9 @@ const LaunchLink = (props: Props) => {
     onSuccess,
     token: props.token,
     onExit,
-    receivedRedirectUri: props.withOAuth ? window?.location?.href : undefined,
+    receivedRedirectUri: props.plaidOAuthFlowQuery
+      ? window?.location?.href
+      : undefined,
   };
 
   // This gets triggered when there is no score response in state (associated to plaid)

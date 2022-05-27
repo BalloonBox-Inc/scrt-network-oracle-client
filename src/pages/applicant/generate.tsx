@@ -56,11 +56,17 @@ export const GenerateScore = ({ chainActivity }: IGenerateScorePage) => {
   const queryType = router?.query?.type;
   const queryStatus = router?.query?.status;
 
-  const isPlaidOAuthFlow = !!router?.query?.oauth_state_id;
+  const plaidOAuthFlowQuery = router?.query?.oauth_state_id;
 
   useEffect(() => {
-    isPlaidOAuthFlow && setStartPlaidLink();
-  }, [isPlaidOAuthFlow, setStartPlaidLink]);
+    if (!scoreResponse) {
+      plaidOAuthFlowQuery &&
+        router.replace(
+          `/applicant/generate?status=loading&oauth_state_id=${router?.query?.oauth_state_id}`
+        ) &&
+        setStartPlaidLink();
+    }
+  }, [plaidOAuthFlowQuery, setStartPlaidLink, router, scoreResponse]);
 
   useManageQuery({ router, setStartCoinbase, setToWaiting });
 
@@ -130,7 +136,7 @@ export const GenerateScore = ({ chainActivity }: IGenerateScorePage) => {
           router={router}
           token={plaidPublicToken.publicToken}
           setStartPlaidLink={setStartPlaidLink}
-          withOAuth={isPlaidOAuthFlow}
+          plaidOAuthFlowQuery={plaidOAuthFlowQuery}
         />
       )}
       {startCoinbase && (
