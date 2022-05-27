@@ -6,6 +6,7 @@ const CLIENT_ID = process.env.PLAID_CLIENT_ID;
 const SECRET_KEY = process.env.PLAID_SECRET_KEY_SANDBOX;
 const { COINMARKET_KEY } = process.env;
 const PLAID_ENDPOINT = `${process.env.BACKEND_BASE_URL}/credit_score/plaid`;
+
 const clientConfiguration = new Configuration({
   basePath: PlaidEnvironments.sandbox,
   baseOptions: {
@@ -39,6 +40,7 @@ const config = {
     client_user_id: 'unique_user_id',
   },
   products: ['auth'],
+  redirect_uri: `${process.env.NEXT_BASE_URL}/applicant/generate`,
 };
 
 async function get_plaid_data(

@@ -40,7 +40,12 @@ chain-id: pulsar-2
 */
 
 export const CUSTOM_FEES = IS_MAINNET
-  ? {}
+  ? {
+      exec: {
+        amount: [{ amount: '200000', denom: 'uscrt' }],
+        gas: '200000',
+      },
+    }
   : {
       upload: {
         amount: [{ amount: '44386260', denom: 'uscrt' }],
