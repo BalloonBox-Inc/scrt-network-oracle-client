@@ -34,7 +34,7 @@ export interface ITokenExchangeProps {
 const config = {
   client_id: CLIENT_ID,
   secret: SECRET_KEY,
-  client_name: 'Insert Client name here',
+  client_name: 'SCRTSibyl',
   country_codes: ['US', 'CA'],
   language: 'en',
   user: {
