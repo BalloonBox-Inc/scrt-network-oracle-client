@@ -35,7 +35,7 @@ const config = {
   client_id: CLIENT_ID,
   secret: SECRET_KEY,
   client_name: 'Insert Client name here',
-  country_codes: ['US'],
+  country_codes: ['US', 'CA'],
   language: 'en',
   user: {
     client_user_id: 'unique_user_id',
