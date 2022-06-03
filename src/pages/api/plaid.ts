@@ -21,6 +21,7 @@ export interface IPlaidTokenCreateResponse {
   expiration: string; // 4 hours (given in UTC)
   link_token: string;
   request_id: string;
+  status: number;
 }
 
 export interface ITokenExchangeProps {
@@ -115,6 +116,7 @@ export default async function handler(
 
     res.send({
       ...data,
+      status: clientTokenRes.status,
     });
   } catch (error) {
     res.send({ error });

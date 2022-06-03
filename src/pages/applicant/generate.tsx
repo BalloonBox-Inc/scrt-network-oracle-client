@@ -101,9 +101,13 @@ export const GenerateScore = ({ chainActivity }: IGenerateScorePage) => {
         setToWaiting();
         const plaidRes = await fetch('/api/plaid');
         const plaidResJson: IPlaidTokenCreateResponse = await plaidRes.json();
+
         if (plaidResJson?.link_token) {
           setStartPlaidLink();
           setPlaidPublicToken({ publicToken: plaidResJson.link_token });
+        }
+        if (plaidResJson?.status === 400) {
+          connectionError('plaid');
         }
       } catch (error) {
         connectionError('plaid');
