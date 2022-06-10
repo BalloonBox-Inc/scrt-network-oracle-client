@@ -18,7 +18,7 @@ const MainContainer = ({
     { setToCoinbase, setToPlaid },
   ] = useHandleSelection();
 
-  const isEnvStaging = process.env.ENV === 'staging';
+  const isEnvProduction = process.env.ENV === 'production';
 
   const providerSelectors = (
     <div className="flex flex-col 2xl:flex-row 2xl:space-x-10 space-y-4 2xl:space-y-0 z-50">
@@ -78,7 +78,7 @@ const MainContainer = ({
           {providerSelectors}
         </div>
       </div>
-      {plaidSelected && !isEnvStaging && (
+      {plaidSelected && !isEnvProduction && (
         <div className="text-center mt-4 px-20 text-xs text-blue-400">
           <a
             target={'_blank'}
