@@ -1,3 +1,5 @@
+import { StdSignature } from 'secretjs/types/types';
+
 enum ScoreQuality {
   'very poor',
   'poor',
@@ -85,4 +87,10 @@ export interface IScoreResponseCoinbase {
   status: 'success' | 'error';
   timestamp: string;
   title: 'Credit Score';
+}
+
+export interface IQueryInputs {
+  permit_name: string;
+  public_key: StdSignature['pub_key'];
+  signature: StdSignature['signature'];
 }
