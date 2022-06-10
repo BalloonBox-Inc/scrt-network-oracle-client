@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { notification } from 'antd';
 import { replace } from 'ramda';
 import { SigningCosmWasmClient } from 'secretjs';
@@ -50,8 +48,8 @@ export const handleSetScore = async ({
         addr,
         keplrOfflineSigner as any,
         // @ts-ignore
-        window.getEnigmaUtils(CHAIN_ID)
-        // CUSTOM_FEES
+        window.getEnigmaUtils(CHAIN_ID),
+        CUSTOM_FEES
       );
 
       const handleMsg = {

@@ -6,6 +6,7 @@ const CLIENT_ID = process.env.PLAID_CLIENT_ID;
 const SECRET_KEY = process.env.PLAID_SECRET_KEY_SANDBOX;
 const { COINMARKET_KEY } = process.env;
 const PLAID_ENDPOINT = `${process.env.BACKEND_BASE_URL}/credit_score/plaid`;
+
 const clientConfiguration = new Configuration({
   basePath: PlaidEnvironments.sandbox,
   baseOptions: {
@@ -20,6 +21,7 @@ export interface IPlaidTokenCreateResponse {
   expiration: string; // 4 hours (given in UTC)
   link_token: string;
   request_id: string;
+  status: number;
 }
 
 export interface ITokenExchangeProps {
@@ -32,13 +34,14 @@ export interface ITokenExchangeProps {
 const config = {
   client_id: CLIENT_ID,
   secret: SECRET_KEY,
-  client_name: 'Insert Client name here',
-  country_codes: ['US'],
+  client_name: 'SCRTSibyl',
+  country_codes: ['US', 'CA'],
   language: 'en',
   user: {
     client_user_id: 'unique_user_id',
   },
   products: ['auth'],
+  redirect_uri: `${process.env.NEXT_BASE_URL}/applicant/generate`,
 };
 
 async function get_plaid_data(
@@ -113,6 +116,7 @@ export default async function handler(
 
     res.send({
       ...data,
+      status: clientTokenRes.status,
     });
   } catch (error) {
     res.send({ error });

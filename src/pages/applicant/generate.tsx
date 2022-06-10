@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { notification } from 'antd';
 import { useRouter } from 'next/router';
 
@@ -33,6 +35,7 @@ export const GenerateScore = ({ chainActivity }: IGenerateScorePage) => {
     plaidPublicToken,
     setScoreResponse,
     handleSetChainActivity,
+    scoreResponse,
   } = useSecretContext();
 
   const [awaitingScoreResponse, { setToWaiting, setNotWaiting }] =
@@ -52,6 +55,18 @@ export const GenerateScore = ({ chainActivity }: IGenerateScorePage) => {
   const router = useRouter();
   const queryType = router?.query?.type;
   const queryStatus = router?.query?.status;
+
+  const plaidOAuthFlowQuery = router?.query?.oauth_state_id;
+
+  useEffect(() => {
+    if (!scoreResponse) {
+      plaidOAuthFlowQuery &&
+        router.replace(
+          `/applicant/generate?status=loading&oauth_state_id=${router?.query?.oauth_state_id}`
+        ) &&
+        setStartPlaidLink();
+    }
+  }, [plaidOAuthFlowQuery, setStartPlaidLink, router, scoreResponse]);
 
   useManageQuery({ router, setStartCoinbase, setToWaiting });
 
@@ -78,8 +93,7 @@ export const GenerateScore = ({ chainActivity }: IGenerateScorePage) => {
   };
 
   const handlePlaidConnect = async () => {
-    if (plaidPublicToken) {
-      setStartPlaidLink();
+    if (plaidPublicToken && scoreResponse?.endpoint.includes('plaid')) {
       router.replace('/applicant/generate?type=plaid&status=success');
     } else {
       router.replace('/applicant/generate?type=plaid&status=loading');
@@ -87,9 +101,13 @@ export const GenerateScore = ({ chainActivity }: IGenerateScorePage) => {
         setToWaiting();
         const plaidRes = await fetch('/api/plaid');
         const plaidResJson: IPlaidTokenCreateResponse = await plaidRes.json();
+
         if (plaidResJson?.link_token) {
           setStartPlaidLink();
           setPlaidPublicToken({ publicToken: plaidResJson.link_token });
+        }
+        if (plaidResJson?.status === 400) {
+          connectionError('plaid');
         }
       } catch (error) {
         connectionError('plaid');
@@ -122,6 +140,7 @@ export const GenerateScore = ({ chainActivity }: IGenerateScorePage) => {
           router={router}
           token={plaidPublicToken.publicToken}
           setStartPlaidLink={setStartPlaidLink}
+          plaidOAuthFlowQuery={plaidOAuthFlowQuery}
         />
       )}
       {startCoinbase && (
