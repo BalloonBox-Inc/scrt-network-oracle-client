@@ -23,9 +23,9 @@ export const CHAIN_ID = IS_MAINNET ? 'secret-4' : 'pulsar-2';
 
 export const REST_URL = IS_MAINNET
   ? process.env.NEXT_PUBLIC_MAINNET_API_URL
-  : 'https://api.pulsar.griptapejs.com';
+  : 'https://api.pulsar.scrttestnet.com';
 
-export const RPC_PORT = 'https://rpc.pulsar.griptapejs.com/';
+export const RPC_PORT = 'https://rpc.pulsar.scrttestnet.com/';
 
 export const SECRET_CONTRACT_ADDR = IS_MAINNET
   ? 'secret1lgays77xvx5eqvv9k0083d62zr9nwhhtel7658'
