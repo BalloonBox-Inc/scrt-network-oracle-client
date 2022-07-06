@@ -129,7 +129,7 @@ const Connect = ({ showWallet, setShowWallet }: any) => {
             className="relative oveflow-hidden"
           >
             <img
-              src="/images/keplr.svg"
+              src="/images/keplr.png"
               alt="keplr-logo"
               className="absolute"
             />

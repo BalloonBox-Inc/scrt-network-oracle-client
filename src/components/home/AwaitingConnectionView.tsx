@@ -2,7 +2,7 @@ import { useSecretContext } from '@scrtsybil/src/context';
 
 import Button, { BUTTON_STYLES } from '../Button';
 
-const keplr = '/images/keplr.svg';
+const keplr = '/images/keplr.png';
 
 export default function AwaitingConnectionView() {
   const { setConnectRequest, connectRequest } = useSecretContext();
