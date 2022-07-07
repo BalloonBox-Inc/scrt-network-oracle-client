@@ -77,7 +77,7 @@ export default function Header() {
             <Link
               passHref={true}
               href={
-                isOnTestnet
+                IS_MAINNET
                   ? 'https://www.secretsibyl.com/'
                   : 'https://test.secretsibyl.com/'
               }
@@ -87,7 +87,7 @@ export default function Header() {
                   showWallet ? 'disappear' : 'reappear'
                 }`}
               >
-                {isOnTestnet ? 'Use Mainnet' : 'Use Testnet'}
+                {!IS_MAINNET ? 'Use Mainnet' : 'Use Testnet'}
               </p>
             </Link>
             <Link passHref={true} href="/learn">
