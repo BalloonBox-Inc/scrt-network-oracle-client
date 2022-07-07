@@ -77,7 +77,7 @@ export default function Header() {
             <Link
               passHref={true}
               href={
-                IS_MAINNET
+                !IS_MAINNET
                   ? 'https://www.secretsibyl.com/'
                   : 'https://test.secretsibyl.com/'
               }
