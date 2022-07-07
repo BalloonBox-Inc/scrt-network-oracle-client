@@ -44,7 +44,7 @@ const LaunchLink = (props: Props) => {
 
   const onSuccess = async (publicToken: string, metadata: any) => {
     const { plaid_score_res } = await exchangePlaidToken({ publicToken });
-    if (plaid_score_res.status_code === 200) {
+    if (plaid_score_res?.status_code === 200) {
       router.replace('/applicant/generate?type=plaid&status=success');
       setScoreResponse(plaid_score_res);
     } else {
