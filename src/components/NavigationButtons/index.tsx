@@ -1,4 +1,4 @@
-import Button, { BUTTON_STYLES } from '../Button';
+import Button, { BUTTON_ACTION, BUTTON_STYLES } from '../Button';
 
 interface INavigationButtonProps {
   backHandler?: () => void;
@@ -9,6 +9,7 @@ interface INavigationButtonProps {
   nextText?: string;
   showNextBtn?: boolean;
   showBackBtn?: boolean;
+  fullWidth?: boolean;
 }
 
 const NavigationButtons = ({
@@ -20,10 +21,15 @@ const NavigationButtons = ({
   nextText = 'Continue',
   showNextBtn = true,
   showBackBtn = true,
+  fullWidth = false,
 }: INavigationButtonProps) => {
   return (
-    <div className="w-full mb-20 2xl:mt-20 flex justify-center">
-      <div className="flex w-3/4 md:w-3/5 justify-between ">
+    <div
+      className={`w-full mb-20 2xl:mt-20 ${
+        !fullWidth && 'flex justify-center'
+      }`}
+    >
+      <div className={`flex justify-between ${!fullWidth && 'w-3/4 md:w-3/5'}`}>
         {showBackBtn && backHandler && (
           <div className="pt-16 z-30 flex justify-start">
             <div>
@@ -31,6 +37,7 @@ const NavigationButtons = ({
                 onClick={() => backHandler()}
                 text={backText}
                 style={BUTTON_STYLES.OUTLINE}
+                type={BUTTON_ACTION.BUTTON}
                 isDisabled={backDisabled}
               />
             </div>
@@ -43,6 +50,7 @@ const NavigationButtons = ({
                 onClick={() => nextHandler()}
                 text={nextText}
                 style={BUTTON_STYLES.DEFAULT}
+                type={BUTTON_ACTION.SUBMIT}
                 isDisabled={nextDisabled}
               />
             </div>
