@@ -1,8 +1,9 @@
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import Link from 'next/link';
+import router from 'next/router';
 
-import Button, { BUTTON_ACTION } from '../Button';
+import NavigationButtons from '@scrtsybil/src/components/NavigationButtons';
 
 const MainContainer = ({
   isRevokePermit,
@@ -53,9 +54,9 @@ const MainContainer = ({
           </p>
         </div>
       </div>
-      <div className="w-full text-center z-50  flex flex-col ">
+      <div className="w-full text-center z-50  flex flex-col">
         <form
-          className="flex flex-col items-start mt-8  w-full"
+          className="flex flex-col items-start mt-8 w-full"
           onSubmit={handleSubmit}
         >
           <label className="text-left mb-1">Query permit name or phrase</label>
@@ -65,28 +66,29 @@ const MainContainer = ({
             className=" z-50 focus-visible:outline-blue-600 focus-visible:outline-none font-mono text-blue-600 bg-input-bg w-full py-3 px-3 rounded-md mb-4 uppercase"
             type={'text'}
           />
-          <div className="flex items-center mt-8">
-            <Button
-              data-testid="permit-button"
-              text={isCreatePermit ? 'Create' : 'Revoke'}
-              classes={{ container: 'mr-3' }}
-              isDisabled={!inputData || !inputData.trim()}
-              type={BUTTON_ACTION.SUBMIT}
-            />
-            <Link
-              href={
-                isRevokePermit
-                  ? '/applicant/permit?type=create'
-                  : '/applicant/permit?type=revoke'
-              }
-            >
-              <a className="z-50">
-                {isCreatePermit
-                  ? 'Revoke a query permit'
-                  : 'Create a query permit'}
-              </a>
-            </Link>
-          </div>
+          <Link
+            href={
+              isRevokePermit
+                ? '/applicant/permit?type=create'
+                : '/applicant/permit?type=revoke'
+            }
+          >
+            <a className="z-50 underline">
+              {isCreatePermit
+                ? 'Revoke a query permit'
+                : 'Create a query permit'}
+            </a>
+          </Link>
+          <NavigationButtons
+            backHandler={() => router.push('/applicant')}
+            nextHandler={() =>
+              isRevokePermit ? handleRevokePermit() : handleCreatePermit()
+            }
+            backText="Back"
+            nextText={isCreatePermit ? 'Create' : 'Revoke'}
+            nextDisabled={!inputData || !inputData.trim()}
+            fullWidth
+          />
         </form>
       </div>
     </div>
